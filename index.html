@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>CUR8 posting</title>
+    <!--importa lo stile-->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>Cur8 posting</h1>
+
+    <nav>
+        <button onclick="showPage('draftPage')" id="draftBtn" disabled>
+            <i class="material-icons">description</i>
+            <span>Bozze</span>
+        </button>
+        <button onclick="showPage('postPage')" id="postBtn" disabled>
+            <i class="material-icons">edit</i>
+            <span>Pubblica</span>
+        </button>
+        <button onclick="showPage('accountPage')" id="accountBtn" disabled>
+            <i class="material-icons">account_circle</i>
+            <span>Account</span>
+        </button>
+
+    </nav>
+
+    <!-- Pagina Login -->
+    <div id="loginPage" class="page active">
+        <h2>Login/Logout</h2>
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Inserisci Username">
+
+        <label for="postingKey">Posting Key:</label>
+        <input type="text" id="postingKey" placeholder="Inserisci Posting Key">
+
+        <button class="action-btn" onclick="login()">Login</button>
+    </div>
+
+    <!-- Pagina Gestione Bozze -->
+    <div id="draftPage" class="page">
+        <h2 id="titleGestionBozze">Gestione Bozze</h2>
+        <!--lista delle bozze dell'username selezionato-->
+        <ul id="draftList"></ul>
+    </div>
+
+    <!-- Pagina Pubblica Post -->
+    <div id="postPage" class="page">
+        <h2>Pubblica Post</h2>
+        <label for="postTitle">Titolo Post:</label>
+        <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
+
+        <label for="postBody">Corpo Post:</label>   
+        <div id="dropZone">
+            Inserisci Immagine
+            <input type="file" id="fileInput" style="display: none;" accept="image/*">
+        </div>
+        <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
+       
+        <label for="postTags">Tag Post:</label>
+        <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola">
+
+        <button class="action-btn" onclick="postToSteem()">Pubblica Post</button>
+        <!--salva bozza-->
+        <button class="action-btn" onclick="salvaBozza()">Salva Bozza</button>
+    </div>
+
+    <!-- Pagina Gestione Account CRUD -->
+    <div id="accountPage" class="page">
+        <h2>Gestione Account Steem</h2>
+        <ul id="accountList"></ul>
+        <div class="actions-container">
+            <button class="action-btn loginIn" onclick="showPage('loginPage')">
+                <i class="material-icons">add</i>
+                <span>Crea Account</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="hide toast" id="toast">
+        <h2>Risultato</h2>
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        // ApiClient class
+        class ApiClient {
+            constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com') {
+                this.apiKey = 'your_secret_api_key';
+                this.baseUrl = baseUrl;
+            }
+
+            async sendRequest(endpoint, method, data = null) {
+                const url = `${this.baseUrl}${endpoint}`;
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'API-Key': this.apiKey
+                    },
+                    body: data ? JSON.stringify(data) : null
+                };
+
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error:', error);
+                    throw error;
+                }
+            }
+
+            login(idTelegram, username, postingKey) {
+                return this.sendRequest('/login', 'POST', { id_telegram: idTelegram, username, posting_key: postingKey });
+            }
+
+            logout(idTelegram, username) {
+                return this.sendRequest('/logout', 'POST', { id_telegram: idTelegram, username });
+            }
+
+            saveDraft(username, title, tags, body, scheduledTime, timezone) {
+                return this.sendRequest('/save_draft', 'POST', { username, title, tags, body, scheduled_time: scheduledTime, timezone });
+            }
+
+            getUserDrafts(username) {
+                return this.sendRequest(`/get_user_drafts?username=${username}`, 'GET');
+            }
+
+            deleteDraft(id, username) {
+                return this.sendRequest('/delete_draft', 'DELETE', { id, username });
+            }
+
+            postToSteem(username, title, body, tags) {
+                return this.sendRequest('/post_to_steem', 'POST', { username, title, body, tags });
+            }
+
+            createAccount(username, postingKey) {
+                return this.sendRequest('/create_account', 'POST', { username, posting_key: postingKey });
+            }
+
+            readAccount(username) {
+                return this.sendRequest(`/read_account?username=${username}`, 'GET');
+            }
+
+            updateAccount(username, postingKey) {
+                return this.sendRequest('/update_account', 'PUT', { username, posting_key: postingKey });
+            }
+
+            deleteAccount(username) {
+                return this.sendRequest('/delete_account', 'DELETE', { username });
+            }
+
+            checkLogin(idTelegram) {
+                return this.sendRequest('/check_login', 'POST', { id_telegram: idTelegram });
+            }
+        }
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const postBody = document.getElementById('postBody');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file);
+            }
+        }
+
+        function uploadImage(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onloadend = function () {
+                const base64Image = reader.result.split(',')[1]; // Estrarre solo la parte base64
+
+                const payload = {
+                    image_base64: base64Image,
+                    username: usernameSelected
+                };
+
+                fetch('http://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const imageUrl = data.image_url; 
+                        insertImageUrlInTextarea(imageUrl);
+                    })
+                    .catch(error => {
+                        console.error('Errore durante il caricamento dell\'immagine:', error);
+                        alert('Si è verificato un errore durante il caricamento dell\'immagine.');
+                    });
+            };
+
+            reader.onerror = function (error) {
+                console.error('Errore durante la lettura del file:', error);
+                alert('Si è verificato un errore durante la lettura del file.');
+            };
+        }
+
+
+        function insertImageUrlInTextarea(url) {
+            const imageMarkdown = `![Immagine](${url})`;
+            postBody.value += postBody.value ? `\n${imageMarkdown}` : imageMarkdown;
+        }
+
+        // UI handling
+        let client;
+        let usernames = [];
+        let idTelegram;
+        let usernameSelected = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            idTelegram = initializeTelegram();
+            initializeApp(idTelegram);
+        });
+
+        function salvaBozza() {
+            const title = document.getElementById('postTitle').value;
+            const tags = document.getElementById('postTags').value;
+            const body = document.getElementById('postBody').value;
+            saveDraft(title, tags, body, null, null);
+            //refresh lista bozze
+            getUserDrafts();
+        }
+
+        function initializeTelegram() {
+            if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+                return window.Telegram.WebApp.initDataUnsafe.user.id;
+            }
+            console.warn('Telegram WebApp not available, using default ID');
+            return '6999103418';
+        }
+
+        async function initializeApp(userId) {
+            client = new ApiClient();
+            try {
+                const result = await client.checkLogin(userId);
+                enableNavigationButtons();
+                initializeEnd(result);
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        function initializeEnd(result) {
+            usernames = result.usernames;
+            const accountList = document.getElementById('accountList');
+            accountList.innerHTML = '';
+            usernames.forEach(createAccountListItem);
+            if (usernames.length > 0) {
+                usernameSelected = usernames[0];
+                document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
+                getUserDrafts(); 
+            }
+            showPage('accountPage');
+            displayResult(result);
+        }
+
+        function createAccountListItem(username) {
+            const li = document.createElement('li');
+            const container = document.createElement('div');
+            container.classList.add('container-username');
+            const span = document.createElement('span');
+            span.innerText = username;
+            span.classList.add('usernameElement');
+            container.onclick = () => {
+                selectAccount(username, container);
+                usernameSelected = username;
+                document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
+            };
+            const buttonsContainer = document.createElement('div');
+            const logoutButton = document.createElement('button');
+            logoutButton.classList.add('action-btn');
+            logoutButton.innerText = 'Logout';
+            logoutButton.onclick = (event) => {
+                usernameSelected = '';
+                handleLogout(username);
+            };
+            buttonsContainer.classList.add('buttons-container');
+            buttonsContainer.appendChild(logoutButton);
+            container.appendChild(span);
+            container.appendChild(buttonsContainer);
+            li.appendChild(container);
+            document.getElementById('accountList').appendChild(li);
+
+        }
+
+        function selectAccount(username, containerElement) {
+            usernameSelected = username;
+
+            document.querySelectorAll('.container-username').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            containerElement.classList.add('selected');
+
+            displayResult({ message: `Account ${username} selected` }, 'success');
+            updateUIWithSelectedAccount();
+            getUserDrafts(); 
+        }
+
+        function updateUIWithSelectedAccount() {
+            const selectedAccountDisplay = document.getElementById('selectedAccountDisplay');
+            if (selectedAccountDisplay) {
+                selectedAccountDisplay.textContent = usernameSelected ? `Selected Account: ${usernameSelected}` : 'No account selected';
+            }
+
+            const accountDependentButtons = document.querySelectorAll('.account-dependent');
+            accountDependentButtons.forEach(button => {
+                button.disabled = !usernameSelected;
+            });
+        }
+
+        async function handleLogout(username) {
+            try {
+                const result = await client.logout(idTelegram, username);
+                displayResult(result, 'success');
+                initializeApp(idTelegram);
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        function enableNavigationButtons() {
+            ['draftBtn', 'postBtn', 'accountBtn'].forEach(id => {
+                document.getElementById(id).disabled = false;
+            });
+        }
+
+        function getUsername() {
+            return usernameSelected;
+        }
+
+        function displayResult(result, type = 'success', enabled = false) {
+            if (!enabled) {
+                return;
+            }
+            const toast = document.getElementById('toast');
+            const pre = toast.querySelector('pre');
+            pre.innerText = JSON.stringify(result, null, 2);
+            toast.className = `show ${type}`;
+            setTimeout(() => toast.classList.replace('show', 'hide'), 1700);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // API interaction functions
+        async function login() {
+            try {
+                const result = await client.login(
+                    idTelegram,
+                    document.getElementById('username').value,
+                    document.getElementById('postingKey').value
+                );
+                displayResult(result, 'success');
+                initializeApp(idTelegram);
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function saveDraft() {
+
+            try {
+                const result = await client.saveDraft(
+                    getUsername(),
+                    document.getElementById('postTitle').value,
+                    document.getElementById('postTags').value,
+                    document.getElementById('postBody').value,
+                    null, null
+                );
+                getUserDrafts(); // Refresh the draft list after saving the draft
+                displayResult(result, 'success');
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function getUserDrafts() {
+            try {
+                const result = await client.getUserDrafts(getUsername());
+                displayResult(result, 'success');
+                createListaDrafts(result); // Call the function to create the draft list
+                return result;
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+                return []; // Return an empty array in case of error
+            }
+        }
+        // Create list of drafts
+        function createListaDrafts(drafts) {
+            const draftList = document.getElementById('draftList');
+            draftList.innerHTML = ''; // Clear existing list
+            if (Array.isArray(drafts) && drafts.length > 0) {
+                drafts.forEach(draft => {
+                    const li = document.createElement('li');
+                    li.innerText = draft.title || 'Untitled Draft';
+                    const buttonsContainer = document.createElement('div');
+                    buttonsContainer.classList.add('buttons-container');
+                    li.onclick = () => loadDraft(draft); // Add click event to load draft
+                    li.classList.add('draft-item');
+                    // Add a delete button to each draft
+                    const deleteButton = document.createElement('button');
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('material-icons');
+                    deleteIcon.innerText = 'delete';
+                    deleteButton.appendChild(deleteIcon);
+                    deleteButton.onclick = (event) => {
+                        deleteDraft(draft.id);
+                    };
+
+                    //editButton
+                    const editButton = document.createElement('button');
+                    const icon = document.createElement('i');
+                    icon.classList.add('material-icons');
+                    icon.innerText = 'edit';
+                    editButton.appendChild(icon);
+
+                    editButton.onclick = (event) => {
+                        //apri la pagina del post e compila i campi con i dati della bozza
+                        document.getElementById('postTitle').value = draft.title || '';
+                        document.getElementById('postTags').value = draft.tags || '';
+                        document.getElementById('postBody').value = draft.body || '';
+                        showPage('postPage');
+
+                    };
+                    deleteButton.classList.add('action-btn-mini');
+                    editButton.classList.add('action-btn-mini');
+                    buttonsContainer.appendChild(editButton);
+                    buttonsContainer.appendChild(deleteButton);
+                    li.appendChild(buttonsContainer);
+                    draftList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.innerText = 'No drafts available';
+                draftList.appendChild(li);
+            }
+        }
+        // Load draft into the editor
+        function loadDraft(draft) {
+            document.getElementById('postTitle').value = draft.title || '';
+            document.getElementById('postTags').value = draft.tags || '';
+            document.getElementById('postBody').value = draft.body || '';
+        }
+
+        async function deleteDraft(id) {
+            const draftId = id;
+            if (!draftId) return;
+            try {
+                const result = await client.deleteDraft(draftId, getUsername());
+                // Refresh the draft list after deleting the draft
+                getUserDrafts();
+                displayResult(result, 'success');
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function postToSteem() {
+            try {
+                const result = await client.postToSteem(
+                    getUsername(),
+                    document.getElementById('postTitle').value,
+                    document.getElementById('postBody').value,
+                    document.getElementById('postTags').value
+                );
+                displayResult(result, 'success');
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function createAccount() {
+            try {
+                const result = await client.createAccount(
+                    document.getElementById('newUsername').value,
+                    document.getElementById('newPostingKey').value
+                );
+                displayResult(result, 'success');
+                initializeApp(idTelegram);
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function readAccount() {
+            try {
+                const result = await client.readAccount(document.getElementById('newUsername').value);
+                displayResult(result, 'success');
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function updateAccount() {
+            try {
+                const result = await client.updateAccount(
+                    document.getElementById('newUsername').value,
+                    document.getElementById('newPostingKey').value
+                );
+                displayResult(result, 'success');
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+        async function deleteAccount() {
+            try {
+                const result = await client.deleteAccount(document.getElementById('newUsername').value);
+                displayResult(result, 'success');
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+
+    </script>
+</body>
+
+</html>
