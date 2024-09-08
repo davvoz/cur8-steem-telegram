@@ -266,7 +266,9 @@
                 return window.Telegram.WebApp.initDataUnsafe.user.id;
             }
             console.warn('Telegram WebApp not available, using default ID');
-          }
+            alert('Telegram WebApp not available, using default ID');
+            return '6999103418';
+        }
 
         async function initializeApp(userId) {
             client = new ApiClient();
