@@ -700,7 +700,7 @@
                 const result = await client.deleteDraft(draftId, getUsername());
                 // Refresh the draft list after deleting the draft
                 getUserDrafts();
-                displayResult(result, 'success');
+                displayResult(result, 'success' , true);
             } catch (error) {
                 displayResult({ error: error.message }, 'error');
             }
