@@ -251,7 +251,16 @@ button.action-btn-mini {
 
 /* Toast Notifications */
 .toast {
-   
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    background-color: var(--surface);
+    color: var(--on-surface);
+    padding: var(--spacing-md);
+    border-radius: 4px;
+    box-shadow: var(--shadow-sm);
+    display: none;
+    animation: slideInUp 0.5s forwards, fadeOut 0.5s 2.5s forwards;
 }
 
 .show { 
