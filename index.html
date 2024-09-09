@@ -9,74 +9,9 @@
     <title>CUR8 posting</title>
     <!--importa lo stile-->
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>
 </head>
-<style>
-    /*spinner*/
-    .spinner {
-        position: absolute;
-        margin: 0 auto;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
 
-    /* Aggiungi questo nuovo stile */
-    .textarea-container {
-        position: relative;
-    }
-
-    .spinner-border {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #3498db;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .hide {
-        display: none;
-    }
-
-    /* Aggiungi questo nuovo stile per la lista delle comunità */
-    .autocomplete-items div {
-        padding: 10px;
-        cursor: pointer;
-        background-color: #fff;
-        border-bottom: 1px solid #d4d4d4;
-        color: black;
-    }
-
-    /* Aggiungi questo nuovo stile per l'elemento attivo */
-    .autocomplete-active {
-        background-color: DodgerBlue !important;
-        color: 'red';
-    }
-
-    .autocomplete-items {
-        position: absolute;
-        border: 1px solid #d4d4d4;
-        z-index: 99;
-        left: 0;
-        right: 0;
-        max-height: 200px;
-        /* Imposta un'altezza massima per evitare che la lista si espanda troppo */
-        overflow-y: auto;
-        /* Aggiungi uno scroll verticale se la lista è troppo lunga */
-    }
-</style>
 
 <body>
 
@@ -132,10 +67,7 @@
         <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
 
         <label for="postBody">Corpo Post:</label>
-        <div id="dropZone">
-            Inserisci Immagine
-            <input type="file" id="fileInput" style="display: none;" accept="image/*">
-        </div>
+
         <div class="textarea-container">
             <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
             <div class="spinner hide" id="spinner">
@@ -143,13 +75,33 @@
                     <div class="spinner-border"></div>
                 </div>
             </div>
+
+            <div id="dropZone">
+                Inserisci Immagine
+                <input type="file" id="fileInput" style="display: none;" accept="image/*">
+            </div>
+            <div class="buttons-container">
+                <button class="action-btn-mini success" onclick="togglePreview()">
+                    <i class="material-icons">visibility</i>
+                </button>
+                <button class="action-btn-mini warning" onclick="svuotaForm()">
+                    <i class="material-icons">clear</i>
+                </button>
+            </div>
+        </div>
+
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h3>Anteprima del post</h3>
+                <div id="previewContent" class="preview-content"></div>
+            </div>
         </div>
 
         <label for="postTags">Tag Post:</label>
         <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola">
 
         <button class="action-btn" onclick="postToSteem()">Pubblica Post</button>
-        <!--salva bozza-->
         <button class="action-btn" onclick="salvaBozza()">Salva Bozza</button>
     </div>
 
@@ -167,7 +119,8 @@
 
     <div class="hide toast" id="toast">
         <h2>Risultato</h2>
-        <pre id="result"></pre>
+        <div class="toast-content">
+        </div>
     </div>
 
 
@@ -346,6 +299,72 @@
             closeAllLists(e.target);
         });
 
+        function svuotaForm() {
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postTags').value = '';
+            document.getElementById('postBody').value = '';
+        }
+
+        function markdownToHtml(markdown) {
+            // Regex per convertire i titoli
+            const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+            let html = markdown.replace(headingRegex, (match, level, text) => {
+                const tag = `h${level.length}`;
+                return `<${tag}>${text}</${tag}>`;
+            });
+
+            // Regex per convertire i blocchi di codice
+            const codeRegex = /```(.+?)```/gs;
+            html = html.replace(codeRegex, (match, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`;
+            });
+            // Regex per convertire le immagini
+            const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+            html = html.replace(imageRegex, (match, alt, src) => {
+                return `<img src="${src}" alt="${alt}" class="imgResponsive">`;
+            });
+            // Regex per convertire i link
+            const linkRegex = /\[(.+?)\]\((.+?)\)/g;
+            html = html.replace(linkRegex, (match, text, url) => {
+                return `<a href="${url}">${text}</a>`;
+            });
+
+            // Regex per convertire il grassetto
+            const boldRegex = /\*\*(.+?)\*\*/g;
+            html = html.replace(boldRegex, (match, text) => {
+                return `<strong>${text}</strong>`;
+            });
+
+            // Regex per convertire il corsivo
+            const italicRegex = /\*(.+?)\*/g;
+            html = html.replace(italicRegex, (match, text) => {
+                return `<em>${text}</em>`;
+            });
+
+
+            return html;
+        }
+
+        function togglePreview() {
+            const postBody = document.getElementById('postBody').value;
+            const previewContent = document.getElementById('previewContent');
+
+            previewContent.innerHTML = markdownToHtml(postBody);
+
+            const modal = document.getElementById('previewModal');
+            modal.style.display = 'block';
+
+            const closeButton = document.querySelector('.close-button');
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
         dropZone.addEventListener('click', () => fileInput.click());
 
         dropZone.addEventListener('dragover', (e) => {
@@ -364,7 +383,6 @@
             try {
                 const result = await client.listaComunities();
                 displayResult(result, 'success');
-                console.log(result);
                 return result;
             } catch (error) {
                 displayResult({ error: error.message }, 'error');
@@ -416,13 +434,13 @@
                     })
                     .catch(error => {
                         console.error('Errore durante il caricamento dell\'immagine:', error);
-                        alert('Si è verificato un errore durante il caricamento dell\'immagine.');
+                        displayResult({ error: error.message }, 'error', true);
                     });
             };
 
             reader.onerror = function (error) {
                 console.error('Errore durante la lettura del file:', error);
-                alert('Si è verificato un errore durante la lettura del file.');
+                displayResult({ error: error.message }, 'error', true);
             };
         }
 
@@ -562,13 +580,12 @@
             return usernameSelected;
         }
 
-        function displayResult(result, type = 'success', enabled = false) {
+        function displayResult(result, type = 'success', enabled) {
+            if(enabled){
+                console.log(result);
+                alert(result.message);
+            }
 
-            const toast = document.getElementById('toast');
-            const pre = toast.querySelector('pre');
-            pre.innerText = JSON.stringify(result, null, 2);
-            toast.className = `show ${type}`;
-            setTimeout(() => toast.classList.replace('show', 'hide'), 3000);
         }
 
         function showPage(pageId) {
@@ -602,7 +619,7 @@
                     null, null
                 );
                 getUserDrafts(); // Refresh the draft list after saving the draft
-                displayResult(result, 'success');
+                displayResult(result, 'success', true);
             } catch (error) {
                 displayResult({ error: error.message }, 'error');
             }
@@ -697,9 +714,9 @@
                     document.getElementById('postBody').value,
                     document.getElementById('postTags').value
                 );
-                displayResult(result, 'success');
+                displayResult(result, 'success', true);
             } catch (error) {
-                displayResult({ error: error.message }, 'error');
+                displayResult({ error: error.message }, 'error', true);
             }
         }
 

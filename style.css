@@ -251,22 +251,10 @@ button.action-btn-mini {
 
 /* Toast Notifications */
 .toast {
-    position: fixed;
    
-    transform: translateX(-50%);
-    background-color: var(--surface);
-    color: var(--on-surface);
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: 4px;
-    box-shadow: var(--shadow-md);
-    display: none;
-    z-index: 1000;
-    font-size: 0.9em;
-    max-width: 90%;
-    text-align: center;
 }
 
-.show {
+.show { 
     display: block;
     animation: slideInUp 0.5s forwards, fadeOut 0.5s 2.5s forwards;
 }
@@ -397,6 +385,7 @@ ul li:hover {
 .buttons-container {
     display: flex;
     gap: var(--spacing-sm);
+    margin-top: 10px;
 }
 
 .selected {
@@ -479,3 +468,115 @@ ul li:hover {
     background-color: #f0f0f0;
 }
 
+/*spinner*/
+.spinner {
+    position: absolute;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Aggiungi questo nuovo stile */
+.textarea-container {
+    position: relative;
+}
+
+.spinner-border {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.hide {
+    display: none;
+}
+
+/* Aggiungi questo nuovo stile per la lista delle comunità */
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+    color: black;
+}
+
+/* Aggiungi questo nuovo stile per l'elemento attivo */
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: 'red';
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    z-index: 99;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    /* Imposta un'altezza massima per evitare che la lista si espanda troppo */
+    overflow-y: auto;
+    /* Aggiungi uno scroll verticale se la lista è troppo lunga */
+}
+
+/*modale anteprima post*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 10px;
+    border: 1px solid #888;
+    color: black;
+    margin-bottom: 100px;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.preview-content {
+    margin-top: 20px;
+}
+
+.imgResponsive {
+    max-width: 100%;
+    height: auto;
+}
