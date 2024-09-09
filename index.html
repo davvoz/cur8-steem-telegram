@@ -10,6 +10,48 @@
     <!--importa lo stile-->
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    /*spinner*/
+    .spinner {
+        position: absolute;
+        margin: 0 auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    /* Aggiungi questo nuovo stile */
+    .textarea-container {
+        position: relative;
+    }
+
+
+
+    .spinner-border {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
 
 <body>
 
@@ -57,13 +99,20 @@
         <label for="postTitle">Titolo Post:</label>
         <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
 
-        <label for="postBody">Corpo Post:</label>   
+        <label for="postBody">Corpo Post:</label>
         <div id="dropZone">
             Inserisci Immagine
             <input type="file" id="fileInput" style="display: none;" accept="image/*">
         </div>
-        <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
-       
+        <div class="textarea-container">
+            <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
+            <div class="spinner hide" id="spinner">
+                <div class="spinner-container">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
+        </div>
+
         <label for="postTags">Tag Post:</label>
         <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola">
 
@@ -88,6 +137,7 @@
         <h2>Risultato</h2>
         <pre id="result"></pre>
     </div>
+
 
     <script>
         // ApiClient class
@@ -204,6 +254,8 @@
             reader.readAsDataURL(file);
 
             reader.onloadend = function () {
+                //spinner
+                document.getElementById('spinner').classList.remove('hide');
                 const base64Image = reader.result.split(',')[1]; // Estrarre solo la parte base64
 
                 const payload = {
@@ -211,7 +263,7 @@
                     username: usernameSelected
                 };
 
-                fetch('http://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image', {
+                fetch('https://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -220,8 +272,9 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        const imageUrl = data.image_url; 
+                        const imageUrl = data.image_url;
                         insertImageUrlInTextarea(imageUrl);
+                        document.getElementById('spinner').classList.add('hide');
                     })
                     .catch(error => {
                         console.error('Errore durante il caricamento dell\'immagine:', error);
@@ -289,7 +342,7 @@
             if (usernames.length > 0) {
                 usernameSelected = usernames[0];
                 document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
-                getUserDrafts(); 
+                getUserDrafts();
             }
             showPage('accountPage');
             displayResult(result);
@@ -335,7 +388,7 @@
 
             displayResult({ message: `Account ${username} selected` }, 'success');
             updateUIWithSelectedAccount();
-            getUserDrafts(); 
+            getUserDrafts();
         }
 
         function updateUIWithSelectedAccount() {
