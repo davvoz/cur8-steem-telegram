@@ -252,8 +252,7 @@ button.action-btn-mini {
 /* Toast Notifications */
 .toast {
     position: fixed;
-    bottom: 80px;
-    left: 50%;
+   
     transform: translateX(-50%);
     background-color: var(--surface);
     color: var(--on-surface);
@@ -274,11 +273,11 @@ button.action-btn-mini {
 
 @keyframes slideInUp {
     from {
-        transform: translate(-50%, 100%);
+        transform: translate(0%, 100%);
     }
 
     to {
-        transform: translate(-50%, 0);
+        transform: translate(0%, 0);
     }
 }
 
