@@ -12,6 +12,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>
     <!--importa una libreria per convertire il markdown-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.1/marked.min.js"></script>
+    <style>
+        .red {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .green {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .button-text {
+            margin-left: 5px;
+        }
+    </style>
 </head>
 
 
@@ -50,15 +65,10 @@
 
     <!-- Pagina Pubblica Post -->
     <div id="postPage" class="page">
-
+        <h2>Pubblica Post</h2>
         <label for="postTitle">Titolo Post:</label>
         <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
 
-        <div class="automplete-container">
-            <label for="myInput">Comunità:</label>
-            <input type="text" id="myInput" placeholder="Inizia a digitare...">
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-        </div>
         <label for="postBody">Corpo Post:</label>
 
         <div class="textarea-container">
@@ -69,19 +79,17 @@
                 </div>
             </div>
 
-            <!-- <div id="dropZone">
+            <div id="dropZone">
                 Inserisci Immagine
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
-            </div> -->
+            </div>
             <div class="buttons-container">
+                <button class="action-btn-mini red" onclick="openComunitiesAutocomplete()">
+                    <span class="button-text" id="comunityName">Seleziona
+                        Comunità</span>
+                </button>
                 <button id="previewBtn" class="action-btn-mini success" onclick="togglePreview()">
                     <i class="material-icons">visibility</i>
-                </button>
-                <button class="action-btn-mini warning" onclick="svuotaForm()">
-                    <i class="material-icons">clear</i>
-                </button>
-                <button class="action-btn-mini primary" onclick="prepareUploadImage()">
-                    <i class="material-icons">cloud_upload</i>
                 </button>
                 <button class="action-btn-mini primary" onclick="openDatePicker()">
                     <i class="material-icons">schedule</i>
@@ -208,7 +216,7 @@
 
         const postBody = document.getElementById('postBody');
         let listaComunities;
-        const input = document.getElementById("myInput");
+
         const autocompleteList = document.getElementById("autocomplete-list");
         let currentFocus = -1;
         let scheduledTime;
@@ -216,65 +224,31 @@
         let usernames = [];
         let idTelegram;
         let usernameSelected = '';
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
 
-        input.addEventListener("input", function (e) {
-            const val = this.value;
-            closeAllLists();
-            if (!val) {
-                return false;
-            }
-            currentFocus = -1;
-            const div = document.createElement("div");
-            div.setAttribute("id", this.id + "autocomplete-list");
-            div.setAttribute("class", "autocomplete-items");
+        dropZone.addEventListener('click', () => fileInput.click());
 
-            //dobbiamo mettere la lista delle comunità
-            //all'interno di automplete-container
-            this.parentNode.appendChild(div);
-
-            listaComunities.then((communities) => {
-                communities.forEach((community) => {
-                    if (community.title.toLowerCase().indexOf(val.toLowerCase()) > -1) {
-                        const item = document.createElement("div");
-                        const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
-                        const matchEnd = matchStart + val.length;
-
-                        item.innerHTML = community.title.substr(0, matchStart);
-                        item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
-                        item.innerHTML += community.title.substr(matchEnd);
-                        item.innerHTML += `<input type='hidden' value='${community.title}'>`;
-
-                        item.addEventListener("click", function (e) {
-                            input.value = this.getElementsByTagName("input")[0].value;
-                            // Aggiorna il campo dei tag con il nome della comunità
-                            document.getElementById('postTags').value = community.name;
-                            comunityName = community.name;
-                            comunityTitle = community.title;
-                            closeAllLists();
-                        });
-
-                        div.appendChild(item);
-                    }
-                });
-            });
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
         });
 
-        input.addEventListener("keydown", function (e) {
-            let x = document.getElementById(this.id + "autocomplete-list");
-            if (x) x = x.getElementsByTagName("div");
-            if (e.keyCode == 40) {
-                currentFocus++;
-                addActive(x);
-            } else if (e.keyCode == 38) {
-                currentFocus--;
-                addActive(x);
-            } else if (e.keyCode == 13) {
-                e.preventDefault();
-                if (currentFocus > -1) {
-                    if (x) x[currentFocus].click();
-                }
-            }
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
         });
+
+        dropZone.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file);
+            }
+        }
 
         function addActive(x) {
             if (!x) return false;
@@ -289,19 +263,6 @@
                 x[i].classList.remove("autocomplete-active");
             }
         }
-
-        function closeAllLists(elmnt) {
-            const x = document.getElementsByClassName("autocomplete-items");
-            for (let i = 0; i < x.length; i++) {
-                if (elmnt != x[i] && elmnt != input) {
-                    x[i].parentNode.removeChild(x[i]);
-                }
-            }
-        }
-
-        document.addEventListener("click", function (e) {
-            closeAllLists(e.target);
-        });
 
         function svuotaForm() {
             document.getElementById('postTitle').value = '';
@@ -354,15 +315,6 @@
             }
         }
 
-        function prepareUploadImage() {
-            //apri la finestra di windows per selezionare il file
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.addEventListener('change', handleFileSelect);
-            fileInput.click();
-        }
-
         function uploadImage(file) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -410,7 +362,7 @@
         function prepareShowPage() {
             //scelto l'account, mostro la pagina del post con il dato dell 'username'
             document.getElementById('selectedAccountDisplay').innerText = usernameSelected;
-            document.getElementById('scheduledTimeDisplay').innerText =  scheduledTime ? new Date(scheduledTime).toLocaleString() : '';
+            document.getElementById('scheduledTimeDisplay').innerText = scheduledTime ? new Date(scheduledTime).toLocaleString() : '';
             showPage('postPage');
         }
 
@@ -454,10 +406,109 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            idTelegram = initializeTelegram();
-            initializeApp(idTelegram);
-        });
+        function openComunitiesAutocomplete() {
+            //apri una dialog che contiene l'autocomplete delle comunità
+            const dialog = document.createElement('dialog');
+
+            dialog.classList.add('dialog');
+            dialog.innerHTML = `
+            <div class="autocomplete-container">
+            <h2>Seleziona la comunità</h2>
+            <input type="text" id="myInput" placeholder="Inizia a digitare...">
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+            <button id="confirmButton" class="action-btn">Conferma</button>
+            <button id="cancelButton" class="action-btn">Annulla</button>
+            </div>
+            `;
+            document.body.appendChild(dialog);
+            dialog.showModal();
+
+            const input = document.getElementById("myInput");
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+
+            confirmButton.addEventListener('click', () => {
+                const selectedComunity = input.value;
+                document.getElementById('comunityName').innerText = selectedComunity;
+                dialog.remove();
+            });
+
+            cancelButton.addEventListener('click', () => {
+                dialog.remove();
+            });
+
+            dialog.addEventListener('close', () => {
+                dialog.remove();
+            });
+
+            input.addEventListener("input", function (e) {
+                const val = this.value;
+                closeAllLists(null, this);
+                if (!val) {
+                    return false;
+                }
+                currentFocus = -1;
+                const div = document.createElement("div");
+                div.setAttribute("id", this.id + "autocomplete-list");
+                div.setAttribute("class", "autocomplete-items");
+
+                //dobbiamo mettere la lista delle comunità
+                //all'interno di automplete-container
+                this.parentNode.appendChild(div);
+
+                listaComunities.then((communities) => {
+                    communities.forEach((community) => {
+                        if (community.title.toLowerCase().indexOf(val.toLowerCase()) > -1) {
+                            const item = document.createElement("div");
+                            const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
+                            const matchEnd = matchStart + val.length;
+
+                            item.innerHTML = community.title.substr(0, matchStart);
+                            item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
+                            item.innerHTML += community.title.substr(matchEnd);
+                            item.innerHTML += `<input type='hidden' value='${community.title}'>`;
+
+                            item.addEventListener("click", function (e) {
+                                input.value = this.getElementsByTagName("input")[0].value;
+                                // Aggiorna il campo dei tag con il nome della comunità
+                                document.getElementById('postTags').value = community.name;
+                                comunityName = community.name;
+                                comunityTitle = community.title;
+                                closeAllLists(null, this);
+                            });
+
+                            div.appendChild(item);
+                        }
+                    });
+                });
+            });
+
+            input.addEventListener("keydown", function (e) {
+                let x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    currentFocus++;
+                    addActive(x);
+                } else if (e.keyCode == 38) {
+                    currentFocus--;
+                    addActive(x);
+                } else if (e.keyCode == 13) {
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                        if (x) x[currentFocus].click();
+                    }
+                }
+            });
+        }
+
+        function closeAllLists(elmnt, elmnt2) {
+            const x = document.getElementsByClassName("autocomplete-items");
+            for (let i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt2 != x[i]) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
 
         function salvaBozza() {
             const title = document.getElementById('postTitle').value;
@@ -734,7 +785,7 @@
                     document.getElementById('postTitle').value,
                     document.getElementById('postBody').value,
                     document.getElementById('postTags').value,
-                        scheduledTime,
+                    scheduledTime,
                 );
                 displayResult(result, 'success', true);
             } catch (error) {
@@ -785,6 +836,10 @@
             }
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            idTelegram = initializeTelegram();
+            initializeApp(idTelegram);
+        });
     </script>
 </body>
 
