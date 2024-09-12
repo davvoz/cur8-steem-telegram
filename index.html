@@ -10,20 +10,18 @@
     <!--importa lo stile-->
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>
-    <style>
-        
-    </style>
+    <!--importa una libreria per convertire il markdown-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.1/marked.min.js"></script>
 </head>
 
 
 <body>
-
     <nav>
-        <button onclick="showPage('draftPage')" id="draftBtn" disabled>
+        <button onclick="prepareShowPageBozze()" id="draftBtn" disabled>
             <i class="material-icons">description</i>
             <span>Bozze</span>
         </button>
-        <button onclick="showPage('postPage')" id="postBtn" disabled>
+        <button onclick="prepareShowPage()" id="postBtn" disabled>
             <i class="material-icons">edit</i>
             <span>Pubblica</span>
         </button>
@@ -31,19 +29,15 @@
             <i class="material-icons">account_circle</i>
             <span>Account</span>
         </button>
-
     </nav>
 
     <!-- Pagina Login -->
     <div id="loginPage" class="page active">
-        <h2>Login/Logout</h2>
-
+        <h2>Login</h2>
         <label for="username">Username:</label>
         <input type="text" id="username" placeholder="Inserisci Username">
-
         <label for="postingKey">Posting Key:</label>
         <input type="text" id="postingKey" placeholder="Inserisci Posting Key">
-
         <button class="action-btn" onclick="login()">Login</button>
     </div>
 
@@ -75,10 +69,10 @@
                 </div>
             </div>
 
-            <div id="dropZone">
+            <!-- <div id="dropZone">
                 Inserisci Immagine
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
-            </div>
+            </div> -->
             <div class="buttons-container">
                 <button id="previewBtn" class="action-btn-mini success" onclick="togglePreview()">
                     <i class="material-icons">visibility</i>
@@ -86,7 +80,14 @@
                 <button class="action-btn-mini warning" onclick="svuotaForm()">
                     <i class="material-icons">clear</i>
                 </button>
-
+                <button class="action-btn-mini primary" onclick="prepareUploadImage()">
+                    <i class="material-icons">cloud_upload</i>
+                </button>
+                <button class="action-btn-mini primary" onclick="openDatePicker()">
+                    <i class="material-icons">schedule</i>
+                </button>
+                <span id="selectedAccountDisplay"></span>
+                <span id="scheduledTimeDisplay"></span>
             </div>
         </div>
 
@@ -100,9 +101,6 @@
 
         <label for="postTags">Tag Post:</label>
         <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola">
-
-        <label for="scheduledTime">Data e Ora Pubblicazione:</label>
-        <input type="datetime-local" id="scheduledTime">
         <div class="buttons-container">
             <button class="action-btn" onclick="postToSteem()">Pubblica Post</button>
             <button class="action-btn" onclick="salvaBozza()">Salva Bozza</button>
@@ -208,14 +206,16 @@
             }
         }
 
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
         const postBody = document.getElementById('postBody');
         let listaComunities;
-
         const input = document.getElementById("myInput");
         const autocompleteList = document.getElementById("autocomplete-list");
         let currentFocus = -1;
+        let scheduledTime;
+        let client;
+        let usernames = [];
+        let idTelegram;
+        let usernameSelected = '';
 
         input.addEventListener("input", function (e) {
             const val = this.value;
@@ -307,45 +307,16 @@
             document.getElementById('postTitle').value = '';
             document.getElementById('postTags').value = '';
             document.getElementById('postBody').value = '';
+            document.getElementById('scheduledTimeDisplay').innerText = '';
+            document.getElementById('selectedAccountDisplay').innerText = '';
         }
 
         function markdownToHtml(markdown) {
-            // Regex per convertire i titoli
-            const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-            let html = markdown.replace(headingRegex, (match, level, text) => {
-                const tag = `h${level.length}`;
-                return `<${tag}>${text}</${tag}>`;
-            });
-
-            // Regex per convertire i blocchi di codice
-            const codeRegex = /```(.+?)```/gs;
-            html = html.replace(codeRegex, (match, code) => {
-                return `<pre><code>${code.trim()}</code></pre>`;
-            });
-            // Regex per convertire le immagini
-            const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
-            html = html.replace(imageRegex, (match, alt, src) => {
-                return `<img src="${src}" alt="${alt}" class="imgResponsive">`;
-            });
-            // Regex per convertire i link
-            const linkRegex = /\[(.+?)\]\((.+?)\)/g;
-            html = html.replace(linkRegex, (match, text, url) => {
-                return `<a href="${url}">${text}</a>`;
-            });
-
-            // Regex per convertire il grassetto
-            const boldRegex = /\*\*(.+?)\*\*/g;
-            html = html.replace(boldRegex, (match, text) => {
-                return `<strong>${text}</strong>`;
-            });
-
-            // Regex per convertire il corsivo
-            const italicRegex = /\*(.+?)\*/g;
-            html = html.replace(italicRegex, (match, text) => {
-                return `<em>${text}</em>`;
-            });
-
-
+            let html = marked.parse(markdown);
+            // Sanitize the HTML to prevent XSS attacks
+            html = DOMPurify.sanitize(html);
+            //le immagini devono avere la classe img-fluid
+            html = html.replace(/<img/g, '<img class="img-fluid"');
             return html;
         }
 
@@ -366,20 +337,6 @@
             });
         }
 
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('drag-over');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('drag-over');
-        });
-
-        dropZone.addEventListener('drop', handleDrop);
-        fileInput.addEventListener('change', handleFileSelect);
-
         async function getListaComunities() {
             try {
                 const result = await client.listaComunities();
@@ -390,20 +347,20 @@
             }
         }
 
-        function handleDrop(e) {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                uploadImage(file);
-            }
-        }
-
         function handleFileSelect(e) {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
                 uploadImage(file);
             }
+        }
+
+        function prepareUploadImage() {
+            //apri la finestra di windows per selezionare il file
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.addEventListener('change', handleFileSelect);
+            fileInput.click();
         }
 
         function uploadImage(file) {
@@ -445,17 +402,57 @@
             };
         }
 
-
         function insertImageUrlInTextarea(url) {
             const imageMarkdown = `![Immagine](${url})`;
             postBody.value += postBody.value ? `\n${imageMarkdown}` : imageMarkdown;
         }
 
-        // UI handling
-        let client;
-        let usernames = [];
-        let idTelegram;
-        let usernameSelected = '';
+        function prepareShowPage() {
+            //scelto l'account, mostro la pagina del post con il dato dell 'username'
+            document.getElementById('selectedAccountDisplay').innerText = usernameSelected;
+            document.getElementById('scheduledTimeDisplay').innerText =  scheduledTime ? new Date(scheduledTime).toLocaleString() : '';
+            showPage('postPage');
+        }
+
+        function prepareShowPageBozze() {
+            //scelto l'account, pulisco il formdei post e mostro la pagina delle bozze
+            svuotaForm();
+            showPage('draftPage');
+        }
+
+        function openDatePicker() {
+            //crea un dialog con il datepicker
+            const dialog = document.createElement('dialog');
+            dialog.classList.add('dialog');
+            dialog.innerHTML = `
+            <h2>Seleziona la data e l'ora di pubblicazione</h2>
+            <input type="datetime-local" id="scheduledTime" name="scheduledTime">
+            <button id="confirmButton" class="action-btn">Conferma</button>
+            <button id="cancelButton" class="action-btn">Annulla</button>
+            `;
+            document.body.appendChild(dialog);
+            dialog.showModal();
+
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+            const scheduledTimeInput = document.getElementById('scheduledTime');
+
+            confirmButton.addEventListener('click', () => {
+                const scheduled = scheduledTimeInput.value;
+                scheduledTime = new Date(scheduled).getTime();
+                document.getElementById('scheduledTimeDisplay').innerText = //formattiamo la data
+                    new Date(scheduled).toLocaleString();
+                dialog.remove();
+            });
+
+            cancelButton.addEventListener('click', () => {
+                dialog.remove();
+            });
+
+            dialog.addEventListener('close', () => {
+                dialog.remove();
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             idTelegram = initializeTelegram();
@@ -466,7 +463,7 @@
             const title = document.getElementById('postTitle').value;
             const tags = document.getElementById('postTags').value;
             const body = document.getElementById('postBody').value;
-            saveDraft(title, tags, body, null, null);
+            saveDraft(title, tags, body, scheduledTime, null);
             //refresh lista bozze
             getUserDrafts();
         }
@@ -583,8 +580,21 @@
 
         function displayResult(result, type = 'success', enabled) {
             if (enabled) {
-                console.log(result);
-                alert(result.message);
+                //crea una dialog con il risultato
+                const dialog = document.createElement('dialog');
+                dialog.classList.add('dialog');
+                dialog.innerHTML = `
+                <h2>Risultato</h2>
+                <p>${result.message || result.error}</p>
+                <button id="closeButton" class="action-btn">Chiudi</button>
+                `;
+                document.body.appendChild(dialog);
+                dialog.showModal();
+
+                const closeButton = document.getElementById('closeButton');
+                closeButton.addEventListener('click', () => {
+                    dialog.remove();
+                });
             }
 
         }
@@ -617,7 +627,8 @@
                     document.getElementById('postTitle').value,
                     document.getElementById('postTags').value,
                     document.getElementById('postBody').value,
-                    null, null
+                    scheduledTime,
+                    null
                 );
                 getUserDrafts(); // Refresh the draft list after saving the draft
                 displayResult(result, 'success', true);
@@ -646,6 +657,13 @@
                     const li = document.createElement('li');
                     li.innerText = `${index + 1}. ${draft.title || 'Untitled Draft'}`;
                     const buttonsContainer = document.createElement('div');
+
+                    const scheduledHere = document.createElement('span');
+                    scheduledHere.innerText = draft.scheduled_time ? new Date(draft.scheduled_time).toLocaleString() : '';
+                    scheduledHere.classList.add('scheduled-time');
+
+                    buttonsContainer.appendChild(scheduledHere);
+
                     buttonsContainer.classList.add('buttons-container');
                     li.onclick = () => loadDraft(draft); // Add click event to load draft
                     li.classList.add('draft-item');
@@ -671,7 +689,8 @@
                         document.getElementById('postTitle').value = draft.title || '';
                         document.getElementById('postTags').value = draft.tags || '';
                         document.getElementById('postBody').value = draft.body || '';
-                        showPage('postPage');
+                        document.getElementById('scheduledTimeDisplay').innerText = draft.scheduled_time ? new Date(draft.scheduled_time).toLocaleString() : '';
+                        prepareShowPage();
 
                     };
                     deleteButton.classList.add('action-btn-mini');
@@ -692,6 +711,7 @@
             document.getElementById('postTitle').value = draft.title || '';
             document.getElementById('postTags').value = draft.tags || '';
             document.getElementById('postBody').value = draft.body || '';
+            document.getElementById('scheduledTimeDisplay').innerText = draft.scheduled_time ? new Date(draft.scheduled_time).toLocaleString() : '';
         }
 
         async function deleteDraft(id) {
@@ -713,7 +733,8 @@
                     getUsername(),
                     document.getElementById('postTitle').value,
                     document.getElementById('postBody').value,
-                    document.getElementById('postTags').value
+                    document.getElementById('postTags').value,
+                        scheduledTime,
                 );
                 displayResult(result, 'success', true);
             } catch (error) {
