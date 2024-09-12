@@ -10,12 +10,13 @@
     <!--importa lo stile-->
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>
+    <style>
+        
+    </style>
 </head>
 
 
 <body>
-
-    <h1>Cur8 posting</h1>
 
     <nav>
         <button onclick="showPage('draftPage')" id="draftBtn" disabled>
@@ -55,17 +56,15 @@
 
     <!-- Pagina Pubblica Post -->
     <div id="postPage" class="page">
-        <h2>Pubblica Post</h2>
+
+        <label for="postTitle">Titolo Post:</label>
+        <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
 
         <div class="automplete-container">
             <label for="myInput">Comunità:</label>
             <input type="text" id="myInput" placeholder="Inizia a digitare...">
             <div id="autocomplete-list" class="autocomplete-items"></div>
         </div>
-
-        <label for="postTitle">Titolo Post:</label>
-        <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
-
         <label for="postBody">Corpo Post:</label>
 
         <div class="textarea-container">
@@ -81,12 +80,13 @@
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
             </div>
             <div class="buttons-container">
-                <button class="action-btn-mini success" onclick="togglePreview()">
+                <button id="previewBtn" class="action-btn-mini success" onclick="togglePreview()">
                     <i class="material-icons">visibility</i>
                 </button>
                 <button class="action-btn-mini warning" onclick="svuotaForm()">
                     <i class="material-icons">clear</i>
                 </button>
+
             </div>
         </div>
 
@@ -101,8 +101,12 @@
         <label for="postTags">Tag Post:</label>
         <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola">
 
-        <button class="action-btn" onclick="postToSteem()">Pubblica Post</button>
-        <button class="action-btn" onclick="salvaBozza()">Salva Bozza</button>
+        <label for="scheduledTime">Data e Ora Pubblicazione:</label>
+        <input type="datetime-local" id="scheduledTime">
+        <div class="buttons-container">
+            <button class="action-btn" onclick="postToSteem()">Pubblica Post</button>
+            <button class="action-btn" onclick="salvaBozza()">Salva Bozza</button>
+        </div>
     </div>
 
     <!-- Pagina Gestione Account CRUD -->
@@ -348,23 +352,20 @@
         function togglePreview() {
             const postBody = document.getElementById('postBody').value;
             const previewContent = document.getElementById('previewContent');
-
             previewContent.innerHTML = markdownToHtml(postBody);
-
             const modal = document.getElementById('previewModal');
             modal.style.display = 'block';
-
             const closeButton = document.querySelector('.close-button');
             closeButton.addEventListener('click', () => {
                 modal.style.display = 'none';
             });
-
             window.addEventListener('click', (event) => {
                 if (event.target == modal) {
                     modal.style.display = 'none';
                 }
             });
         }
+
         dropZone.addEventListener('click', () => fileInput.click());
 
         dropZone.addEventListener('dragover', (e) => {
@@ -581,7 +582,7 @@
         }
 
         function displayResult(result, type = 'success', enabled) {
-            if(enabled){
+            if (enabled) {
                 console.log(result);
                 alert(result.message);
             }
@@ -641,9 +642,9 @@
             const draftList = document.getElementById('draftList');
             draftList.innerHTML = ''; // Clear existing list
             if (Array.isArray(drafts) && drafts.length > 0) {
-                drafts.forEach(draft => {
+                drafts.forEach((draft, index) => {
                     const li = document.createElement('li');
-                    li.innerText = draft.title || 'Untitled Draft';
+                    li.innerText = `${index + 1}. ${draft.title || 'Untitled Draft'}`;
                     const buttonsContainer = document.createElement('div');
                     buttonsContainer.classList.add('buttons-container');
                     li.onclick = () => loadDraft(draft); // Add click event to load draft
@@ -700,7 +701,7 @@
                 const result = await client.deleteDraft(draftId, getUsername());
                 // Refresh the draft list after deleting the draft
                 getUserDrafts();
-                displayResult(result, 'success' , true);
+                displayResult(result, 'success', true);
             } catch (error) {
                 displayResult({ error: error.message }, 'error');
             }

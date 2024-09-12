@@ -589,3 +589,15 @@ ul li:hover {
     max-width: 100%;
     height: auto;
 }
+/*uniformiamo lo stile del datetime-local*/
+input[type="datetime-local"] {
+    width: 100%;
+    padding: var(--spacing-md);
+    margin: var(--spacing-sm) 0;
+    background-color: var(--surface);
+    border: none;
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--on-surface);
+    border-radius: 4px;
+    transition: border-color var(--transition-fast);
+}
