@@ -149,7 +149,7 @@ nav button:disabled {
 /* Page Styles */
 .page {
     display: none;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xs);
     margin-bottom: 80px;
     animation: fadeIn 0.5s ease-in-out;
 }
@@ -199,7 +199,7 @@ label {
 
 textarea {
     resize: vertical;
-    min-height: 250px;
+    min-height: 100px;
 }
 
 button.action-btn {
