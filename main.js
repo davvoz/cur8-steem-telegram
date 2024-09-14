@@ -1,16 +1,22 @@
 import ApiClient from './api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
 
-document.getElementById('postBtn').addEventListener('click', () => prepareShowPage());
-document.getElementById('draftBtn').addEventListener('click', () => prepareShowPageBozze());
-document.getElementById('accountBtn').addEventListener('click', () => showPage('accountPage'));
-document.getElementById('goLogin').addEventListener('click', () => login());
-document.getElementById('openComunities').addEventListener('click', () => openComunitiesAutocomplete());
-document.getElementById('previewBtn').addEventListener('click', () => togglePreview());
-document.getElementById('openDatePicker').addEventListener('click', () => openDatePicker());
-document.getElementById('postToSteem').addEventListener('click', () => postToSteem());
-document.getElementById('salvaBozza').addEventListener('click', () => salvaBozza());
-document.getElementById('loginInBtn').addEventListener('click', () => showPage('loginPage'));
+const eventListeners = [
+    { id: 'postBtn', event: 'click', handler: prepareShowPage },
+    { id: 'draftBtn', event: 'click', handler: prepareShowPageBozze },
+    { id: 'accountBtn', event: 'click', handler: () => showPage('accountPage') },
+    { id: 'goLogin', event: 'click', handler: login },
+    { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },
+    { id: 'previewBtn', event: 'click', handler: togglePreview },
+    { id: 'openDatePicker', event: 'click', handler: openDatePicker },
+    { id: 'postToSteem', event: 'click', handler: postToSteem },
+    { id: 'salvaBozza', event: 'click', handler: salvaBozza },
+    { id: 'loginInBtn', event: 'click', handler: () => showPage('loginPage') }
+];
+
+eventListeners.forEach(({ id, event, handler }) => {
+    document.getElementById(id).addEventListener(event, handler);
+});
 
 
 
@@ -24,19 +30,7 @@ let idTelegram;
 let usernameSelected = '';
 initializeImageUpload();
 
-function addActive(x) {
-    if (!x) return false;
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    x[currentFocus].classList.add("autocomplete-active");
-}
 
-function removeActive(x) {
-    for (let i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
-    }
-}
 
 function svuotaForm() {
     document.getElementById('postTitle').value = '';
@@ -44,14 +38,15 @@ function svuotaForm() {
     document.getElementById('postBody').value = '';
     document.getElementById('scheduledTimeDisplay').innerText = '';
     document.getElementById('selectedAccountDisplay').innerText = '';
+    document.getElementById('comunityName').innerText = 'Seleziona la comunità';
+    scheduledTime = null;
 }
 
 function markdownToHtml(markdown) {
     let html = marked.parse(markdown);
-    // Sanitize the HTML to prevent XSS attacks
     html = DOMPurify.sanitize(html);
-    //le immagini devono avere la classe img-fluid
     html = html.replace(/<img/g, '<img class="img-fluid"');
+    html = html.replace(/<video/g, '<video class="img-fluid"');
     return html;
 }
 
@@ -82,11 +77,12 @@ async function getListaComunities() {
     }
 }
 
-
-function prepareShowPage() {
-    //scelto l'account, mostro la pagina del post con il dato dell 'username'
+function prepareShowPage(fromBozze) {
     document.getElementById('selectedAccountDisplay').innerText = usernameSelected;
     document.getElementById('scheduledTimeDisplay').innerText = scheduledTime ? new Date(scheduledTime).toLocaleString() : '';
+    if (!fromBozze) {
+        svuotaForm();
+    }
     showPage('postPage');
 }
 
@@ -226,6 +222,20 @@ function handleKeydown(e) {
     } else if (e.keyCode == 13) {
         e.preventDefault();
         if (currentFocus > -1 && x) x[currentFocus].click();
+    }
+}
+
+function addActive(x) {
+    if (!x) return false;
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    x[currentFocus].classList.add("autocomplete-active");
+}
+
+function removeActive(x) {
+    for (let i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
     }
 }
 
@@ -402,28 +412,46 @@ async function login() {
 }
 
 async function saveDraft() {
+    let scheduledDate = null;
     const dateString = document.getElementById('scheduledTimeDisplay').innerText;
 
-    // Separare la parte della data e dell'ora
-    const [datePart, timePart] = dateString.split(', ');
-    const [day, month, year] = datePart.split('/');
-    const isoFormattedDate = `${year}-${month}-${day}T${timePart}`;
-    const dateObject = new Date(isoFormattedDate);
+    if (dateString) {
+        // La data che ci arriva è nel formato "28/09/2024, 03:07:00"
+        const [datePart, timePart] = dateString.split(', ');
+
+        // Estrai i componenti della data
+        const [day, month, year] = datePart.split('/').map(Number); // Converti in numeri
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+
+        // Crea la data usando il formato corretto (anno, mese, giorno, ora, minuti, secondi)
+        scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
+
+        if (scheduledDate < Date.now()) {
+            displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
+            // Resetta la data di pubblicazione
+            document.getElementById('scheduledTimeDisplay').innerText = '';
+            return;
+        }
+    }
+
     try {
         const result = await client.saveDraft(
             getUsername(),
             document.getElementById('postTitle').value,
             document.getElementById('postTags').value,
             document.getElementById('postBody').value,
-            dateObject,
-            new Date().getTimezoneOffset()
+           //non così new Date(scheduledDate), perchè deve fare Tue, 10 Sep 2024 10:00:00 GMT
+           //quindi convertiamo in stringa , così : const scheduledTime = new Date(scheduledDate).toISOString();
+           scheduledTime = new Date(scheduledDate).toISOString(),
+            Intl.DateTimeFormat().resolvedOptions().timeZone
         );
-        getUserDrafts(); // Refresh the draft list after saving the draft
+        getUserDrafts(); // Aggiorna la lista delle bozze dopo il salvataggio
         displayResult(result, 'success', true);
     } catch (error) {
         displayResult({ error: error.message }, 'error');
     }
 }
+
 
 async function getUserDrafts() {
     try {
@@ -455,7 +483,7 @@ function createListaDrafts(drafts) {
 
         const editButton = createIconButton('edit', () => {
             loadDraft(draft);
-            prepareShowPage();
+            prepareShowPage(true);
         });
         const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
 
@@ -538,4 +566,3 @@ document.addEventListener('DOMContentLoaded', () => {
     idTelegram = initializeTelegram();
     initializeApp(idTelegram);
 });
-

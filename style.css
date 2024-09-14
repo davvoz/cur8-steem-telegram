@@ -1,60 +1,43 @@
 :root {
     /* Palette di Colori */
-    --primary-color: #5e4ddb;
-    /* Colore primario più luminoso */
-    --primary-variant: #4833c1;
-    --secondary-color: #00c897;
-    /* Colore secondario più vivace */
-    --background: #121223;
-    /* Sfondo più scuro per un contrasto maggiore */
-    --surface: #2a2a3c;
+    --primary-color: #6c5ce7;
+    --primary-variant: #5541d8;
+    --secondary-color: #00b894;
+    --background: #1e1e2e;
+    --surface: #2d2d3f;
     --error: #e74c3c;
-    --success: #2ecc71;
-    /* Successo più saturo */
-    --warning: #f1c40f;
-    /* Giallo più vivo */
+    --success: #27ae60;
+    --warning: #f39c12;
     --on-primary: #ffffff;
-    --on-background: #e0e0eb;
-    /* Testo più luminoso su sfondi scuri */
-    --on-surface: #c8c8d4;
-
-    /* Gradienti */
-    --gradient-primary: linear-gradient(135deg, #5e4ddb, #4833c1);
-    --gradient-secondary: linear-gradient(135deg, #00c897, #00a383);
+    --on-background: #f1f2f6;
+    --on-surface: #dfe4ea;
 
     /* Tipografia */
-    --font-main: 'Inter', sans-serif;
-    /* Font più moderno */
-    --font-accent: 'Montserrat', serif;
-    --font-size-base: 17px;
-    /* Dimensione del font leggermente maggiore */
-    --line-height-base: 1.7;
-    /* Maggiore leggibilità */
+    --font-main: 'Lato', sans-serif;
+    --font-accent: 'Playfair Display', serif;
+    --font-size-base: 16px;
+    --line-height-base: 1.6;
 
     /* Spaziatura */
-    --spacing-xs: 6px;
-    --spacing-sm: 12px;
-    --spacing-md: 20px;
-    --spacing-lg: 28px;
-    --spacing-xl: 36px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
 
     /* Transizioni */
-    --transition-fast: 0.25s ease;
-    --transition-medium: 0.4s ease;
+    --transition-fast: 0.3s ease;
+    --transition-medium: 0.5s ease;
 
     /* Ombre */
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.18);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
 
     /* Bordi */
-    --border-radius-sm: 6px;
-    --border-radius-md: 12px;
-    --border-radius-lg: 20px;
-
-    /* Effetti di interazione */
-    --hover-brightness: brightness(1.1);
-    --focus-outline: 2px solid var(--primary-color);
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
 }
 
 /* Reset and Base Styles */

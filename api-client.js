@@ -36,7 +36,7 @@ export default class ApiClient {
     }
 
     saveDraft(username, title, tags, body, scheduledTime, timezone) {
-        return this.sendRequest('/save_draft', 'POST', { username, title, tags, body, scheduledTime, timezone });
+        return this.sendRequest('/save_draft', 'POST', { username, title, tags, body, scheduled_time: scheduledTime, timezone });
     }
 
     getUserDrafts(username) {
