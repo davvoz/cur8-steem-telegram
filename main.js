@@ -291,7 +291,7 @@ async function initializeApp(userId) {
     }
 }
 
-function initializeEnd(result) {
+function initializeEnd(result) {;
     listaComunities = getListaComunities();
     usernames = result.usernames;
     const accountList = document.getElementById('accountList');
@@ -615,7 +615,8 @@ async function converiIlTagInNomeComunita(tags) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeTelegram()
-        .then(idTelegram => {
+        .then(idTelegramo => {
+            idTelegram = idTelegramo;
             if (idTelegram) {
                 initializeApp(idTelegram);
             } else {

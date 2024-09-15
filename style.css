@@ -90,7 +90,6 @@ nav button:disabled {
 
 #postPage {
     overflow: hidden !important;
-    padding-right: 60px;
 }
 
 @keyframes fadeIn {
@@ -108,9 +107,8 @@ nav button:disabled {
 }
 
 /* Form Elements */
-input[type="text"],
-textarea {
-    width: 90%;
+input[type="text"], textarea {
+    width: -webkit-fill-available;
     padding: var(--spacing-md);
     margin: var(--spacing-sm) 0;
     background-color: var(--surface);
