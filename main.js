@@ -280,10 +280,15 @@ const closeAndResolve = async (dialog, value, resolve) => {
    await resolve(value);
 };
 
-async function initializeApp(userId) {
+async function initializeApp(userId,fromOut) {
     client = new ApiClient();
     try {
         const result = await client.checkLogin(userId);
+        if(fromOut && typeof result.usernames === 'undefined'){
+            displayResult({ error: 'Nessun account trovato' }, 'error', true);
+            return;
+        }
+
         enableNavigationButtons();
         initializeEnd(result);
     } catch (error) {
@@ -425,6 +430,11 @@ function displayResult(result, type = 'success', enabled = false, callback) {
 
         dialog.addEventListener('close', () => dialog.remove());
 
+        if (!callback) {
+            setTimeout(() => {
+                dialog.remove();
+            }, 2000);
+        }
     }
 }
 
@@ -618,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(idTelegramo => {
             idTelegram = idTelegramo;
             if (idTelegram) {
-                initializeApp(idTelegram);
+                initializeApp(idTelegram,true);
             } else {
                 displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true, () => {
                     location.reload();
