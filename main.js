@@ -100,7 +100,7 @@ function openDatePicker() {
 
 function createDatePickerDialog() {
     const dialog = document.createElement('dialog');
-    dialog.classList.add('dialog');
+    dialog.classList.add('dialogo');
     dialog.innerHTML = `
         <h2>Seleziona la data e l'ora di pubblicazione</h2>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
@@ -133,7 +133,7 @@ function openComunitiesAutocomplete() {
 
 function createDialog() {
     const dialog = document.createElement('dialog');
-    dialog.classList.add('dialog');
+    dialog.classList.add('dialogo');
     dialog.innerHTML = `
         <div class="autocomplete-container">
             <h2>Seleziona la comunità</h2>
@@ -265,7 +265,7 @@ const getDialogTelegramId = () => {
 
 const createDialogo = () => {
     const dialog = document.createElement('dialog');
-    dialog.classList.add('dialog');
+    dialog.classList.add('dialogo');
     dialog.innerHTML = `
         <h2>Telegram ID</h2>
         <input type="text" id="telegramId" placeholder="Inserisci il tuo ID Telegram">
