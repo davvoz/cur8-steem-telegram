@@ -474,7 +474,6 @@ ul li:hover {
     color: var(--primary-color);
     font-weight: 500;
     margin-bottom: 15px;
-    width: 112%;
 }
 
 #dropZone.drag-over {
