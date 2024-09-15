@@ -238,11 +238,11 @@ function salvaBozza() {
     getUserDrafts();
 }
 
-const initializeTelegram = () => {
+ const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
         return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
-    return getDialogTelegramId();
+    return await getDialogTelegramId();
 };
 
 const getDialogTelegramId = () => {
@@ -274,10 +274,10 @@ const createDialogo = () => {
     return dialog;
 };
 
-const closeAndResolve = (dialog, value, resolve) => {
+const closeAndResolve = async (dialog, value, resolve) => {
     dialog.close();
     dialog.remove();
-    resolve(value);
+   await resolve(value);
 };
 
 async function initializeApp(userId) {
