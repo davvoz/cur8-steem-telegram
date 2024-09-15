@@ -306,7 +306,6 @@ function initializeEnd(result) {;
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
         setUsernameForImageUpload(usernameSelected);
-        getUserDrafts();
     }
     showPage('accountPage');
     displayResult(result);
