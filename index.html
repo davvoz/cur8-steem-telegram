@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>CUR8 posting</title>
-    <!--importa lo stile-->
-    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>
-    <!--importa una libreria per convertire il markdown-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.1/marked.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes.css">
 </head>
 
 
@@ -29,6 +27,10 @@
         <button id="accountBtn" disabled>
             <i class="material-icons">account_circle</i>
             <span>Account</span>
+        </button>
+        <button id="configBtn">
+            <i class="material-icons">settings</i>
+            <span>Configurazione</span>
         </button>
     </nav>
 
@@ -102,7 +104,7 @@
 
     <!-- Pagina Gestione Account CRUD -->
     <div id="accountPage" class="page">
-        <h2>Gestione Account Steem</h2>
+        <h2>Seleziona Account Steem</h2>
         <ul id="accountList"></ul>
         <div class="actions-container">
             <button class="action-btn loginIn" id="loginInBtn">
@@ -117,7 +119,165 @@
         <div class="toast-content">
         </div>
     </div>
-    <script type="module" src="main.js"></script>
+
+    <!-- Menu di selezione per cambiare tema -->
+    <div id="configPage" class="page" style="overflow: hidden;">
+
+        <h2>Configurazione</h2>
+        <button class="collapsible">Selezione Tema</button>
+
+        <div class="contento" id="themeConfig">
+            <div class="theme-selector"> </div>
+        </div>
+  
+        <button class="collapsible">Configura default post</button>
+        <div class="contento" id="defaultPostConfig">
+            <label for="defaultPostTitle">Titolo Post:</label>
+            <input type="text" id="defaultPostTitle" placeholder="Inserisci Titolo Post">
+            <label for="defaultPostBody">Corpo Post:</label>
+            <textarea id="defaultPostBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
+            <label for="defaultPostTags">Tag Post:</label>
+            <input type="text" id="defaultPostTags" placeholder="Inserisci Tag separati da virgola">
+            <button class="action-btn" id="saveDefaultPost">Salva</button>
+        </div>
+        <script>
+            //creiamo un array di oggetti per i temi
+            const themes = [
+                {
+                    name: 'root',
+                    value: 'default'
+                },
+                {
+                    name: 'red-dark-theme',
+                    value: 'red-dark-theme'
+                },
+                {
+                    name: 'purple-dark-theme',
+                    value: 'purple-dark-theme'
+                },
+                {
+                    name: 'green-dark-theme',
+                    value: 'green-dark-theme'
+                },
+                {
+                    name: 'blue-dark-theme',
+                    value: 'blue-dark-theme'
+                },
+                {
+                    name: 'orange-dark-theme',
+                    value: 'orange-dark-theme'
+                },
+                {
+                    name: 'yellow-dark-theme',
+                    value: 'yellow-dark-theme'
+                },
+                {
+                    name: 'pink-dark-theme',
+                    value: 'pink-dark-theme'
+                },
+                {
+                    name: 'cyan-dark-theme',
+                    value: 'cyan-dark-theme'
+                },
+                {
+                    name: 'brown-dark-theme',
+                    value: 'brown-dark-theme'
+                },
+                {
+                    name: 'silver-dark-theme',
+                    value: 'silver-dark-theme'
+                },
+                {
+                    name: 'lime-dark-theme',
+                    value: 'lime-dark-theme'
+                }
+
+            ];
+
+            //creiamo N card per i temi
+            const themeSelector = document.querySelector('.theme-selector');
+            let themeSelected = 'root';
+            themes.forEach(theme => {
+                const themeCard = document.createElement('div');
+                themeCard.classList.add('theme-card');
+                themeCard.innerHTML = `<h3>${theme.name}</h3>`;
+                themeCard.addEventListener('click', () => {
+                    document.body.className = theme.value;
+                    themeSelected = theme.name;
+                });
+                themeSelector.appendChild(themeCard);
+            });
+
+            //creiamo un bottone per salvare il tema e mettiamolo in una card
+            const saveThemeCard = document.createElement('div');
+            saveThemeCard.classList.add('theme-card');
+            const saveThemeBtn = document.createElement('h3');
+            saveThemeBtn.classList.add('action-btn');
+            saveThemeBtn.innerText = 'Salva';
+            saveThemeBtn.addEventListener('click', () => {
+                localStorage.setItem('theme', themeSelected);
+            });
+            saveThemeCard.appendChild(saveThemeBtn);
+            themeSelector.appendChild(saveThemeCard);
+            //controlliamo se c'è un tema salvato
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.className = savedTheme;
+            }
+
+            let coll = document.getElementsByClassName("collapsible");
+            let i;
+
+            for (i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    let content = this.nextElementSibling;
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            }
+            // Save default post settings to localStorage
+            function saveDefaultPostSettings() {
+                const defaultPostSettings = {
+                    title: document.getElementById('defaultPostTitle').value,
+                    body: document.getElementById('defaultPostBody').value,
+                    tags: document.getElementById('defaultPostTags').value
+                };
+                localStorage.setItem('defaultPostSettings', JSON.stringify(defaultPostSettings));
+            }
+
+            // Load default post settings from localStorage
+            function loadDefaultPostSettings() {
+                const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
+                if (defaultPostSettings) {
+                    document.getElementById('defaultPostTitle').value = defaultPostSettings.title || '';
+                    document.getElementById('defaultPostBody').value = defaultPostSettings.body || '';
+                    document.getElementById('defaultPostTags').value = defaultPostSettings.tags || '';
+                }
+            }
+
+            // Apply default post settings to the post form
+            function applyDefaultPostSettings() {
+                const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
+                if (defaultPostSettings) {
+                    document.getElementById('postTitle').value = defaultPostSettings.title || '';
+                    document.getElementById('postBody').value = defaultPostSettings.body || '';
+                    document.getElementById('postTags').value = defaultPostSettings.tags || '';
+                }
+            }
+
+            // Save default post settings when the save button is clicked
+            document.getElementById('saveDefaultPost').addEventListener('click', saveDefaultPostSettings);
+
+            // Load default post settings when the page is loaded
+            loadDefaultPostSettings();
+
+        </script>
+
+        <script type="module" src="main.js"></script>
 
 
 </body>

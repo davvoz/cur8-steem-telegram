@@ -11,16 +11,14 @@ const eventListeners = [
     { id: 'openDatePicker', event: 'click', handler: openDatePicker },
     { id: 'postToSteem', event: 'click', handler: postToSteem },
     { id: 'salvaBozza', event: 'click', handler: salvaBozza },
-    { id: 'loginInBtn', event: 'click', handler: () => showPage('loginPage') }
+    { id: 'loginInBtn', event: 'click', handler: () => showPage('loginPage') },
+    { id: 'configBtn', event: 'click', handler: () => showPage('configPage') },
 ];
 
 eventListeners.forEach(({ id, event, handler }) => {
     document.getElementById(id).addEventListener(event, handler);
 });
 
-
-
-let comunityTitle = document.getElementById('comunityName');
 let listaComunities;
 let currentFocus = -1;
 let scheduledTime;
@@ -29,8 +27,6 @@ let usernames = [];
 let idTelegram;
 let usernameSelected = '';
 initializeImageUpload();
-
-
 
 function svuotaForm() {
     document.getElementById('postTitle').value = '';
@@ -79,7 +75,6 @@ async function getListaComunities() {
 
 function prepareShowPage(fromBozze) {
     document.getElementById('selectedAccountDisplay').innerText = usernameSelected;
-    document.getElementById('scheduledTimeDisplay').innerText = scheduledTime ? new Date(scheduledTime).toLocaleString() : '';
     if (!fromBozze) {
         svuotaForm();
     }
@@ -87,7 +82,6 @@ function prepareShowPage(fromBozze) {
 }
 
 function prepareShowPageBozze() {
-    //scelto l'account, pulisco il formdei post e mostro la pagina delle bozze
     svuotaForm();
     showPage('draftPage');
 }
@@ -96,11 +90,9 @@ function openDatePicker() {
     const dialog = createDatePickerDialog();
     document.body.appendChild(dialog);
     dialog.showModal();
-
-    const confirmButton = dialog.querySelector('#confirmButton');
-    const cancelButton = dialog.querySelector('#cancelButton');
+    const confirmButton = dialog.querySelector('#confirmButtonDP');
+    const cancelButton = dialog.querySelector('#cancelButtonDP');
     const scheduledTimeInput = dialog.querySelector('#scheduledTime');
-
     confirmButton.addEventListener('click', () => handleDatePickerConfirm(dialog, scheduledTimeInput));
     cancelButton.addEventListener('click', () => dialog.remove());
     dialog.addEventListener('close', () => dialog.remove());
@@ -112,8 +104,8 @@ function createDatePickerDialog() {
     dialog.innerHTML = `
         <h2>Seleziona la data e l'ora di pubblicazione</h2>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
-        <button id="confirmButton" class="action-btn">Conferma</button>
-        <button id="cancelButton" class="action-btn">Annulla</button>
+        <button id="confirmButtonDP" class="action-btn">Conferma</button>
+        <button id="cancelButtonDP" class="action-btn">Annulla</button>
     `;
     return dialog;
 }
@@ -129,15 +121,12 @@ function openComunitiesAutocomplete() {
     const dialog = createDialog();
     document.body.appendChild(dialog);
     dialog.showModal();
-
     const input = document.getElementById("myInput");
     const confirmButton = document.getElementById('confirmButton');
     const cancelButton = document.getElementById('cancelButton');
-
     confirmButton.addEventListener('click', () => handleConfirm(dialog, input));
     cancelButton.addEventListener('click', () => dialog.remove());
     dialog.addEventListener('close', () => dialog.remove());
-
     input.addEventListener("input", handleInput);
     input.addEventListener("keydown", handleKeydown);
 }
@@ -169,7 +158,6 @@ function handleInput(e) {
     if (!val) return false;
     currentFocus = -1;
     const div = createAutocompleteList(this);
-
     listaComunities.then((communities) => {
         communities.forEach((community) => {
             if (community.title.toLowerCase().includes(val.toLowerCase())) {
@@ -193,12 +181,10 @@ function createAutocompleteItem(community, val) {
     const item = document.createElement("div");
     const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
     const matchEnd = matchStart + val.length;
-
     item.innerHTML = community.title.substr(0, matchStart);
     item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
     item.innerHTML += community.title.substr(matchEnd);
     item.innerHTML += `<input type='hidden' value='${community.title}'>`;
-
     return item;
 }
 
@@ -206,7 +192,6 @@ function handleItemClick(item, community) {
     const input = document.getElementById("myInput");
     input.value = item.getElementsByTagName("input")[0].value;
     document.getElementById('postTags').value = community.name;
-    comunityTitle = community.title;
     closeAllLists(null, item);
 }
 
@@ -250,18 +235,50 @@ function closeAllLists(elmnt, elmnt2) {
 
 function salvaBozza() {
     saveDraft();
-    //refresh lista bozze
     getUserDrafts();
 }
 
-function initializeTelegram() {
+const initializeTelegram = () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
         return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
-    console.warn('Telegram WebApp not available, using default ID');
-    alert('Telegram WebApp not available, using default ID');
-    return '6999103418';
-}
+    return getDialogTelegramId();
+};
+
+const getDialogTelegramId = () => {
+    return new Promise((resolve) => {
+        const dialog = createDialogo();
+        document.body.appendChild(dialog);
+        dialog.showModal();
+
+        const confirmButton = dialog.querySelector('#confirmButtonTelegramId');
+        confirmButton.addEventListener('click', () => {
+            const telegramId = document.getElementById('telegramId').value;
+            closeAndResolve(dialog, telegramId, resolve);
+        });
+
+        dialog.addEventListener('close', () => {
+            closeAndResolve(dialog, null, resolve);
+        });
+    });
+};
+
+const createDialogo = () => {
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialog');
+    dialog.innerHTML = `
+        <h2>Telegram ID</h2>
+        <input type="text" id="telegramId" placeholder="Inserisci il tuo ID Telegram">
+        <button id="confirmButtonTelegramId" class="action-btn">Conferma</button>
+    `;
+    return dialog;
+};
+
+const closeAndResolve = (dialog, value, resolve) => {
+    dialog.close();
+    dialog.remove();
+    resolve(value);
+};
 
 async function initializeApp(userId) {
     client = new ApiClient();
@@ -284,12 +301,6 @@ function initializeEnd(result) {
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
         setUsernameForImageUpload(usernameSelected);
-        //evidenziamo nella lista l'account selezionato
-        document.querySelectorAll('.container-username').forEach(el => {
-            if (el.querySelector('.usernameElement').innerText === usernameSelected) {
-                el.classList.add('selected');
-            }
-        });
         getUserDrafts();
     }
     showPage('accountPage');
@@ -308,11 +319,12 @@ function createAccountListItem(username) {
         usernameSelected = username;
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
     };
+
     const buttonsContainer = document.createElement('div');
     const logoutButton = document.createElement('button');
     logoutButton.classList.add('action-btn');
     logoutButton.innerText = 'Logout';
-    logoutButton.onclick = (event) => {
+    logoutButton.onclick = () => {
         usernameSelected = '';
         handleLogout(username);
     };
@@ -322,6 +334,10 @@ function createAccountListItem(username) {
     container.appendChild(buttonsContainer);
     li.appendChild(container);
     document.getElementById('accountList').appendChild(li);
+    //selected il primo account
+    if (!usernameSelected) {
+        selectAccount(username, container);
+    }
 
 }
 
@@ -332,7 +348,6 @@ function selectAccount(username, containerElement) {
     });
 
     containerElement.classList.add('selected');
-
     displayResult({ message: `Account ${username} selected` }, 'success');
     updateUIWithSelectedAccount();
     getUserDrafts();
@@ -343,7 +358,6 @@ function updateUIWithSelectedAccount() {
     if (selectedAccountDisplay) {
         selectedAccountDisplay.textContent = usernameSelected ? `Selected Account: ${usernameSelected}` : 'No account selected';
     }
-
     const accountDependentButtons = document.querySelectorAll('.account-dependent');
     accountDependentButtons.forEach(button => {
         button.disabled = !usernameSelected;
@@ -361,7 +375,7 @@ async function handleLogout(username) {
 }
 
 function enableNavigationButtons() {
-    ['draftBtn', 'postBtn', 'accountBtn'].forEach(id => {
+    ['draftBtn', 'postBtn', 'accountBtn', 'configBtn'].forEach(id => {
         document.getElementById(id).disabled = false;
     });
 }
@@ -370,25 +384,48 @@ function getUsername() {
     return usernameSelected;
 }
 
-function displayResult(result, type = 'success', enabled) {
+function displayResult(result, type = 'success', enabled = false, callback) {
     if (enabled) {
         //crea una dialog con il risultato
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
-        dialog.innerHTML = `
-        <h2>Risultato</h2>
-        <p>${result.message || result.error}</p>
-        <button id="closeButton" class="action-btn">Chiudi</button>
-        `;
+        switch (type) {
+            case 'success':
+                dialog.innerHTML = `
+                <h2>Risultato</h2>
+                <p>${result.message}</p>
+                <button id="closeButton" class="action-btn">Chiudi</button>
+                `;
+                break;
+            case 'error':
+                dialog.innerHTML = `
+                <h2>Errore</h2>
+                <p>${result.error}</p>
+                <button id="closeButton" class="action-btn">Chiudi</button>
+                `;
+                break;
+            default:
+                dialog.innerHTML = `
+                <h2>Informazione</h2>
+                <p>${result.info}</p>
+                <button id="closeButton" class="action-btn">Chiudi</button>
+                `;
+        }
         document.body.appendChild(dialog);
+        //aggiungiamo la classe css che è il type
+        dialog.classList.add(type);
         dialog.showModal();
-
-        const closeButton = document.getElementById('closeButton');
+        const closeButton = dialog.querySelector('#closeButton');
         closeButton.addEventListener('click', () => {
             dialog.remove();
+            if (callback) {
+                callback();
+            }
         });
-    }
 
+        dialog.addEventListener('close', () => dialog.remove());
+
+    }
 }
 
 function showPage(pageId) {
@@ -396,7 +433,6 @@ function showPage(pageId) {
     document.getElementById(pageId).classList.add('active');
 }
 
-// API interaction functions
 async function login() {
     try {
         const result = await client.login(
@@ -404,45 +440,35 @@ async function login() {
             document.getElementById('username').value,
             document.getElementById('postingKey').value
         );
-        displayResult(result, 'success');
+        displayResult(result, 'success', true);
         initializeApp(idTelegram);
     } catch (error) {
-        displayResult({ error: error.message }, 'error');
+        displayResult({ error: error.message }, 'error', true);
     }
 }
 
 async function saveDraft() {
     let scheduledDate = null;
     const dateString = document.getElementById('scheduledTimeDisplay').innerText;
-
     if (dateString) {
-        // La data che ci arriva è nel formato "28/09/2024, 03:07:00"
         const [datePart, timePart] = dateString.split(', ');
-
-        // Estrai i componenti della data
         const [day, month, year] = datePart.split('/').map(Number); // Converti in numeri
         const [hours, minutes, seconds] = timePart.split(':').map(Number);
-
-        // Crea la data usando il formato corretto (anno, mese, giorno, ora, minuti, secondi)
         scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
-
         if (scheduledDate < Date.now()) {
             displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-            // Resetta la data di pubblicazione
             document.getElementById('scheduledTimeDisplay').innerText = '';
             return;
         }
     }
-
     try {
+        scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
         const result = await client.saveDraft(
             getUsername(),
             document.getElementById('postTitle').value,
             document.getElementById('postTags').value,
             document.getElementById('postBody').value,
-           //non così new Date(scheduledDate), perchè deve fare Tue, 10 Sep 2024 10:00:00 GMT
-           //quindi convertiamo in stringa , così : const scheduledTime = new Date(scheduledDate).toISOString();
-           scheduledTime = new Date(scheduledDate).toISOString(),
+            scheduledTime,
             Intl.DateTimeFormat().resolvedOptions().timeZone
         );
         getUserDrafts(); // Aggiorna la lista delle bozze dopo il salvataggio
@@ -452,41 +478,32 @@ async function saveDraft() {
     }
 }
 
-
 async function getUserDrafts() {
     try {
         const result = await client.getUserDrafts(getUsername());
-        displayResult(result, 'success');
-        createListaDrafts(result); // Call the function to create the draft list
+        await createListaDrafts(result); // Call the function to create the draft list
         return result;
     } catch (error) {
-        displayResult({ error: error.message }, 'error');
         return []; // Return an empty array in case of error
     }
 }
 // Create list of drafts
-function createListaDrafts(drafts) {
+async function createListaDrafts(drafts) {
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = ''; // Clear existing list
-
     if (!Array.isArray(drafts) || drafts.length === 0) {
-        draftList.appendChild(createDraftListItem('No drafts available'));
+        draftList.appendChild(await createDraftListItem('No drafts available'));
         return;
     }
-
-    drafts.forEach((draft, index) => {
-        const li = createDraftListItem(`${index + 1}. ${draft.title || 'Untitled Draft'}`, draft.scheduled_time);
-        li.onclick = () => loadDraft(draft); // Add click event to load draft
-
+    drafts.forEach(async (draft, index) => {
+        const li = await createDraftListItem(draft.id, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags);
         const buttonsContainer = document.createElement('div');
-        buttonsContainer.classList.add('buttons-container');
-
+        buttonsContainer.classList.add('buttons-container-draft');
         const editButton = createIconButton('edit', () => {
             loadDraft(draft);
             prepareShowPage(true);
         });
         const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
-
         buttonsContainer.appendChild(editButton);
         buttonsContainer.appendChild(deleteButton);
         li.appendChild(buttonsContainer);
@@ -494,20 +511,42 @@ function createListaDrafts(drafts) {
     });
 }
 
-function createDraftListItem(title, scheduledTime) {
+async function createDraftListItem(id,title, scheduledTime, tags) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
-
     const titleSpan = document.createElement('span');
     titleSpan.innerText = title;
-    li.appendChild(titleSpan);
-
+    titleSpan.classList.add('draft-title');
+    const idDiv = document.createElement('div');
+    idDiv.classList.add('draft-id');
+    const titleContainer = document.createElement('div');
+    idDiv.innerText = id;
+    titleContainer.classList.add('title-container');
+    titleContainer.appendChild(idDiv);
+    titleContainer.appendChild(titleSpan);
+    li.appendChild(titleContainer);
+    const infoDiv = document.createElement('div');
+    infoDiv.classList.add('draft-info');
+    infoDiv.style.display = 'flex';
+    infoDiv.style.flexDirection = 'column';
+    //margine destro
+    infoDiv.style.marginRight = '10px';
+    const scheduledTimeSpan = document.createElement('div');
     if (scheduledTime) {
-        const scheduledTimeSpan = document.createElement('span');
-        scheduledTimeSpan.innerText = `Scheduled: ${new Date(scheduledTime).toLocaleString()}`;
-        scheduledTimeSpan.classList.add('scheduled-time');
-        li.appendChild(scheduledTimeSpan);
+        scheduledTimeSpan.innerText = new Date(scheduledTime).toLocaleString();
+    } else {
+        scheduledTimeSpan.innerText = 'No scheduled time';
     }
+    scheduledTimeSpan.classList.add('scheduled-time');
+    infoDiv.appendChild(scheduledTimeSpan);
+
+    const communityNameSpan = document.createElement('div');
+    const comunita = await converiIlTagInNomeComunita(tags);
+    communityNameSpan.innerText = comunita;
+    communityNameSpan.classList.add('community-name');
+    infoDiv.appendChild(communityNameSpan);
+
+    li.appendChild(infoDiv);
 
     return li;
 }
@@ -526,11 +565,13 @@ function createIconButton(iconName, onClick) {
     return button;
 }
 // Load draft into the editor
-function loadDraft(draft) {
+async function loadDraft(draft) {
     document.getElementById('postTitle').value = draft.title || '';
     document.getElementById('postTags').value = draft.tags || '';
     document.getElementById('postBody').value = draft.body || '';
     document.getElementById('scheduledTimeDisplay').innerText = draft.scheduled_time ? new Date(draft.scheduled_time).toLocaleString() : '';
+    document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
+    scheduledTime = draft.scheduled_time;
 }
 
 async function deleteDraft(id) {
@@ -538,7 +579,6 @@ async function deleteDraft(id) {
     if (!draftId) return;
     try {
         const result = await client.deleteDraft(draftId, getUsername());
-        // Refresh the draft list after deleting the draft
         getUserDrafts();
         displayResult(result, 'success', true);
     } catch (error) {
@@ -561,8 +601,34 @@ async function postToSteem() {
     }
 }
 
+async function converiIlTagInNomeComunita(tags) {
+    const tag = tags.split(' ')[0];
+    try {
+        const communities = await listaComunities;
+        const community = communities.find(community => community.name === tag);
+        return community ? community.title : 'Community not selected';
+    } catch (error) {
+        console.error('Error while searching for community:', error);
+        return 'Error occurred while searching for community';
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    idTelegram = initializeTelegram();
-    initializeApp(idTelegram);
+    initializeTelegram()
+        .then(idTelegram => {
+            if (idTelegram) {
+                initializeApp(idTelegram);
+            } else {
+                displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true, () => {
+                    location.reload();
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante l\'inizializzazione di Telegram:', error);
+            displayResult({ error: 'Errore durante l\'inizializzazione di Telegram' }, 'error', true, () => {
+                location.reload();
+            });
+        });
+
 });
