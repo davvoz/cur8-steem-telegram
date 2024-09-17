@@ -54,12 +54,12 @@
     <!-- Pagina Pubblica Post -->
     <div id="postPage" class="page">
         <label for="postTitle">Titolo Post:</label>
-        <input type="text" id="postTitle" placeholder="Inserisci Titolo Post">
+        <input type="text" id="postTitle" placeholder="Inserisci Titolo Post" required>
 
         <label for="postBody">Corpo Post:</label>
 
         <div class="textarea-container">
-            <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
+            <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post" required></textarea>
             <div class="spinner hide" id="spinner">
                 <div class="spinner-container">
                     <div class="spinner-border"></div>
@@ -72,7 +72,7 @@
             </div>
 
             <label for="postTags">Tag Post:</label>
-            <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola">
+            <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola" required>
 
             <div class="buttons-container">
                 <button class="action-btn-mini red" id="openComunities">
@@ -98,11 +98,10 @@
             </div>
         </div>
 
-
-        <div class="buttons-container">
-            <button class="action-btn" id="postToSteem">Pubblica Post</button>
-            <button class="action-btn" id="salvaBozza">Salva Bozza</button>
-        </div>
+        <div class="buttons-container"></div>
+        <button class="action-btn" id="postToSteem">Pubblica Post</button>
+        <button class="action-btn" id="salvaBozza">Salva Bozza</button>
+    </div>
     </div>
 
     <!-- Pagina Gestione Account CRUD -->
@@ -131,17 +130,6 @@
 
         <div class="contento" id="themeConfig">
             <div class="theme-selector"> </div>
-        </div>
-  
-        <button class="collapsible">Configura default post</button>
-        <div class="contento" id="defaultPostConfig">
-            <label for="defaultPostTitle">Titolo Post:</label>
-            <input type="text" id="defaultPostTitle" placeholder="Inserisci Titolo Post">
-            <label for="defaultPostBody">Corpo Post:</label>
-            <textarea id="defaultPostBody" rows="5" placeholder="Inserisci Corpo del Post"></textarea>
-            <label for="defaultPostTags">Tag Post:</label>
-            <input type="text" id="defaultPostTags" placeholder="Inserisci Tag separati da virgola">
-            <button class="action-btn" id="saveDefaultPost">Salva</button>
         </div>
         <script>
             //creiamo un array di oggetti per i temi
@@ -242,15 +230,7 @@
                     }
                 });
             }
-            // Save default post settings to localStorage
-            function saveDefaultPostSettings() {
-                const defaultPostSettings = {
-                    title: document.getElementById('defaultPostTitle').value,
-                    body: document.getElementById('defaultPostBody').value,
-                    tags: document.getElementById('defaultPostTags').value
-                };
-                localStorage.setItem('defaultPostSettings', JSON.stringify(defaultPostSettings));
-            }
+
 
             // Load default post settings from localStorage
             function loadDefaultPostSettings() {
@@ -272,8 +252,6 @@
                 }
             }
 
-            // Save default post settings when the save button is clicked
-            document.getElementById('saveDefaultPost').addEventListener('click', saveDefaultPostSettings);
 
             // Load default post settings when the page is loaded
             loadDefaultPostSettings();

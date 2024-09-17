@@ -876,3 +876,6 @@ input[type="datetime-local"] {
     list-style: none;
     padding:  var(--spacing-md);
 }
+.error {
+    border: 2px solid red;
+}

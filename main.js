@@ -233,10 +233,42 @@ function closeAllLists(elmnt, elmnt2) {
     }
 }
 
-function salvaBozza() {
-    saveDraft();
-    getUserDrafts();
+async function salvaBozza() {
+    if (!validateForm()) {
+        return;
+    }
+
+    let scheduledDate = null;
+    const dateString = document.getElementById('scheduledTimeDisplay').innerText;
+    if (dateString) {
+        const [datePart, timePart] = dateString.split(', ');
+        const [day, month, year] = datePart.split('/').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
+        if (scheduledDate < Date.now()) {
+            displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
+            document.getElementById('scheduledTimeDisplay').innerText = '';
+            return;
+        }
+    }
+
+    try {
+        scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
+        const result = await client.saveDraft(
+            getUsername(),
+            document.getElementById('postTitle').value,
+            document.getElementById('postTags').value,
+            document.getElementById('postBody').value,
+            scheduledTime,
+            Intl.DateTimeFormat().resolvedOptions().timeZone
+        );
+        getUserDrafts();
+        displayResult(result, 'success', true);
+    } catch (error) {
+        displayResult({ error: error.message }, 'error', true);
+    }
 }
+
 
  const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
@@ -456,37 +488,6 @@ async function login() {
     }
 }
 
-async function saveDraft() {
-    let scheduledDate = null;
-    const dateString = document.getElementById('scheduledTimeDisplay').innerText;
-    if (dateString) {
-        const [datePart, timePart] = dateString.split(', ');
-        const [day, month, year] = datePart.split('/').map(Number); // Converti in numeri
-        const [hours, minutes, seconds] = timePart.split(':').map(Number);
-        scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
-        if (scheduledDate < Date.now()) {
-            displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-            document.getElementById('scheduledTimeDisplay').innerText = '';
-            return;
-        }
-    }
-    try {
-        scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
-        const result = await client.saveDraft(
-            getUsername(),
-            document.getElementById('postTitle').value,
-            document.getElementById('postTags').value,
-            document.getElementById('postBody').value,
-            scheduledTime,
-            Intl.DateTimeFormat().resolvedOptions().timeZone
-        );
-        getUserDrafts(); // Aggiorna la lista delle bozze dopo il salvataggio
-        displayResult(result, 'success', true);
-    } catch (error) {
-        displayResult({ error: error.message }, 'error');
-    }
-}
-
 async function getUserDrafts() {
     try {
         const result = await client.getUserDrafts(getUsername());
@@ -548,15 +549,12 @@ async function createDraftListItem(id,title, scheduledTime, tags) {
     }
     scheduledTimeSpan.classList.add('scheduled-time');
     infoDiv.appendChild(scheduledTimeSpan);
-
     const communityNameSpan = document.createElement('div');
     const comunita = await converiIlTagInNomeComunita(tags);
     communityNameSpan.innerText = comunita;
     communityNameSpan.classList.add('community-name');
     infoDiv.appendChild(communityNameSpan);
-
     li.appendChild(infoDiv);
-
     return li;
 }
 
@@ -594,8 +592,11 @@ async function deleteDraft(id) {
         displayResult({ error: error.message }, 'error');
     }
 }
-
 async function postToSteem() {
+    if (!validateForm()) {
+        return;
+    }
+
     try {
         const result = await client.postToSteem(
             getUsername(),
@@ -621,7 +622,50 @@ async function converiIlTagInNomeComunita(tags) {
         return 'Error occurred while searching for community';
     }
 }
+function validateForm() {
+    const title = document.getElementById('postTitle').value.trim();
+    const body = document.getElementById('postBody').value.trim();
+    const tags = document.getElementById('postTags').value.trim();
+    
+    let isValid = true;
+    let errorMessage = '';
 
+    if (title === '') {
+        isValid = false;
+        errorMessage += 'Il titolo del post è obbligatorio.\n';
+        document.getElementById('postTitle').classList.add('error');
+    } else {
+        document.getElementById('postTitle').classList.remove('error');
+    }
+
+    if (body === '') {
+        isValid = false;
+        errorMessage += 'Il corpo del post è obbligatorio.\n';
+        document.getElementById('postBody').classList.add('error');
+    } else {
+        document.getElementById('postBody').classList.remove('error');
+    }
+
+    if (tags === '') {
+        isValid = false;
+        errorMessage += 'Almeno un tag è obbligatorio.\n';
+        document.getElementById('postTags').classList.add('error');
+    } else {
+        document.getElementById('postTags').classList.remove('error');
+    }
+
+    if (!isValid) {
+        displayResult({ error: errorMessage }, 'error', true);
+    }
+
+    return isValid;
+}
+// Add input event listeners to remove error class when user starts typing
+['postTitle', 'postBody', 'postTags'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+        this.classList.remove('error');
+    });
+});
 document.addEventListener('DOMContentLoaded', () => {
     initializeTelegram()
         .then(idTelegramo => {
