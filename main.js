@@ -133,12 +133,14 @@ function openComunitiesAutocomplete() {
 
 function createDialog() {
     const dialog = document.createElement('dialog');
-    dialog.classList.add('dialogo');
+    dialog.classList.add('c-dialogo');
     dialog.innerHTML = `
         <div class="autocomplete-container">
             <h2>Seleziona la comunità</h2>
+            <div class="c-container">
             <input type="text" id="myInput" placeholder="Inizia a digitare...">
             <div id="autocomplete-list" class="autocomplete-items"></div>
+            </div>
             <button id="confirmButton" class="action-btn">Conferma</button>
             <button id="cancelButton" class="action-btn">Annulla</button>
         </div>

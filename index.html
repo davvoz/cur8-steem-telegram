@@ -73,35 +73,38 @@
 
             <label for="postTags">Tag Post:</label>
             <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola" required>
-
+            <br>
             <div class="buttons-container">
+
+                <span id="scheduledTimeDisplay"></span>
                 <button class="action-btn-mini red" id="openComunities">
                     <span class="button-text" id="comunityName">Seleziona
                         Comunità</span>
                 </button>
-                <button id="previewBtn" class="action-btn-mini success">
-                    <i class="material-icons">visibility</i>
-                </button>
+
                 <button class="action-btn-mini primary" id="openDatePicker">
                     <i class="material-icons">schedule</i>
                 </button>
-                <span id="selectedAccountDisplay"></span>
-                <span id="scheduledTimeDisplay"></span>
+                <button id="previewBtn" class="action-btn-mini success">
+                    <i class="material-icons">visibility</i>
+                </button>
             </div>
         </div>
 
-        <div id="previewModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button">&times;</span>
-                <h3>Anteprima del post</h3>
-                <div id="previewContent" class="preview-content"></div>
-            </div>
-        </div>
 
-        <div class="buttons-container"></div>
-        <button class="action-btn" id="postToSteem">Pubblica Post</button>
-        <button class="action-btn" id="salvaBozza">Salva Bozza</button>
+
+        <div class="buttons-container-center">
+            <div id="selectedAccountDisplay"></div>
+            <button class="action-btn" id="postToSteem">Pubblica Post</button>
+            <button class="action-btn" id="salvaBozza">Salva Bozza</button>
+        </div>
     </div>
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Anteprima del post</h3>
+            <div id="previewContent" class="preview-content"></div>
+        </div>
     </div>
 
     <!-- Pagina Gestione Account CRUD -->
