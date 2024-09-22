@@ -297,7 +297,7 @@ const getDialogTelegramId = () => {
             const telegramId = document.getElementById('telegramId').value;
             closeAndResolve(dialog, telegramId, resolve).then(() => {
                 //nascondi lo spinner
-                document.getElementById('spinner').classList.add('hide');
+               // document.getElementById('spinner').classList.add('hide');
             });
         });
 
@@ -336,8 +336,12 @@ async function initializeApp(userId, fromOut) {
         enableNavigationButtons();
         initializeEnd(result);
     } catch (error) {
-        console.error('Error in initializeApp:', error);
-        displayResult({ error: error.message }, 'error');
+       //apriamo il login usando l iD telegram che è stato passato
+        showPage('loginPage');
+        displayResult({ error: 'Effettua il login' }, 'error', true);
+        console.error('Error in initialize app:', error);
+        //chiudi lo spinner
+        document.getElementById('spinner').classList.add('hide');
     }
 }
 
@@ -351,14 +355,14 @@ function initializeEnd(result) {
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
         setUsernameForImageUpload(usernameSelected.username);
-       // getUserDrafts(); // Carica i draft all'inizializzazione
 
-        // Highlight the first account
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
             selectAccount(usernameSelected, firstAccountContainer);
         }
     }
+    // chiudi lo spinner
+    document.getElementById('spinner').classList.add('hide');
     showPage('accountPage');
     displayResult(result);
 }
@@ -434,6 +438,8 @@ function updateUIWithSelectedAccount() {
 
 async function handleLogout(username) {
     try {
+        //attiva lo spinner
+        document.getElementById('spinner').classList.remove('hide');
         const result = await client.logout(idTelegram, username);
         displayResult(result, 'success');
         initializeApp(idTelegram);
@@ -735,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeTelegram()
         .then(idTelegramo => {
-            console.log('initializeTelegram resolved with idTelegramo:', idTelegramo);
+            console.log('initializeTelegram resolved with idTelegram:', idTelegramo);
             idTelegram = idTelegramo;
             if (idTelegram) {
                 initializeApp(idTelegram, true);
