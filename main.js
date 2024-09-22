@@ -69,12 +69,13 @@ async function getListaComunities() {
         displayResult(result, 'success');
         return result;
     } catch (error) {
+        console.error('Error in getListaComunities:', error);
         displayResult({ error: error.message }, 'error');
     }
 }
 
 function prepareShowPage(fromBozze) {
-    document.getElementById('selectedAccountDisplay').innerText = usernameSelected;
+    document.getElementById('selectedAccountDisplay').innerText = usernameSelected.username;
     if (!fromBozze) {
         svuotaForm();
     }
@@ -82,6 +83,10 @@ function prepareShowPage(fromBozze) {
 }
 
 function prepareShowPageBozze() {
+    if (!usernameSelected.username) {
+        displayResult({ error: 'Seleziona un account' }, 'error', true);
+        return;
+    }
     svuotaForm();
     showPage('draftPage');
 }
@@ -264,15 +269,15 @@ async function salvaBozza() {
             scheduledTime,
             Intl.DateTimeFormat().resolvedOptions().timeZone
         );
-        getUserDrafts();
+        await getUserDrafts(); // Ricarica i draft dopo il salvataggio
         displayResult(result, 'success', true);
     } catch (error) {
+        console.error('Error in salvaBozza:', error);
         displayResult({ error: error.message }, 'error', true);
     }
 }
 
-
- const initializeTelegram = async () => {
+const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
         return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
@@ -287,8 +292,13 @@ const getDialogTelegramId = () => {
 
         const confirmButton = dialog.querySelector('#confirmButtonTelegramId');
         confirmButton.addEventListener('click', () => {
+            //attiva lo spinner
+                document.getElementById('spinner').classList.remove('hide');
             const telegramId = document.getElementById('telegramId').value;
-            closeAndResolve(dialog, telegramId, resolve);
+            closeAndResolve(dialog, telegramId, resolve).then(() => {
+                //nascondi lo spinner
+                document.getElementById('spinner').classList.add('hide');
+            });
         });
 
         dialog.addEventListener('close', () => {
@@ -311,26 +321,27 @@ const createDialogo = () => {
 const closeAndResolve = async (dialog, value, resolve) => {
     dialog.close();
     dialog.remove();
-   await resolve(value);
+    await resolve(value);
 };
 
-async function initializeApp(userId,fromOut) {
+async function initializeApp(userId, fromOut) {
     client = new ApiClient();
     try {
         const result = await client.checkLogin(userId);
-        if(fromOut && typeof result.usernames === 'undefined'){
+        if (fromOut && typeof result.usernames === 'undefined') {
             displayResult({ error: 'Nessun account trovato' }, 'error', true);
             return;
         }
-
+        usernames = result.usernames;
         enableNavigationButtons();
         initializeEnd(result);
     } catch (error) {
+        console.error('Error in initializeApp:', error);
         displayResult({ error: error.message }, 'error');
     }
 }
 
-function initializeEnd(result) {;
+function initializeEnd(result) {
     listaComunities = getListaComunities();
     usernames = result.usernames;
     const accountList = document.getElementById('accountList');
@@ -338,8 +349,15 @@ function initializeEnd(result) {;
     usernames.forEach(createAccountListItem);
     if (usernames.length > 0) {
         usernameSelected = usernames[0];
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
-        setUsernameForImageUpload(usernameSelected);
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
+        setUsernameForImageUpload(usernameSelected.username);
+        getUserDrafts(); // Carica i draft all'inizializzazione
+        
+        // Highlight the first account
+        const firstAccountContainer = accountList.querySelector('.container-username');
+        if (firstAccountContainer) {
+            selectAccount(usernameSelected, firstAccountContainer);
+        }
     }
     showPage('accountPage');
     displayResult(result);
@@ -349,13 +367,25 @@ function createAccountListItem(username) {
     const li = document.createElement('li');
     const container = document.createElement('div');
     container.classList.add('container-username');
+    const img = document.createElement('img');
+    img.alt = `${username.username}'s profile image`;
+    img.classList.add('profile-image-thumbnail'); // Add a class for thumbnail styling
+
+    // Check if profile image exists, otherwise use material icon
+    if (username.profile_image) {
+        img.src = username.profile_image;
+    } else {
+        img.src = 'https://fonts.gstatic.com/s/i/materialiconsoutlined/account_circle/v6/24px.svg'; // URL for material icon
+    }
+
     const span = document.createElement('span');
-    span.innerText = username;
+    span.innerText = username.username;
     span.classList.add('usernameElement');
+
     container.onclick = () => {
         selectAccount(username, container);
         usernameSelected = username;
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected}`;
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
     };
 
     const buttonsContainer = document.createElement('div');
@@ -364,19 +394,21 @@ function createAccountListItem(username) {
     logoutButton.innerText = 'Logout';
     logoutButton.onclick = () => {
         usernameSelected = '';
-        handleLogout(username);
+        handleLogout(username.username);
     };
+
     buttonsContainer.classList.add('buttons-container');
     buttonsContainer.appendChild(logoutButton);
+    container.appendChild(img);
     container.appendChild(span);
     container.appendChild(buttonsContainer);
     li.appendChild(container);
     document.getElementById('accountList').appendChild(li);
-    //selected il primo account
+
+    // Select the first account by default
     if (!usernameSelected) {
         selectAccount(username, container);
     }
-
 }
 
 function selectAccount(username, containerElement) {
@@ -386,19 +418,19 @@ function selectAccount(username, containerElement) {
     });
 
     containerElement.classList.add('selected');
-    displayResult({ message: `Account ${username} selected` }, 'success');
+    displayResult({ message: `Account ${username.username} selected` }, 'success');
     updateUIWithSelectedAccount();
-    getUserDrafts();
+    getUserDrafts(); // Carica i draft quando si seleziona un account
 }
 
 function updateUIWithSelectedAccount() {
     const selectedAccountDisplay = document.getElementById('selectedAccountDisplay');
     if (selectedAccountDisplay) {
-        selectedAccountDisplay.textContent = usernameSelected ? `Selected Account: ${usernameSelected}` : 'No account selected';
+        selectedAccountDisplay.textContent = usernameSelected.username ? `Selected Account: ${usernameSelected.username}` : 'No account selected';
     }
     const accountDependentButtons = document.querySelectorAll('.account-dependent');
     accountDependentButtons.forEach(button => {
-        button.disabled = !usernameSelected;
+        button.disabled = !usernameSelected.username;
     });
 }
 
@@ -408,6 +440,7 @@ async function handleLogout(username) {
         displayResult(result, 'success');
         initializeApp(idTelegram);
     } catch (error) {
+        console.error('Error in handleLogout:', error);
         displayResult({ error: error.message }, 'error');
     }
 }
@@ -419,9 +452,11 @@ function enableNavigationButtons() {
 }
 
 function getUsername() {
-    return usernameSelected;
+    if (typeof usernameSelected.username === 'undefined') {
+        return usernames[0].username;
+    }
+    return usernameSelected.username;
 }
-
 function displayResult(result, type = 'success', enabled = false, callback) {
     if (enabled) {
         //crea una dialog con il risultato
@@ -486,25 +521,32 @@ async function login() {
         displayResult(result, 'success', true);
         initializeApp(idTelegram);
     } catch (error) {
+        console.error('Error in login:', error);
         displayResult({ error: error.message }, 'error', true);
     }
 }
 
 async function getUserDrafts() {
+    const username = getUsername();
+    if (!username) {
+        return;
+    }
     try {
-        const result = await client.getUserDrafts(getUsername());
-        await createListaDrafts(result); // Call the function to create the draft list
-        return result;
+        const result = await client.getUserDrafts(username);
+        await createListaDrafts(result, username);
     } catch (error) {
-        return []; // Return an empty array in case of error
+        displayResult({ error: 'Failed to load drafts. Please try again.' }, 'error', true);
     }
 }
+
 // Create list of drafts
-async function createListaDrafts(drafts) {
+async function createListaDrafts(drafts,username) {
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = ''; // Clear existing list
     if (!Array.isArray(drafts) || drafts.length === 0) {
-        draftList.appendChild(await createDraftListItem('No drafts available'));
+        const li = document.createElement('li');
+        li.textContent = 'No drafts available';
+        draftList.appendChild(li);
         return;
     }
     drafts.forEach(async (draft, index) => {
@@ -523,7 +565,7 @@ async function createListaDrafts(drafts) {
     });
 }
 
-async function createDraftListItem(id,title, scheduledTime, tags) {
+async function createDraftListItem(id, title, scheduledTime, tags) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
     const titleSpan = document.createElement('span');
@@ -573,6 +615,7 @@ function createIconButton(iconName, onClick) {
     };
     return button;
 }
+
 // Load draft into the editor
 async function loadDraft(draft) {
     document.getElementById('postTitle').value = draft.title || '';
@@ -591,9 +634,11 @@ async function deleteDraft(id) {
         getUserDrafts();
         displayResult(result, 'success', true);
     } catch (error) {
+        console.error('Error in deleteDraft:', error);
         displayResult({ error: error.message }, 'error');
     }
 }
+
 async function postToSteem() {
     if (!validateForm()) {
         return;
@@ -609,11 +654,13 @@ async function postToSteem() {
         );
         displayResult(result, 'success', true);
     } catch (error) {
+        console.error('Error in postToSteem:', error);
         displayResult({ error: error.message }, 'error', true);
     }
 }
 
 async function converiIlTagInNomeComunita(tags) {
+    if (!tags) return 'Community not selected';
     const tag = tags.split(' ')[0];
     try {
         const communities = await listaComunities;
@@ -624,6 +671,7 @@ async function converiIlTagInNomeComunita(tags) {
         return 'Error occurred while searching for community';
     }
 }
+
 function validateForm() {
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
@@ -662,18 +710,21 @@ function validateForm() {
 
     return isValid;
 }
+
 // Add input event listeners to remove error class when user starts typing
 ['postTitle', 'postBody', 'postTags'].forEach(id => {
     document.getElementById(id).addEventListener('input', function() {
         this.classList.remove('error');
     });
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     initializeTelegram()
         .then(idTelegramo => {
+            console.log('initializeTelegram resolved with idTelegramo:', idTelegramo);
             idTelegram = idTelegramo;
             if (idTelegram) {
-                initializeApp(idTelegram,true);
+                initializeApp(idTelegram, true);
             } else {
                 displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true, () => {
                     location.reload();
@@ -686,5 +737,4 @@ document.addEventListener('DOMContentLoaded', () => {
                 location.reload();
             });
         });
-
 });

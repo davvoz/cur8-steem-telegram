@@ -33,7 +33,11 @@
             <span>Configurazione</span>
         </button>
     </nav>
-
+    <div class="spinner hide" id="spinner">
+        <div class="spinner-container">
+            <div class="spinner-border"></div>
+        </div>
+    </div>
     <!-- Pagina Login -->
     <div id="loginPage" class="page active">
         <h2>Login</h2>
@@ -60,11 +64,7 @@
 
         <div class="textarea-container">
             <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post" required></textarea>
-            <div class="spinner hide" id="spinner">
-                <div class="spinner-container">
-                    <div class="spinner-border"></div>
-                </div>
-            </div>
+            
 
             <div id="dropZone">
                 Inserisci Immagine
