@@ -73,6 +73,8 @@ nav button {
 nav button:hover,
 nav button:focus {
     background-color: rgba(187, 134, 252, 0.1);
+    color: var(--primary-variant);
+
 }
 
 nav button:disabled {
@@ -86,13 +88,14 @@ nav button:disabled {
     animation: fadeIn 0.5s ease-in-out;
     overflow: hidden;
     margin-bottom: 20%;
-   
+
 }
 
 #postPage {
     overflow: hidden !important;
-     /* Ridurre gli spazi tra i div */
-     & > div {
+
+    /* Ridurre gli spazi tra i div */
+    &>div {
         margin: 4px;
     }
 }
@@ -112,7 +115,8 @@ nav button:disabled {
 }
 
 /* Form Elements */
-input[type="text"], textarea {
+input[type="text"],
+textarea {
     width: -webkit-fill-available;
     padding: var(--spacing-md);
     /* margin: var(--spacing-sm) 0; */
@@ -333,6 +337,10 @@ ul li:hover {
     display: flex;
     gap: var(--spacing-sm);
     margin-right: var(--spacing-md);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: stretch;
 }
 
 .selected {
@@ -518,8 +526,13 @@ ul li:hover {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .textarea-container {
@@ -584,11 +597,13 @@ ul li:hover {
     color: black;
     margin-bottom: 50%;
 }
+
 dialog::backdrop {
     position: fixed;
     inset: 0px;
     background: rgba(0, 0, 0, 0.9);
 }
+
 .close-button {
     color: #aaa;
     float: right;
@@ -626,11 +641,13 @@ input[type="datetime-local"] {
     max-width: 100%;
     height: auto;
 }
+
 .dialogo .dialog dialog::backdrop {
     position: fixed;
     inset: 0px;
     background: rgba(0, 0, 0, 0.9);
 }
+
 .dialog {
     position: fixed;
     z-index: 1;
@@ -872,20 +889,62 @@ input[type="datetime-local"] {
     }
 }
 
+/*le classe page su desktop hanno un margine inferiore di 20% per far spazio alla navbar*/
+
+@media screen and (min-width: 1024px) {
+    .page {
+        margin-bottom: 20%;
+        margin-left: 20%;
+        margin-right: 20%;
+        height: webkit-fill-available;
+        background-color: var(--secondary-color);
+
+    }
+
+    dialog {
+        margin-left: 20%;
+        margin-right: 20%;
+    }
+}
+
+
+#selectedAccountDisplay,#scheduledTimeDisplay {
+    width: -webkit-fill-available;
+    background: var(--surface);
+    color: var(--on-surface);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
 .community-name {
     font-size: small;
     background-color: var(--background);
     color: var(--on-background);
     border-radius: 4px;
     padding: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 
 .draft-id {
-    height: 28px;
-    width: 28px;
+    height: 30px;
+    width: 50px;
     margin: 0%;
-    border-radius: 100%;
+    border-radius: 20%;
     background: var(--background);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    align-content: center;
 }
 
 .draft-id-title {
@@ -899,6 +958,7 @@ input[type="datetime-local"] {
     /*shadow*/
     box-shadow: var(--shadow-md);
 }
+
 .title-container {
     display: flex;
     justify-content: flex-start;
@@ -909,12 +969,14 @@ input[type="datetime-local"] {
 
 #accountPage ul {
     list-style: none;
-    padding:  var(--spacing-md);
+    padding: var(--spacing-md);
 }
+
 .error {
     border: 2px solid red;
 }
-.buttons-container-center{
+
+.buttons-container-center {
     display: flex;
     gap: var(--spacing-sm);
     margin-top: 10px;
@@ -924,9 +986,11 @@ input[type="datetime-local"] {
     align-items: center;
 
 }
-#postTags{
+
+#postTags {
     margin-bottom: var(--spacing-md);
 }
+
 .c-container {
     display: flex;
     justify-content: center;
@@ -938,6 +1002,7 @@ input[type="datetime-local"] {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
 }
+
 .c-dialogo {
     background-color: var(--surface);
     border: none;
@@ -946,15 +1011,26 @@ input[type="datetime-local"] {
     transition: border-color var(--transition-fast);
     width: -webkit-fill-available;
     position: absolute;
-    top: -50%; 
+    top: -50%;
     /* left: 50%; */
     /* transform: translate(-50%, -50%); */
     /* padding: var(--spacing-md); */
     height: 338px;
 }
+
 .profile-image-thumbnail {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-left: var(--spacing-md);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--spacing-md);
+}
+table td {
+   
+    text-align: center;
 }

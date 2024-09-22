@@ -74,6 +74,8 @@
             <label for="postTags">Tag Post:</label>
             <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola" required>
             <br>
+
+            
             <div class="buttons-container">
 
                 <span id="scheduledTimeDisplay"></span>
@@ -94,7 +96,7 @@
 
 
         <div class="buttons-container-center">
-            <div id="selectedAccountDisplay"></div>
+            <span id="selectedAccountDisplay"></span>
             <button class="action-btn" id="postToSteem">Pubblica Post</button>
             <button class="action-btn" id="salvaBozza">Salva Bozza</button>
         </div>
@@ -210,6 +212,8 @@
             saveThemeBtn.innerText = 'Salva';
             saveThemeBtn.addEventListener('click', () => {
                 localStorage.setItem('theme', themeSelected);
+                alert('Tema salvato');
+                
             });
             saveThemeCard.appendChild(saveThemeBtn);
             themeSelector.appendChild(saveThemeCard);

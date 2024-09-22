@@ -293,7 +293,7 @@ const getDialogTelegramId = () => {
         const confirmButton = dialog.querySelector('#confirmButtonTelegramId');
         confirmButton.addEventListener('click', () => {
             //attiva lo spinner
-                document.getElementById('spinner').classList.remove('hide');
+            document.getElementById('spinner').classList.remove('hide');
             const telegramId = document.getElementById('telegramId').value;
             closeAndResolve(dialog, telegramId, resolve).then(() => {
                 //nascondi lo spinner
@@ -351,8 +351,8 @@ function initializeEnd(result) {
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
         setUsernameForImageUpload(usernameSelected.username);
-        getUserDrafts(); // Carica i draft all'inizializzazione
-        
+       // getUserDrafts(); // Carica i draft all'inizializzazione
+
         // Highlight the first account
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
@@ -406,9 +406,7 @@ function createAccountListItem(username) {
     document.getElementById('accountList').appendChild(li);
 
     // Select the first account by default
-    if (!usernameSelected) {
-        selectAccount(username, container);
-    }
+
 }
 
 function selectAccount(username, containerElement) {
@@ -457,7 +455,7 @@ function getUsername() {
     }
     return usernameSelected.username;
 }
-function displayResult(result, type = 'success', enabled = false, callback) {
+function displayResult(result, type = 'success', enabled = false, callback,time = 2000) {
     if (enabled) {
         //crea una dialog con il risultato
         const dialog = document.createElement('dialog');
@@ -498,10 +496,10 @@ function displayResult(result, type = 'success', enabled = false, callback) {
 
         dialog.addEventListener('close', () => dialog.remove());
 
-        if (!callback) {
+        if (!callback || !neverClose) {
             setTimeout(() => {
                 dialog.remove();
-            }, 2000);
+            }, time);
         }
     }
 }
@@ -540,7 +538,7 @@ async function getUserDrafts() {
 }
 
 // Create list of drafts
-async function createListaDrafts(drafts,username) {
+async function createListaDrafts(drafts, username) {
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = ''; // Clear existing list
     if (!Array.isArray(drafts) || drafts.length === 0) {
@@ -583,7 +581,6 @@ async function createDraftListItem(id, title, scheduledTime, tags) {
     infoDiv.classList.add('draft-info');
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
-    //margine destro
     infoDiv.style.marginRight = '10px';
     const scheduledTimeSpan = document.createElement('div');
     if (scheduledTime) {
@@ -644,19 +641,44 @@ async function postToSteem() {
         return;
     }
 
-    try {
-        const result = await client.postToSteem(
-            getUsername(),
-            document.getElementById('postTitle').value,
-            document.getElementById('postBody').value,
-            document.getElementById('postTags').value,
-            scheduledTime,
-        );
-        displayResult(result, 'success', true);
-    } catch (error) {
-        console.error('Error in postToSteem:', error);
-        displayResult({ error: error.message }, 'error', true);
-    }
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialogo');
+    dialog.innerHTML = `
+        <h2>Conferma Pubblicazione</h2>
+        <p>Sei sicuro di voler pubblicare questo post su Steem?</p>
+        <button id="confirmButtonPost" class="action-btn">Conferma</button>
+        <button id="cancelButtonPost" class="action-btn">Annulla</button>
+    `;
+    document.body.appendChild(dialog);
+    dialog.showModal();
+
+    const confirmButton = dialog.querySelector('#confirmButtonPost');
+    const cancelButton = dialog.querySelector('#cancelButtonPost');
+
+    confirmButton.addEventListener('click', async () => {
+        dialog.remove();
+        try {
+            const result = await client.postToSteem(
+                getUsername(),
+                document.getElementById('postTitle').value,
+                document.getElementById('postBody').value,
+                document.getElementById('postTags').value,
+                scheduledTime,
+            );
+            displayResult(result, 'success', true);
+        } catch (error) {
+            console.error('Error in postToSteem:', error);
+            displayResult({ error: error.message }, 'error', true);
+        }
+    });
+
+    cancelButton.addEventListener('click', () => {
+        dialog.remove();
+    });
+
+    dialog.addEventListener('close', () => {
+        dialog.remove();
+    });
 }
 
 async function converiIlTagInNomeComunita(tags) {
@@ -676,36 +698,26 @@ function validateForm() {
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
     const tags = document.getElementById('postTags').value.trim();
-    
+
     let isValid = true;
     let errorMessage = '';
 
     if (title === '') {
         isValid = false;
         errorMessage += 'Il titolo del post è obbligatorio.\n';
-        document.getElementById('postTitle').classList.add('error');
-    } else {
-        document.getElementById('postTitle').classList.remove('error');
-    }
-
+    } 
     if (body === '') {
         isValid = false;
         errorMessage += 'Il corpo del post è obbligatorio.\n';
-        document.getElementById('postBody').classList.add('error');
-    } else {
-        document.getElementById('postBody').classList.remove('error');
-    }
+    } 
 
     if (tags === '') {
         isValid = false;
         errorMessage += 'Almeno un tag è obbligatorio.\n';
-        document.getElementById('postTags').classList.add('error');
-    } else {
-        document.getElementById('postTags').classList.remove('error');
-    }
+    } 
 
     if (!isValid) {
-        displayResult({ error: errorMessage }, 'error', true);
+        displayResult({ error: errorMessage }, 'error', true,false,5000);
     }
 
     return isValid;
@@ -713,12 +725,14 @@ function validateForm() {
 
 // Add input event listeners to remove error class when user starts typing
 ['postTitle', 'postBody', 'postTags'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function() {
+    document.getElementById(id).addEventListener('input', function () {
         this.classList.remove('error');
     });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+
+
     initializeTelegram()
         .then(idTelegramo => {
             console.log('initializeTelegram resolved with idTelegramo:', idTelegramo);
