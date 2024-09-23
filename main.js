@@ -461,6 +461,7 @@ function getUsername() {
     }
     return usernameSelected.username;
 }
+
 function displayResult(result, type = 'success', enabled = false, callback,time = 2000) {
     if (enabled) {
         //crea una dialog con il risultato
@@ -554,7 +555,7 @@ async function createListaDrafts(drafts, username) {
         return;
     }
     drafts.forEach(async (draft, index) => {
-        const li = await createDraftListItem(draft.id, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags);
+        const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags);
         const buttonsContainer = document.createElement('div');
         buttonsContainer.classList.add('buttons-container-draft');
         const editButton = createIconButton('edit', () => {
