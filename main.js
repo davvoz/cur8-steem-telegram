@@ -297,7 +297,7 @@ const getDialogTelegramId = () => {
             const telegramId = document.getElementById('telegramId').value;
             closeAndResolve(dialog, telegramId, resolve).then(() => {
                 //nascondi lo spinner
-               // document.getElementById('spinner').classList.add('hide');
+                // document.getElementById('spinner').classList.add('hide');
             });
         });
 
@@ -336,7 +336,7 @@ async function initializeApp(userId, fromOut) {
         enableNavigationButtons();
         initializeEnd(result);
     } catch (error) {
-       //apriamo il login usando l iD telegram che è stato passato
+        //apriamo il login usando l iD telegram che è stato passato
         showPage('loginPage');
         displayResult({ error: 'Effettua il login' }, 'error', true);
         console.error('Error in initialize app:', error);
@@ -354,7 +354,8 @@ function initializeEnd(result) {
     if (usernames.length > 0) {
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
-        setUsernameForImageUpload(usernameSelected.username);
+       
+       setUsernameForImageUpload(usernameSelected.username);
 
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
@@ -371,10 +372,14 @@ function createAccountListItem(username) {
     const li = document.createElement('li');
     const container = document.createElement('div');
     container.classList.add('container-username');
+    const imgNameContainer = document.createElement('div');
+    imgNameContainer.style.display = 'flex';
+    imgNameContainer.style.flexDirection = 'row';
+    imgNameContainer.style.alignItems = 'center';
+
     const img = document.createElement('img');
     img.alt = `${username.username}'s profile image`;
     img.classList.add('profile-image-thumbnail'); // Add a class for thumbnail styling
-
     // Check if profile image exists, otherwise use material icon
     if (username.profile_image) {
         img.src = username.profile_image;
@@ -382,9 +387,9 @@ function createAccountListItem(username) {
         img.src = 'https://fonts.gstatic.com/s/i/materialiconsoutlined/account_circle/v6/24px.svg'; // URL for material icon
     }
 
-    const span = document.createElement('span');
-    span.innerText = username.username;
-    span.classList.add('usernameElement');
+    const spanUSername = document.createElement('span');
+    spanUSername.innerText = username.username;
+    spanUSername.classList.add('usernameElement');
 
     container.onclick = () => {
         selectAccount(username, container);
@@ -402,13 +407,19 @@ function createAccountListItem(username) {
     };
 
     buttonsContainer.classList.add('buttons-container');
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.flexDirection = 'row';
+    buttonsContainer.style.flexWrap = 'nowrap';
+    buttonsContainer.style.justifyContent = 'flex-end';
+    buttonsContainer.style.alignItems = 'baseline';
+
     buttonsContainer.appendChild(logoutButton);
-    container.appendChild(img);
-    container.appendChild(span);
+    imgNameContainer.appendChild(img);
+    imgNameContainer.appendChild(spanUSername);
+    container.appendChild(imgNameContainer);
     container.appendChild(buttonsContainer);
     li.appendChild(container);
     document.getElementById('accountList').appendChild(li);
-
     // Select the first account by default
 
 }
@@ -462,7 +473,7 @@ function getUsername() {
     return usernameSelected.username;
 }
 
-function displayResult(result, type = 'success', enabled = false, callback,time = 2000) {
+function displayResult(result, type = 'success', enabled = false, callback, time = 2000) {
     if (enabled) {
         //crea una dialog con il risultato
         const dialog = document.createElement('dialog');
@@ -544,7 +555,7 @@ async function getUserDrafts() {
     }
 }
 
-// Create list of drafts
+// Create list of draftsaction-btn-mini
 async function createListaDrafts(drafts, username) {
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = ''; // Clear existing list
@@ -613,6 +624,7 @@ function createIconButton(iconName, onClick) {
     icon.innerText = iconName;
     button.appendChild(icon);
     button.classList.add('action-btn-mini');
+    
     button.onclick = (event) => {
         event.stopPropagation(); // Prevent triggering the parent click event
         onClick();
@@ -712,19 +724,19 @@ function validateForm() {
     if (title === '') {
         isValid = false;
         errorMessage += 'Il titolo del post è obbligatorio.\n';
-    } 
+    }
     if (body === '') {
         isValid = false;
         errorMessage += 'Il corpo del post è obbligatorio.\n';
-    } 
+    }
 
     if (tags === '') {
         isValid = false;
         errorMessage += 'Almeno un tag è obbligatorio.\n';
-    } 
+    }
 
     if (!isValid) {
-        displayResult({ error: errorMessage }, 'error', true,false,5000);
+        displayResult({ error: errorMessage }, 'error', true, false, 5000);
     }
 
     return isValid;

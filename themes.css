@@ -36,6 +36,7 @@
     --border-radius-sm: 4px;
     --border-radius-md: 10px;
     --border-radius-lg: 20px;
+    --header-height: 80px;
 }
 
 .red-dark-theme {
