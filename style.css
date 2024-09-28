@@ -1066,8 +1066,8 @@ table td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
 }
+
 .header {
     display: flex;
     justify-content: space-around;
@@ -1084,6 +1084,7 @@ table td {
     top: 0px;
     z-index: 1 ;
 }
+
 #accountList {
    /*ocio che deve stare sotto all header*/
     margin-top: 130px; 
