@@ -354,8 +354,8 @@ function initializeEnd(result) {
     if (usernames.length > 0) {
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
-       
-       setUsernameForImageUpload(usernameSelected.username);
+
+        setUsernameForImageUpload(usernameSelected.username);
 
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
@@ -523,6 +523,10 @@ function displayResult(result, type = 'success', enabled = false, callback, time
 }
 
 function showPage(pageId) {
+    //chiudi l'anteproima se è aperta
+    const modal = document.getElementById('previewModal');
+    modal.style.display = 'none';
+    
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 }
@@ -566,22 +570,13 @@ async function createListaDrafts(drafts, username) {
         return;
     }
     drafts.forEach(async (draft, index) => {
-        const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags);
-        const buttonsContainer = document.createElement('div');
-        buttonsContainer.classList.add('buttons-container-draft');
-        const editButton = createIconButton('edit', () => {
-            loadDraft(draft);
-            prepareShowPage(true);
-        });
-        const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
-        buttonsContainer.appendChild(editButton);
-        buttonsContainer.appendChild(deleteButton);
-        li.appendChild(buttonsContainer);
+        const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags,draft);
+
         draftList.appendChild(li);
     });
 }
 
-async function createDraftListItem(id, title, scheduledTime, tags) {
+async function createDraftListItem(id, title, scheduledTime, tags,draft) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
     const titleSpan = document.createElement('span');
@@ -612,8 +607,24 @@ async function createDraftListItem(id, title, scheduledTime, tags) {
     const comunita = await converiIlTagInNomeComunita(tags);
     communityNameSpan.innerText = comunita;
     communityNameSpan.classList.add('community-name');
+    const infoButtons = document.createElement('div');
+    infoButtons.classList.add('info-buttons');
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('buttons-container-draft');
+    const editButton = createIconButton('edit', () => {
+        loadDraft(draft);
+        prepareShowPage(true);
+    });
+    const deleteButton = createIconButton('delete', () => deleteDraft(id));
+    buttonsContainer.appendChild(editButton);
+    buttonsContainer.appendChild(deleteButton);
+
+
     infoDiv.appendChild(communityNameSpan);
-    li.appendChild(infoDiv);
+    infoButtons.appendChild(infoDiv);
+    infoButtons.appendChild(buttonsContainer);
+    li.appendChild(infoButtons);
+
     return li;
 }
 
@@ -624,7 +635,7 @@ function createIconButton(iconName, onClick) {
     icon.innerText = iconName;
     button.appendChild(icon);
     button.classList.add('action-btn-mini');
-    
+
     button.onclick = (event) => {
         event.stopPropagation(); // Prevent triggering the parent click event
         onClick();
