@@ -178,7 +178,7 @@ button.action-btn-mini {
     box-shadow: var(--shadow-md);
     color: var(--on-primary);
     border: none;
-    padding: var(--spacing-sm);
+    
     cursor: pointer;
     transition: all var(--transition-fast);
     border-radius: 4px;
@@ -712,12 +712,12 @@ input[type="datetime-local"] {
 
 .buttons-container-draft {
     display: flex;
-    gap: var(--spacing-sm);
-    margin-top: 10px;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    align-items: center;
+    /* gap: var(--spacing-sm); */
+    /* margin-top: 10px; */
+    flex-direction: column;
+    /* flex-wrap: nowrap; */
+    /* justify-content: flex-end; */
+    /* align-items: center;*/
 }
 
 .draft-title {
@@ -989,15 +989,6 @@ input[type="datetime-local"] {
     border: 2px solid red;
 }
 
-.buttons-container-draft {
-    display: flex;
-    gap: var(--spacing-sm);
-    margin-top: 10px;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    align-items: center;
-}
 .buttons-container-center {
     display: flex;
     gap: var(--spacing-sm);

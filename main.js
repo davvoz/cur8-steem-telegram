@@ -656,14 +656,40 @@ async function loadDraft(draft) {
 async function deleteDraft(id) {
     const draftId = id;
     if (!draftId) return;
-    try {
-        const result = await client.deleteDraft(draftId, getUsername());
-        getUserDrafts();
-        displayResult(result, 'success', true);
-    } catch (error) {
-        console.error('Error in deleteDraft:', error);
-        displayResult({ error: error.message }, 'error');
-    }
+
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialogo');
+    dialog.innerHTML = `
+        <h2>Conferma Eliminazione</h2>
+        <p>Sei sicuro di voler eliminare questa bozza?</p>
+        <button id="confirmButtonDelete" class="action-btn">Conferma</button>
+        <button id="cancelButtonDelete" class="action-btn">Annulla</button>
+    `;
+    document.body.appendChild(dialog);
+    dialog.showModal();
+
+    const confirmButton = dialog.querySelector('#confirmButtonDelete');
+    const cancelButton = dialog.querySelector('#cancelButtonDelete');
+
+    confirmButton.addEventListener('click', async () => {
+        dialog.remove();
+        try {
+            const result = await client.deleteDraft(draftId, getUsername());
+            getUserDrafts();
+            displayResult(result, 'success', true);
+        } catch (error) {
+            console.error('Error in deleteDraft:', error);
+            displayResult({ error: error.message }, 'error');
+        }
+    });
+
+    cancelButton.addEventListener('click', () => {
+        dialog.remove();
+    });
+
+    dialog.addEventListener('close', () => {
+        dialog.remove();
+    });
 }
 
 async function postToSteem() {
