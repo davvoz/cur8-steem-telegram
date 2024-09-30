@@ -570,62 +570,56 @@ async function createListaDrafts(drafts, username) {
         return;
     }
     drafts.forEach(async (draft, index) => {
-        const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags,draft);
+        const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags, draft);
 
         draftList.appendChild(li);
     });
 }
 
-async function createDraftListItem(id, title, scheduledTime, tags,draft) {
+async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
-    const titleSpan = document.createElement('span');
-    titleSpan.innerText = title;
-    titleSpan.classList.add('draft-title');
-    const idDiv = document.createElement('div');
-    idDiv.classList.add('draft-id');
-    const titleContainer = document.createElement('div');
-    idDiv.innerText = id;
-    titleContainer.classList.add('title-container');
-    titleContainer.appendChild(idDiv);
-    titleContainer.appendChild(titleSpan);
-    li.appendChild(titleContainer);
-    const infoDiv = document.createElement('div');
-    infoDiv.classList.add('draft-info');
+
+    const titleSpan = createElementWithClass('span', 'draft-title', title);
+    const idDiv = createElementWithClass('div', 'draft-id', id);
+
+    const titleContainer = createElementWithClass('div', 'title-container');
+    titleContainer.append(idDiv, titleSpan);
+
+    const infoDiv = createElementWithClass('div', 'draft-info');
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
     infoDiv.style.marginRight = '10px';
-    const scheduledTimeSpan = document.createElement('div');
-    if (scheduledTime) {
-        scheduledTimeSpan.innerText = new Date(scheduledTime).toLocaleString();
-    } else {
-        scheduledTimeSpan.innerText = 'No scheduled time';
-    }
-    scheduledTimeSpan.classList.add('scheduled-time');
+
+    const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', scheduledTime ? new Date(scheduledTime).toLocaleString() : 'No scheduled time');
     infoDiv.appendChild(scheduledTimeSpan);
-    const communityNameSpan = document.createElement('div');
-    const comunita = await converiIlTagInNomeComunita(tags);
-    communityNameSpan.innerText = comunita;
-    communityNameSpan.classList.add('community-name');
-    const infoButtons = document.createElement('div');
-    infoButtons.classList.add('info-buttons');
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.classList.add('buttons-container-draft');
-    const editButton = createIconButton('edit', () => {
-        loadDraft(draft);
-        prepareShowPage(true);
-    });
-    const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
-    buttonsContainer.appendChild(editButton);
-    buttonsContainer.appendChild(deleteButton);
 
+    const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
+    titleScheduleContainer.append(titleContainer, infoDiv);
+    li.appendChild(titleScheduleContainer);
 
+    const communityNameSpan = createElementWithClass('div', 'community-name', await converiIlTagInNomeComunita(tags));
     infoDiv.appendChild(communityNameSpan);
-    infoButtons.appendChild(infoDiv);
-    infoButtons.appendChild(buttonsContainer);
-    li.appendChild(infoButtons);
+
+    const buttonsContainer = createElementWithClass('div', 'buttons-container-draft');
+    buttonsContainer.append(
+        createIconButton('edit', () => {
+            loadDraft(draft);
+            prepareShowPage(true);
+        }),
+        createIconButton('delete', () => deleteDraft(draft.id))
+    );
+
+    li.appendChild(buttonsContainer);
 
     return li;
+}
+
+function createElementWithClass(tag, className, textContent = '') {
+    const element = document.createElement(tag);
+    element.classList.add(className);
+    element.textContent = textContent;
+    return element;
 }
 
 function createIconButton(iconName, onClick) {
