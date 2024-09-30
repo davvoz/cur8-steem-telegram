@@ -327,8 +327,12 @@ const closeAndResolve = async (dialog, value, resolve) => {
 async function initializeApp(userId, fromOut) {
     client = new ApiClient();
     try {
+        //attiva lo spinner
+        document.getElementById('spinner').classList.remove('hide');
         const result = await client.checkLogin(userId);
         if (fromOut && typeof result.usernames === 'undefined') {
+            //termina lo spinner
+            document.getElementById('spinner').classList.add('hide');
             displayResult({ error: 'Nessun account trovato' }, 'error', true);
             return;
         }
