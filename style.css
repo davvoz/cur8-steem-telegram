@@ -404,7 +404,7 @@ ul li {
     }
 
     .draft-item {
-        grid-template-columns: 3fr 2fr 1fr;
+        grid-template-columns: 3fr 1fr;
     }
 
     .buttons-container-draft {
@@ -431,7 +431,7 @@ ul li {
     }
 
     .draft-item {
-        grid-template-columns: 3fr 2fr 1fr;
+        grid-template-columns: 3fr 1fr;
     }
 
     .theme-selector {
@@ -467,7 +467,7 @@ ul li {
     }
 
     .draft-item {
-        grid-template-columns: 3fr 2fr 1fr;
+        grid-template-columns: 3fr  1fr;
     }
 }
 
@@ -831,10 +831,6 @@ input[type="datetime-local"] {
 
     .accountList li {
         padding: var(--spacing-md);
-    }
-
-    .buttons-container-draft {
-        justify-content: flex-start;
     }
 
     .scheduled-time {
