@@ -165,16 +165,20 @@ button.action-btn i {
 }
 
 button.action-btn-mini {
+    display: flex;
     background-color: var(--primary-variant);
     box-shadow: var(--shadow-md);
     color: var(--on-primary);
     border: none;
-    
     cursor: pointer;
     transition: all var(--transition-fast);
     border-radius: 4px;
-    font-weight: 500;
-    text-transform: uppercase;
+    height: 37px;
+    width: 37px;
+    flex-direction: column;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 #result {
@@ -701,10 +705,7 @@ input[type="datetime-local"] {
 
 .buttons-container-draft {
     display: flex;
-    /* gap: var(--spacing-sm); */
-    /* margin-top: 10px; */
     flex-direction: row;
-    /* flex-wrap: nowrap; */
     justify-content: space-evenly;
     align-items: center;
     align-content: center;
