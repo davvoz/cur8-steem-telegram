@@ -32,8 +32,17 @@ function svuotaForm() {
     document.getElementById('postTitle').value = '';
     document.getElementById('postTags').value = '';
     document.getElementById('postBody').value = '';
-    document.getElementById('scheduledTimeDisplay').innerText = '';
-    document.getElementById('selectedAccountDisplay').innerText = '';
+    //mettiamo licona dell'orologio al posto del testo la <i>
+    document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+    //aggiungiamo la classe btn-action-mini
+    document.getElementById('openDatePicker').classList.add('action-btn-mini');
+    //rimuoviamo la classe action-btn
+    document.getElementById('openDatePicker').classList.remove('action-btn');
+    //rimuoviamo la classe error dai campi del form
+    ['postTitle', 'postBody', 'postTags'].forEach(id => {
+        document.getElementById(id).classList.remove('error');
+    });
+
     document.getElementById('comunityName').innerText = 'Seleziona la comunità';
     scheduledTime = null;
 }
@@ -75,7 +84,6 @@ async function getListaComunities() {
 }
 
 function prepareShowPage(fromBozze) {
-    document.getElementById('selectedAccountDisplay').innerText = usernameSelected.username;
     if (!fromBozze) {
         svuotaForm();
     }
@@ -118,7 +126,12 @@ function createDatePickerDialog() {
 function handleDatePickerConfirm(dialog, scheduledTimeInput) {
     const scheduled = scheduledTimeInput.value;
     scheduledTime = new Date(scheduled).getTime();
-    document.getElementById('scheduledTimeDisplay').innerText = new Date(scheduled).toLocaleString();
+    //scrivi l'orario al posto dell'orologio openDatePicker
+    document.getElementById('openDatePicker').innerText = new Date(scheduled).toLocaleString();
+    //mofica la classe del bottone
+    document.getElementById('openDatePicker').classList.add('action-btn');
+    //rimuoviamo la classe btn-action-mini
+    document.getElementById('openDatePicker').classList.remove('action-btn-mini');
     dialog.remove();
 }
 
@@ -246,7 +259,7 @@ async function salvaBozza() {
     }
 
     let scheduledDate = null;
-    const dateString = document.getElementById('scheduledTimeDisplay').innerText;
+    const dateString = document.getElementById('openDatePicker').innerText;
     if (dateString) {
         const [datePart, timePart] = dateString.split(', ');
         const [day, month, year] = datePart.split('/').map(Number);
@@ -254,7 +267,12 @@ async function salvaBozza() {
         scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
         if (scheduledDate < Date.now()) {
             displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-            document.getElementById('scheduledTimeDisplay').innerText = '';
+            //mettiamo l'icona dell'orologio al posto del testo
+            document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+            //aggiungiamo la classe btn-action-mini
+            document.getElementById('openDatePicker').classList.add('action-btn-mini');
+            //rimuoviamo la classe action-btn
+            document.getElementById('openDatePicker').classList.remove('action-btn');
             return;
         }
     }
@@ -436,20 +454,9 @@ function selectAccount(username, containerElement) {
 
     containerElement.classList.add('selected');
     displayResult({ message: `Account ${username.username} selected` }, 'success');
-    updateUIWithSelectedAccount();
     getUserDrafts(); // Carica i draft quando si seleziona un account
 }
 
-function updateUIWithSelectedAccount() {
-    const selectedAccountDisplay = document.getElementById('selectedAccountDisplay');
-    if (selectedAccountDisplay) {
-        selectedAccountDisplay.textContent = usernameSelected.username ? `Selected Account: ${usernameSelected.username}` : 'No account selected';
-    }
-    const accountDependentButtons = document.querySelectorAll('.account-dependent');
-    accountDependentButtons.forEach(button => {
-        button.disabled = !usernameSelected.username;
-    });
-}
 
 async function handleLogout(username) {
     try {
@@ -530,9 +537,12 @@ function showPage(pageId) {
     //chiudi l'anteproima se è aperta
     const modal = document.getElementById('previewModal');
     modal.style.display = 'none';
-
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
+    // se il pageId è postPage non svuotare il form
+    if (pageId !== 'postPage') {
+        svuotaForm();
+    }
 }
 
 async function login() {
@@ -609,7 +619,7 @@ async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     buttonsContainer.append(
         createIconButton('edit', () => {
             loadDraft(draft);
-            prepareShowPage(true);
+            showPage('postPage');
         }),
         createIconButton('delete', () => deleteDraft(draft.id))
     );
@@ -646,8 +656,22 @@ async function loadDraft(draft) {
     document.getElementById('postTitle').value = draft.title || '';
     document.getElementById('postTags').value = draft.tags || '';
     document.getElementById('postBody').value = draft.body || '';
-    document.getElementById('scheduledTimeDisplay').innerText = draft.scheduled_time ? new Date(draft.scheduled_time).toLocaleString() : '';
     document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
+    //mettiamo l'orario nel bottone se no l'oologio
+    if (draft.scheduled_time) {
+        document.getElementById('openDatePicker').innerText = new Date(draft.scheduled_time).toLocaleString();
+        //la classe del bottone
+        document.getElementById('openDatePicker').classList.add('action-btn');
+        //rimuoviamo la classe btn-action-mini
+        document.getElementById('openDatePicker').classList.remove('action-btn-mini');
+    } else {
+        document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+        //aggiungiamo la classe btn-action-mini
+        document.getElementById('openDatePicker').classList.add('action-btn-mini');
+        //rimuoviamo la classe action-btn
+        document.getElementById('openDatePicker').classList.remove('action-btn');
+    }
+
     scheduledTime = draft.scheduled_time;
 }
 
@@ -736,12 +760,12 @@ async function postToSteem() {
 }
 
 async function converiIlTagInNomeComunita(tags) {
-    if (!tags) return 'Community not selected';
+    if (!tags) return 'Select a community';
     const tag = tags.split(' ')[0];
     try {
         const communities = await listaComunities;
         const community = communities.find(community => community.name === tag);
-        return community ? community.title : 'Community not selected';
+        return community ? community.title : 'Select a community';
     } catch (error) {
         console.error('Error while searching for community:', error);
         return 'Error occurred while searching for community';
@@ -785,8 +809,7 @@ function validateForm() {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-
-
+    
     initializeTelegram()
         .then(idTelegramo => {
             console.log('initializeTelegram resolved with idTelegram:', idTelegramo);
