@@ -1,9 +1,7 @@
-import dotenv from 'dotenv';
 
-dotenv.config();
 export default class ApiClient {
     constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com/api/steem') {
-        this.apiKey =  process.env.API_KEY;
+        this.apiKey =  'your_secret_api_key';
         this.baseUrl = baseUrl;
     }
 
