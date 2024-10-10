@@ -1,5 +1,5 @@
 export default class ApiClient {
-    constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com') {
+    constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com/api/steem') {
         this.apiKey = 'your_secret_api_key';
         this.baseUrl = baseUrl;
     }
@@ -48,7 +48,7 @@ export default class ApiClient {
     }
 
     postToSteem(username, title, body, tags) {
-        return this.sendRequest('/post_to_steem', 'POST', { username, title, body, tags });
+        return this.sendRequest('/post', 'POST', { username, title, body, tags });
     }
 
     createAccount(username, postingKey) {
@@ -72,6 +72,6 @@ export default class ApiClient {
     }
 
     listaComunities() {
-        return this.sendRequest('/api/steem/communities', 'GET');
+        return this.sendRequest('/communities', 'GET');
     }
 }
