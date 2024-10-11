@@ -809,7 +809,7 @@ function validateForm() {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     initializeTelegram()
         .then(idTelegramo => {
             console.log('initializeTelegram resolved with idTelegram:', idTelegramo);
