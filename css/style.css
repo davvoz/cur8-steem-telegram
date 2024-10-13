@@ -17,7 +17,6 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 95vh;
-    -webkit-text-size-adjust: 100%; /* Previene l'ingrandimento automatico del testo su iOS */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-fast);

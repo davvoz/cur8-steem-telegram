@@ -1,6 +1,5 @@
-import ApiClient from './api-client.js';
-import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
-
+import ApiClient from './js/api-client.js';
+import { initializeImageUpload, setUsernameForImageUpload } from './js/image-upload.js';
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
     { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },
@@ -51,7 +50,7 @@ let scheduledTime;
 let client = new ApiClient();
 let usernames = [];
 let idTelegram;
-let usernameSelected = '';
+window.usernameSelected = '';
 initializeImageUpload();
 
 function svuotaForm() {
@@ -113,7 +112,7 @@ function prepareShowPage(fromBozze) {
 }
 
 function prepareShowPageBozze() {
-    if (!usernameSelected.username) {
+    if (!window.usernameSelected.username) {
         displayResult({ error: 'Seleziona un account' }, 'error', true);
         return;
     }
@@ -384,12 +383,18 @@ function initializeEnd(result) {
     accountList.innerHTML = '';
     usernames.forEach(createAccountListItem);
     if (usernames.length > 0) {
+<<<<<<< HEAD:static/main.js
+        window.usernameSelected = usernames[0];
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
+        setUsernameForImageUpload(window.usernameSelected.username);
+=======
         usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
         setUsernameForImageUpload(usernameSelected.username);
+>>>>>>> master:main.js
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
-            selectAccount(usernameSelected, firstAccountContainer);
+            selectAccount(window.usernameSelected, firstAccountContainer);
         }
     }
     document.getElementById('spinner').classList.add('hide');
@@ -421,8 +426,8 @@ function createAccountListItem(username) {
 
     container.onclick = () => {
         selectAccount(username, container);
-        usernameSelected = username;
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
+        window.usernameSelected = username;
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
     };
 
     const buttonsContainer = document.createElement('div');
@@ -430,7 +435,7 @@ function createAccountListItem(username) {
     logoutButton.classList.add('action-btn');
     logoutButton.innerText = 'Logout';
     logoutButton.onclick = () => {
-        usernameSelected = '';
+        window.usernameSelected = '';
         handleLogout(username.username);
     };
 
@@ -451,7 +456,7 @@ function createAccountListItem(username) {
 }
 
 function selectAccount(username, containerElement) {
-    usernameSelected = username;
+    window.usernameSelected = username;
     document.querySelectorAll('.container-username').forEach(el => {
         el.classList.remove('selected');
     });
@@ -504,10 +509,10 @@ function enableNavigationButtons() {
 }
 
 function getUsername() {
-    if (typeof usernameSelected.username === 'undefined') {
+    if (typeof window.usernameSelected.username === 'undefined') {
         return usernames[0].username;
     }
-    return usernameSelected.username;
+    return window.usernameSelected.username;
 }
 
 function displayResult(result, type = 'success', enabled = false, callback, time = 2000) {

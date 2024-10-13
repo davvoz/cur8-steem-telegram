@@ -39,6 +39,29 @@
     --header-height: 80px;
 }
 
+.theme-chooser {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .theme-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--secondary-color);
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease-in-out;
+  }
+  .theme-option:hover {
+    transform: scale(1.1);
+  }
+  .theme-option.active {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+  }
+
 .red-dark-theme {
     --primary-color: #ff4757;
     --primary-variant: #ff6b6b;
