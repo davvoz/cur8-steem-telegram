@@ -33,7 +33,6 @@ function router() {
     }
 }
 
-
 const routes = {
     '/': showAccountPage,
     '/post': showPostPage,
@@ -833,6 +832,7 @@ function setupTelegramBackButton() {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.BackButton.show();
         window.Telegram.WebApp.BackButton.onClick(() => {
+            console.log('Back button clicked' + window.location.hash , window.location ,window.history);
             window.history.back();
         });
     }
