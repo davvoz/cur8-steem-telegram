@@ -1,6 +1,5 @@
-import ApiClient from './api-client.js';
-import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
-
+import ApiClient from './js/api-client.js';
+import { initializeImageUpload, setUsernameForImageUpload } from './js/image-upload.js';
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
     { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },
@@ -384,9 +383,15 @@ function initializeEnd(result) {
     accountList.innerHTML = '';
     usernames.forEach(createAccountListItem);
     if (usernames.length > 0) {
+<<<<<<< HEAD:static/main.js
         window.usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
         setUsernameForImageUpload(window.usernameSelected.username);
+=======
+        usernameSelected = usernames[0];
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
+        setUsernameForImageUpload(usernameSelected.username);
+>>>>>>> master:main.js
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
             selectAccount(window.usernameSelected, firstAccountContainer);
