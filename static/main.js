@@ -1,20 +1,45 @@
 import ApiClient from './api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
-import { applySavedTheme } from './theme.js';
 
 const eventListeners = [
-    { id: 'postBtn', event: 'click', handler: prepareShowPage },
-    { id: 'draftBtn', event: 'click', handler: prepareShowPageBozze },
-    { id: 'accountBtn', event: 'click', handler: () => showPage('accountPage') },
     { id: 'goLogin', event: 'click', handler: login },
     { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },
     { id: 'previewBtn', event: 'click', handler: togglePreview },
     { id: 'openDatePicker', event: 'click', handler: openDatePicker },
     { id: 'postToSteem', event: 'click', handler: postToSteem },
     { id: 'salvaBozza', event: 'click', handler: salvaBozza },
-    { id: 'loginInBtn', event: 'click', handler: () => showPage('loginPage') },
-    { id: 'configBtn', event: 'click', handler: () => showPage('configPage') },
+    { id: 'postBtn', event: 'click', handler: () => window.location.hash = '#/post' },
+    { id: 'draftBtn', event: 'click', handler: () => window.location.hash = '#/draft' },
+    { id: 'accountBtn', event: 'click', handler: () => window.location.hash = '#/' },
+    { id: 'loginInBtn', event: 'click', handler: () => window.location.hash = '#/login' },
+    { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' }
+
 ];
+
+function router() {
+    const path = window.location.hash.slice(1) || '/';
+    const route = routes[path];
+    if (route) {
+        route();
+        if (path === '/') {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.BackButton.hide();
+            }
+        } else {
+            setupTelegramBackButton();
+        }
+    } else {
+        console.log('404 Not Found');
+    }
+}
+
+const routes = {
+    '/': showAccountPage,
+    '/post': showPostPage,
+    '/draft': showDraftPage,
+    '/login': showLoginPage,
+    '/config': showConfigPage
+};
 
 eventListeners.forEach(({ id, event, handler }) => {
     document.getElementById(id).addEventListener(event, handler);
@@ -26,7 +51,6 @@ let scheduledTime;
 let client = new ApiClient();
 let usernames = [];
 let idTelegram;
-//let usernameSelected = '';
 window.usernameSelected = '';
 initializeImageUpload();
 
@@ -34,13 +58,9 @@ function svuotaForm() {
     document.getElementById('postTitle').value = '';
     document.getElementById('postTags').value = '';
     document.getElementById('postBody').value = '';
-    //mettiamo licona dell'orologio al posto del testo la <i>
     document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-    //aggiungiamo la classe btn-action-mini
     document.getElementById('openDatePicker').classList.add('action-btn-mini');
-    //rimuoviamo la classe action-btn
     document.getElementById('openDatePicker').classList.remove('action-btn');
-    //rimuoviamo la classe error dai campi del form
     ['postTitle', 'postBody', 'postTags'].forEach(id => {
         document.getElementById(id).classList.remove('error');
     });
@@ -128,11 +148,8 @@ function createDatePickerDialog() {
 function handleDatePickerConfirm(dialog, scheduledTimeInput) {
     const scheduled = scheduledTimeInput.value;
     scheduledTime = new Date(scheduled).getTime();
-    //scrivi l'orario al posto dell'orologio openDatePicker
     document.getElementById('openDatePicker').innerText = new Date(scheduled).toLocaleString();
-    //mofica la classe del bottone
     document.getElementById('openDatePicker').classList.add('action-btn');
-    //rimuoviamo la classe btn-action-mini
     document.getElementById('openDatePicker').classList.remove('action-btn-mini');
     dialog.remove();
 }
@@ -259,7 +276,6 @@ async function salvaBozza() {
     if (!validateForm()) {
         return;
     }
-
     let scheduledDate = null;
     const dateString = document.getElementById('openDatePicker').innerText;
     if (dateString) {
@@ -269,11 +285,8 @@ async function salvaBozza() {
         scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
         if (scheduledDate < Date.now()) {
             displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-            //mettiamo l'icona dell'orologio al posto del testo
             document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-            //aggiungiamo la classe btn-action-mini
             document.getElementById('openDatePicker').classList.add('action-btn-mini');
-            //rimuoviamo la classe action-btn
             document.getElementById('openDatePicker').classList.remove('action-btn');
             return;
         }
@@ -312,15 +325,12 @@ const getDialogTelegramId = () => {
 
         const confirmButton = dialog.querySelector('#confirmButtonTelegramId');
         confirmButton.addEventListener('click', () => {
-            //attiva lo spinner
             document.getElementById('spinner').classList.remove('hide');
             const telegramId = document.getElementById('telegramId').value;
             closeAndResolve(dialog, telegramId, resolve).then(() => {
-                //nascondi lo spinner
-                // document.getElementById('spinner').classList.add('hide');
+                initializeApp(telegramId);
             });
         });
-
         dialog.addEventListener('close', () => {
             closeAndResolve(dialog, null, resolve);
         });
@@ -357,16 +367,12 @@ async function initializeApp(userId, fromOut) {
             return;
         }
         usernames = result.usernames;
-        console.log(usernames);
-        applySavedTheme(); // applica il tema salvato
         enableNavigationButtons();
         initializeEnd(result);
     } catch (error) {
-        //apriamo il login usando l iD telegram che è stato passato
         showPage('loginPage');
         displayResult({ error: 'Effettua il login' }, 'error', true);
         console.error('Error in initialize app:', error);
-        //chiudi lo spinner
         document.getElementById('spinner').classList.add('hide');
     }
 }
@@ -380,15 +386,12 @@ function initializeEnd(result) {
     if (usernames.length > 0) {
         window.usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
-
         setUsernameForImageUpload(window.usernameSelected.username);
-
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
             selectAccount(window.usernameSelected, firstAccountContainer);
         }
     }
-    // chiudi lo spinner
     document.getElementById('spinner').classList.add('hide');
     showPage('accountPage');
     displayResult(result);
@@ -406,7 +409,6 @@ function createAccountListItem(username) {
     const img = document.createElement('img');
     img.alt = `${username.username}'s profile image`;
     img.classList.add('profile-image-thumbnail'); // Add a class for thumbnail styling
-    // Check if profile image exists, otherwise use material icon
     if (username.profile_image) {
         img.src = username.profile_image;
     } else {
@@ -419,7 +421,8 @@ function createAccountListItem(username) {
 
     container.onclick = () => {
         selectAccount(username, container);
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${username.username}`;
+        window.usernameSelected = username;
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
     };
 
     const buttonsContainer = document.createElement('div');
@@ -445,33 +448,53 @@ function createAccountListItem(username) {
     container.appendChild(buttonsContainer);
     li.appendChild(container);
     document.getElementById('accountList').appendChild(li);
-    // Select the first account by default
-
 }
 
 function selectAccount(username, containerElement) {
+    window.usernameSelected = username;
     document.querySelectorAll('.container-username').forEach(el => {
         el.classList.remove('selected');
     });
 
     containerElement.classList.add('selected');
-    window.usernameSelected = username;
     displayResult({ message: `Account ${username.username} selected` }, 'success');
     getUserDrafts(); // Carica i draft quando si seleziona un account
-    applySavedTheme(); // applica il tema salvato
 }
 
+
 async function handleLogout(username) {
-    try {
-        //attiva lo spinner
-        document.getElementById('spinner').classList.remove('hide');
-        const result = await client.logout(idTelegram, username);
-        displayResult(result, 'success');
-        initializeApp(idTelegram);
-    } catch (error) {
-        console.error('Error in handleLogout:', error);
-        displayResult({ error: error.message }, 'error');
-    }
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialogo');
+    dialog.innerHTML = `
+        <h2>Conferma Logout</h2>
+        <p>Sei sicuro di voler effettuare il logout?</p>
+        <button id="confirmButtonLogout" class="action-btn">Conferma</button>
+        <button id="cancelButtonLogout" class="action-btn">Annulla</button>
+    `;
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    const confirmButton = dialog.querySelector('#confirmButtonLogout');
+    const cancelButton = dialog.querySelector('#cancelButtonLogout');
+    confirmButton.addEventListener('click', async () => {
+        dialog.remove();
+        try {
+            //attiva lo spinner
+            document.getElementById('spinner').classList.remove('hide');
+            const result = await client.logout(idTelegram, username);
+            displayResult(result, 'success');
+            initializeApp(idTelegram);
+        } catch (error) {
+            console.error('Error in handleLogout:', error);
+            displayResult({ error: error.message }, 'error');
+        }
+    });
+    cancelButton.addEventListener('click', () => {
+        dialog.remove();
+    });
+
+    dialog.addEventListener('close', () => {
+        dialog.remove();
+    });
 }
 
 function enableNavigationButtons() {
@@ -515,7 +538,6 @@ function displayResult(result, type = 'success', enabled = false, callback, time
                 `;
         }
         document.body.appendChild(dialog);
-        //aggiungiamo la classe css che è il type
         dialog.classList.add(type);
         dialog.showModal();
         const closeButton = dialog.querySelector('#closeButton');
@@ -527,8 +549,7 @@ function displayResult(result, type = 'success', enabled = false, callback, time
         });
 
         dialog.addEventListener('close', () => dialog.remove());
-
-        if (!callback || !neverClose) {
+        if (type !== 'error' && (!callback || !neverClose)) {
             setTimeout(() => {
                 dialog.remove();
             }, time);
@@ -537,12 +558,10 @@ function displayResult(result, type = 'success', enabled = false, callback, time
 }
 
 function showPage(pageId) {
-    //chiudi l'anteproima se è aperta
     const modal = document.getElementById('previewModal');
     modal.style.display = 'none';
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-    // se il pageId è postPage non svuotare il form
     if (pageId !== 'postPage') {
         svuotaForm();
     }
@@ -576,7 +595,7 @@ async function getUserDrafts() {
     }
 }
 
-// Create list of draftsaction-btn-mini
+// Create list of drafts
 async function createListaDrafts(drafts, username) {
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = ''; // Clear existing list
@@ -586,9 +605,16 @@ async function createListaDrafts(drafts, username) {
         draftList.appendChild(li);
         return;
     }
+    drafts.sort((a, b) => {
+        if (!a.scheduled_time) return 1;
+        if (!b.scheduled_time) return -1;
+        return new Date(a.scheduled_time) - new Date(b.scheduled_time);
+    });
     drafts.forEach(async (draft, index) => {
         const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags, draft);
-
+        if (!draft.scheduled_time) {
+            li.classList.add('unscheduled-draft');
+        }
         draftList.appendChild(li);
     });
 }
@@ -596,28 +622,21 @@ async function createListaDrafts(drafts, username) {
 async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
-
     const titleSpan = createElementWithClass('span', 'draft-title', title);
     const idDiv = createElementWithClass('div', 'draft-id', id);
-
     const titleContainer = createElementWithClass('div', 'title-container');
     titleContainer.append(idDiv, titleSpan);
-
     const infoDiv = createElementWithClass('div', 'draft-info');
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
     infoDiv.style.marginRight = '10px';
-
     const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', scheduledTime ? new Date(scheduledTime).toLocaleString() : 'No scheduled time');
     infoDiv.appendChild(scheduledTimeSpan);
-
     const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
     titleScheduleContainer.append(titleContainer, infoDiv);
     li.appendChild(titleScheduleContainer);
-
     const communityNameSpan = createElementWithClass('div', 'community-name', await converiIlTagInNomeComunita(tags));
     infoDiv.appendChild(communityNameSpan);
-
     const buttonsContainer = createElementWithClass('div', 'buttons-container-draft');
     buttonsContainer.append(
         createIconButton('edit', () => {
@@ -626,9 +645,7 @@ async function createDraftListItem(id, title, scheduledTime, tags, draft) {
         }),
         createIconButton('delete', () => deleteDraft(draft.id))
     );
-
     li.appendChild(buttonsContainer);
-
     return li;
 }
 
@@ -646,7 +663,6 @@ function createIconButton(iconName, onClick) {
     icon.innerText = iconName;
     button.appendChild(icon);
     button.classList.add('action-btn-mini');
-
     button.onclick = (event) => {
         event.stopPropagation(); // Prevent triggering the parent click event
         onClick();
@@ -660,18 +676,13 @@ async function loadDraft(draft) {
     document.getElementById('postTags').value = draft.tags || '';
     document.getElementById('postBody').value = draft.body || '';
     document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
-    //mettiamo l'orario nel bottone se no l'oologio
     if (draft.scheduled_time) {
         document.getElementById('openDatePicker').innerText = new Date(draft.scheduled_time).toLocaleString();
-        //la classe del bottone
         document.getElementById('openDatePicker').classList.add('action-btn');
-        //rimuoviamo la classe btn-action-mini
         document.getElementById('openDatePicker').classList.remove('action-btn-mini');
     } else {
         document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-        //aggiungiamo la classe btn-action-mini
         document.getElementById('openDatePicker').classList.add('action-btn-mini');
-        //rimuoviamo la classe action-btn
         document.getElementById('openDatePicker').classList.remove('action-btn');
     }
 
@@ -681,7 +692,6 @@ async function loadDraft(draft) {
 async function deleteDraft(id) {
     const draftId = id;
     if (!draftId) return;
-
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
@@ -692,10 +702,8 @@ async function deleteDraft(id) {
     `;
     document.body.appendChild(dialog);
     dialog.showModal();
-
     const confirmButton = dialog.querySelector('#confirmButtonDelete');
     const cancelButton = dialog.querySelector('#cancelButtonDelete');
-
     confirmButton.addEventListener('click', async () => {
         dialog.remove();
         try {
@@ -707,11 +715,9 @@ async function deleteDraft(id) {
             displayResult({ error: error.message }, 'error');
         }
     });
-
     cancelButton.addEventListener('click', () => {
         dialog.remove();
     });
-
     dialog.addEventListener('close', () => {
         dialog.remove();
     });
@@ -732,10 +738,8 @@ async function postToSteem() {
     `;
     document.body.appendChild(dialog);
     dialog.showModal();
-
     const confirmButton = dialog.querySelector('#confirmButtonPost');
     const cancelButton = dialog.querySelector('#cancelButtonPost');
-
     confirmButton.addEventListener('click', async () => {
         dialog.remove();
         try {
@@ -752,11 +756,9 @@ async function postToSteem() {
             displayResult({ error: error.message }, 'error', true);
         }
     });
-
     cancelButton.addEventListener('click', () => {
         dialog.remove();
     });
-
     dialog.addEventListener('close', () => {
         dialog.remove();
     });
@@ -779,10 +781,8 @@ function validateForm() {
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
     const tags = document.getElementById('postTags').value.trim();
-
     let isValid = true;
     let errorMessage = '';
-
     if (title === '') {
         isValid = false;
         errorMessage += 'Il titolo del post è obbligatorio.\n';
@@ -791,18 +791,53 @@ function validateForm() {
         isValid = false;
         errorMessage += 'Il corpo del post è obbligatorio.\n';
     }
-
     if (tags === '') {
         isValid = false;
         errorMessage += 'Almeno un tag è obbligatorio.\n';
     }
-
     if (!isValid) {
         displayResult({ error: errorMessage }, 'error', true, false, 5000);
     }
-
     return isValid;
 }
+
+function showAccountPage() {
+    showPage('accountPage');
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.BackButton.hide();
+    }
+}
+
+function showPostPage() {
+    showPage('postPage');
+    setupTelegramBackButton();
+}
+
+function showDraftPage() {
+    showPage('draftPage');
+    setupTelegramBackButton();
+}
+
+function showLoginPage() {
+    showPage('loginPage');
+    setupTelegramBackButton();
+}
+
+function showConfigPage() {
+    showPage('configPage');
+    setupTelegramBackButton();
+}
+
+function setupTelegramBackButton() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.BackButton.show();
+        window.Telegram.WebApp.BackButton.onClick(() => {
+            console.log('Back button clicked' + window.location.hash , window.location ,window.history);
+            window.history.back();
+        });
+    }
+}
+
 
 // Add input event listeners to remove error class when user starts typing
 ['postTitle', 'postBody', 'postTags'].forEach(id => {
@@ -810,9 +845,10 @@ function validateForm() {
         this.classList.remove('error');
     });
 });
+window.addEventListener('hashchange', router);
 
 document.addEventListener('DOMContentLoaded', () => {
-
+    router();
     initializeTelegram()
         .then(idTelegramo => {
             console.log('initializeTelegram resolved with idTelegram:', idTelegramo);
