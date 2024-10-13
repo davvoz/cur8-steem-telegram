@@ -1,17 +1,26 @@
 
 export default class ApiClient {
     constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com/api/steem') {
-        this.apiKey =  'your_secret_api_key';
+        this.apiKey = 'your_secret_api_key';
         this.baseUrl = baseUrl;
     }
 
-    async sendRequest(endpoint, method, data = null) {
+    async sendRequest(endpoint, method, data = null) {   
+        const telegramData = {
+            'id': window.Telegram.WebApp.initDataUnsafe.user.id,
+            'first_name': window.Telegram.WebApp.initDataUnsafe.user.first_name,
+            'username': window.Telegram.WebApp.initDataUnsafe.user.username,
+            'auth_date': window.Telegram.WebApp.initDataUnsafe.auth_date,
+            'hash': window.Telegram.WebApp.initDataUnsafe.hash
+        };
+        console.log( JSON.stringify(telegramData));
         const url = `${this.baseUrl}${endpoint}`;
         const options = {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                'API-Key': this.apiKey
+                'API-Key': this.apiKey,
+                'Telegram-Data': JSON.stringify(telegramData)
             },
             body: data ? JSON.stringify(data) : null
         };
@@ -75,4 +84,6 @@ export default class ApiClient {
     listaComunities() {
         return this.sendRequest('/communities', 'GET');
     }
+
+    
 }
