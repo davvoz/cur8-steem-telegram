@@ -21,11 +21,18 @@ function router() {
     const route = routes[path];
     if (route) {
         route();
+        if (path === '/') {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.BackButton.hide();
+            }
+        } else {
+            setupTelegramBackButton();
+        }
     } else {
-        // Gestisci la rotta non trovata
         console.log('404 Not Found');
     }
 }
+
 
 const routes = {
     '/': showAccountPage,
@@ -797,29 +804,40 @@ function validateForm() {
 
 function showAccountPage() {
     showPage('accountPage');
-    // Logica aggiuntiva per la pagina account
-  }
-  
-  function showPostPage() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.BackButton.hide();
+    }
+}
+
+function showPostPage() {
     showPage('postPage');
-    // Logica aggiuntiva per la pagina post
-  }
-  
-  function showDraftPage() {
+    setupTelegramBackButton();
+}
+
+function showDraftPage() {
     showPage('draftPage');
-    // Logica aggiuntiva per la pagina bozze
-  }
-  
-  function showLoginPage() {
+    setupTelegramBackButton();
+}
+
+function showLoginPage() {
     showPage('loginPage');
-    // Logica aggiuntiva per la pagina login
-  }
-  
-  function showConfigPage() {
+    setupTelegramBackButton();
+}
+
+function showConfigPage() {
     showPage('configPage');
-    // Logica aggiuntiva per la pagina configurazione
-  }
-  
+    setupTelegramBackButton();
+}
+
+function setupTelegramBackButton() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.BackButton.show();
+        window.Telegram.WebApp.BackButton.onClick(() => {
+            window.history.back();
+        });
+    }
+}
+
 
 // Add input event listeners to remove error class when user starts typing
 ['postTitle', 'postBody', 'postTags'].forEach(id => {
