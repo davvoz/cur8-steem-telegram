@@ -10,8 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.1/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="themes.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/themes.css">
 </head>
 
 
@@ -109,8 +109,8 @@
     <!-- Pagina Gestione Account CRUD -->
     <div id="accountPage" class="page">
        <div class="header"> <h2>Account Manager</h2>
-        <!--logo di cur8-->
-        <img src="./assets/logo_tra.png" alt="cur8 logo" style="width: 81px;height: 81px;display: flex;/* background: black; */">    </div>
+        <!--logo di cur8-->   
+        <img src="{{ url_for('static', filename='assets/logo_tra.png') }}" alt="cur8 logo" style="width: 81px;height: 81px;display: flex;/* background: black; */">    </div>
         <ul id="accountList"></ul>
         <div class="actions-container">
             <button class="action-btn loginIn" id="loginInBtn">
@@ -127,118 +127,43 @@
     </div>
 
     <!-- Menu di selezione per cambiare tema -->
-    <div id="configPage" class="page" style="overflow: hidden;">
+    <div id="configPage" class="page">
 
         <h2>Configurazione</h2>
-        <button class="collapsible">Selezione Tema</button>
+        <!-- <button class="collapsible">Selezione Tema</button> -->
 
-        <div class="contento" id="themeConfig">
-            <div class="theme-selector"> </div>
+        <div class="theme-chooser">
+            <!-- <div class="theme-selector"> </div> --> 
+            <div class="theme-option" style="background: linear-gradient(to right, #2c2c54 50%, #ff4757 50%);" onclick="setTheme('red-dark-theme')"></div>   
+            <div class="theme-option" style="background: linear-gradient(to right, #20232a 50%, #9c27b0 50%);" onclick="setTheme('purple-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #1e3c3b 50%, #00c853 50%);" onclick="setTheme('green-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #0a192f 50%, #2196f3 50%);" onclick="setTheme('blue-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #2c3e50 50%, #ff9800 50%);" onclick="setTheme('orange-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #2d3436 50%, #ffeb3b 50%);" onclick="setTheme('yellow-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #2f3640 50%, #e91e63 50%);" onclick="setTheme('pink-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #263238 50%, #00bcd4 50%);" onclick="setTheme('cyan-dark-them')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #795548 50%, #1e272e 50%);" onclick="setTheme('brown-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #2c3e50 50%, #bdc3c7 50%);" onclick="setTheme('silver-dark-theme')"></div>
+            <div class="theme-option" style="background: linear-gradient(to right, #222f3e 50%, #cddc39 50%);" onclick="setTheme('lime-dark-theme')"></div>
+            <!-- <div class="theme-option" style="background-color: #f0f0f0;" onclick="setTheme('light')"></div>
+            <div class="theme-option" style="background-color: #333333;" onclick="setTheme('dark')"></div> -->
+            <!-- <div class="theme-option" style="background-color: #e6f3ff;" onclick="setTheme('blue')"></div>
+            <div class="theme-option" style="background-color: #fff0f5;" onclick="setTheme('pink')"></div>
+            <div class="theme-option" style="background-color: #f0fff0;" onclick="setTheme('mint')"></div>
+            <div class="theme-option" style="background-color: #fffacd;" onclick="setTheme('lemon')"></div>
+            <div class="theme-option" style="background-color: #ffe4b5;" onclick="setTheme('peach')"></div>
+            <div class="theme-option" style="background-color: #e6e6fa;" onclick="setTheme('lavender')"></div>
+            <div class="theme-option" style="background-color: #f5deb3;" onclick="setTheme('wheat')"></div>
+            <div class="theme-option" style="background-color: #d3ffce;" onclick="setTheme('sage')"></div>
+            <div class="theme-option" style="background-color: #ffdab9;" onclick="setTheme('coral')"></div>
+            <div class="theme-option" style="background-color: #e0ffff;" onclick="setTheme('sky')"></div>
+            <div class="theme-option" style="background-color: #ff4500;" onclick="setTheme('sunset')"></div>
+            <div class="theme-option" style="background-color: #228b22;" onclick="setTheme('forest')"></div>
+            <div class="theme-option" style="background-color: #1e90ff;" onclick="setTheme('ocean')"></div>
+            <div class="theme-option" style="background-color: #d2691e;" onclick="setTheme('autumn')"></div>
+            <div class="theme-option" style="background-color: #4b0082;" onclick="setTheme('galaxy')"></div> -->
         </div>
         <script>
-
-            //creiamo un array di oggetti per i temi
-            const themes = [
-                {
-                    name: 'root',
-                    value: 'default'
-                },
-                {
-                    name: 'red-dark-theme',
-                    value: 'red-dark-theme'
-                },
-                {
-                    name: 'purple-dark-theme',
-                    value: 'purple-dark-theme'
-                },
-                {
-                    name: 'green-dark-theme',
-                    value: 'green-dark-theme'
-                },
-                {
-                    name: 'blue-dark-theme',
-                    value: 'blue-dark-theme'
-                },
-                {
-                    name: 'orange-dark-theme',
-                    value: 'orange-dark-theme'
-                },
-                {
-                    name: 'yellow-dark-theme',
-                    value: 'yellow-dark-theme'
-                },
-                {
-                    name: 'pink-dark-theme',
-                    value: 'pink-dark-theme'
-                },
-                {
-                    name: 'cyan-dark-theme',
-                    value: 'cyan-dark-theme'
-                },
-                {
-                    name: 'brown-dark-theme',
-                    value: 'brown-dark-theme'
-                },
-                {
-                    name: 'silver-dark-theme',
-                    value: 'silver-dark-theme'
-                },
-                {
-                    name: 'lime-dark-theme',
-                    value: 'lime-dark-theme'
-                }
-
-            ];
-
-            //creiamo N card per i temi
-            const themeSelector = document.querySelector('.theme-selector');
-            let themeSelected = 'root';
-            themes.forEach(theme => {
-                const themeCard = document.createElement('div');
-                themeCard.classList.add('theme-card');
-                themeCard.innerHTML = `<h3>${theme.name}</h3>`;
-                themeCard.addEventListener('click', () => {
-                    document.body.className = theme.value;
-                    themeSelected = theme.name;
-                });
-                themeSelector.appendChild(themeCard);
-            });
-
-            //creiamo un bottone per salvare il tema e mettiamolo in una card
-            const saveThemeCard = document.createElement('div');
-            saveThemeCard.classList.add('theme-card');
-            const saveThemeBtn = document.createElement('h3');
-            saveThemeBtn.classList.add('action-btn');
-            saveThemeBtn.innerText = 'Salva';
-            saveThemeBtn.addEventListener('click', () => {
-                localStorage.setItem('theme', themeSelected);
-                alert('Tema salvato');
-                
-            });
-            saveThemeCard.appendChild(saveThemeBtn);
-            themeSelector.appendChild(saveThemeCard);
-            //controlliamo se c'è un tema salvato
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                document.body.className = savedTheme;
-            }
-
-            let coll = document.getElementsByClassName("collapsible");
-            let i;
-
-            for (i = 0; i < coll.length; i++) {
-                coll[i].addEventListener("click", function () {
-                    this.classList.toggle("active");
-                    let content = this.nextElementSibling;
-                    if (content.style.maxHeight) {
-                        content.style.maxHeight = null;
-                    } else {
-                        content.style.maxHeight = content.scrollHeight + "px";
-                    }
-                });
-            }
-
-
             // Load default post settings from localStorage
             function loadDefaultPostSettings() {
                 const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
@@ -258,14 +183,12 @@
                     document.getElementById('postTags').value = defaultPostSettings.tags || '';
                 }
             }
-
-
-            // Load default post settings when the page is loaded
             loadDefaultPostSettings();
 
         </script>
-
-        <script type="module" src="main.js"></script>
+        <script type="module" src="{{ url_for('static', filename='theme.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
+        <!-- <script type="module" src="main.js"></script> -->
 
 
 </body>

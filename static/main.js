@@ -1,5 +1,6 @@
 import ApiClient from './api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
+import { applySavedTheme } from './theme.js';
 
 const eventListeners = [
     { id: 'postBtn', event: 'click', handler: prepareShowPage },
@@ -25,7 +26,8 @@ let scheduledTime;
 let client = new ApiClient();
 let usernames = [];
 let idTelegram;
-let usernameSelected = '';
+//let usernameSelected = '';
+window.usernameSelected = '';
 initializeImageUpload();
 
 function svuotaForm() {
@@ -91,7 +93,7 @@ function prepareShowPage(fromBozze) {
 }
 
 function prepareShowPageBozze() {
-    if (!usernameSelected.username) {
+    if (!window.usernameSelected.username) {
         displayResult({ error: 'Seleziona un account' }, 'error', true);
         return;
     }
@@ -355,6 +357,8 @@ async function initializeApp(userId, fromOut) {
             return;
         }
         usernames = result.usernames;
+        console.log(usernames);
+        applySavedTheme(); // applica il tema salvato
         enableNavigationButtons();
         initializeEnd(result);
     } catch (error) {
@@ -374,14 +378,14 @@ function initializeEnd(result) {
     accountList.innerHTML = '';
     usernames.forEach(createAccountListItem);
     if (usernames.length > 0) {
-        usernameSelected = usernames[0];
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
+        window.usernameSelected = usernames[0];
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
 
-        setUsernameForImageUpload(usernameSelected.username);
+        setUsernameForImageUpload(window.usernameSelected.username);
 
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
-            selectAccount(usernameSelected, firstAccountContainer);
+            selectAccount(window.usernameSelected, firstAccountContainer);
         }
     }
     // chiudi lo spinner
@@ -415,8 +419,7 @@ function createAccountListItem(username) {
 
     container.onclick = () => {
         selectAccount(username, container);
-        usernameSelected = username;
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${usernameSelected.username}`;
+        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${username.username}`;
     };
 
     const buttonsContainer = document.createElement('div');
@@ -424,7 +427,7 @@ function createAccountListItem(username) {
     logoutButton.classList.add('action-btn');
     logoutButton.innerText = 'Logout';
     logoutButton.onclick = () => {
-        usernameSelected = '';
+        window.usernameSelected = '';
         handleLogout(username.username);
     };
 
@@ -447,16 +450,16 @@ function createAccountListItem(username) {
 }
 
 function selectAccount(username, containerElement) {
-    usernameSelected = username;
     document.querySelectorAll('.container-username').forEach(el => {
         el.classList.remove('selected');
     });
 
     containerElement.classList.add('selected');
+    window.usernameSelected = username;
     displayResult({ message: `Account ${username.username} selected` }, 'success');
     getUserDrafts(); // Carica i draft quando si seleziona un account
+    applySavedTheme(); // applica il tema salvato
 }
-
 
 async function handleLogout(username) {
     try {
@@ -478,10 +481,10 @@ function enableNavigationButtons() {
 }
 
 function getUsername() {
-    if (typeof usernameSelected.username === 'undefined') {
+    if (typeof window.usernameSelected.username === 'undefined') {
         return usernames[0].username;
     }
-    return usernameSelected.username;
+    return window.usernameSelected.username;
 }
 
 function displayResult(result, type = 'success', enabled = false, callback, time = 2000) {
