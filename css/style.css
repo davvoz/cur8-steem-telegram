@@ -38,7 +38,7 @@ h1 {
     font-weight: 500;
 }
 
-nav {
+/* nav {
     display: flex;
     justify-content: space-around;
     background-color: var(--surface);
@@ -81,7 +81,7 @@ nav button:focus {
 nav button:disabled {
     color: #666;
     cursor: not-allowed;
-}
+} */
 
 .page {
     display: none;
@@ -340,7 +340,7 @@ ul li {
         padding-left: 80px;
     }
 
-    nav {
+    /* nav {
         flex-direction: column;
         height: 100%;
         width: 80px;
@@ -349,9 +349,9 @@ ul li {
         left: 0;
         transform: translateX(0);
         transition: width var(--transition-fast);
-    }
+    } */
 
-    nav.show {
+    /* nav.show {
         width: 200px;
     }
 
@@ -364,7 +364,7 @@ ul li {
 
     nav button i {
         margin-right: var(--spacing-md);
-    }
+    } */
 
     .page {
         margin-bottom: 0;
@@ -398,13 +398,13 @@ ul li {
         padding-left: 200px;
     }
 
-    nav {
+    /* nav {
         width: 200px;
     }
 
     nav button {
         font-size: 1em;
-    }
+    } */
 
     .draft-item {
         grid-template-columns: 3fr 1fr;
