@@ -13,6 +13,7 @@ export default class ApiClient {
             'auth_date': window.Telegram?.WebApp?.initDataUnsafe?.auth_date || 'default_auth_date',
             'hash': window.Telegram?.WebApp?.initDataUnsafe?.hash || 'default_hash'
         };
+        
         console.log( JSON.stringify(telegramData));
         const url = `${this.baseUrl}${endpoint}`;
         const options = {
