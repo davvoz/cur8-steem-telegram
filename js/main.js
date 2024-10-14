@@ -1,5 +1,7 @@
 import ApiClient from './api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
+import { applySavedTheme } from './theme.js';
+
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
     { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },
@@ -461,6 +463,7 @@ function selectAccount(username, containerElement) {
     containerElement.classList.add('selected');
     displayResult({ message: `Account ${username.username} selected` }, 'success');
     getUserDrafts(); // Carica i draft quando si seleziona un account
+    applySavedTheme(); // Carica il tema salvato quando si seleziona un account
 }
 
 
@@ -766,19 +769,6 @@ async function postToSteem() {
     });
 }
 
-async function converiIlTagInNomeComunita(tags) {
-    if (!tags) return 'Select a community';
-    const tag = tags.split(' ')[0];
-    try {
-        const communities = await listaComunities;
-        const community = communities.find(community => community.name === tag);
-        return community ? community.title : 'Select a community';
-    } catch (error) {
-        console.error('Error while searching for community:', error);
-        return 'Error occurred while searching for community';
-    }
-}
-
 function validateForm() {
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
@@ -801,6 +791,19 @@ function validateForm() {
         displayResult({ error: errorMessage }, 'error', true, false, 5000);
     }
     return isValid;
+}
+
+async function converiIlTagInNomeComunita(tags) {
+    if (!tags) return 'Select a community';
+    const tag = tags.split(' ')[0];
+    try {
+        const communities = await listaComunities;
+        const community = communities.find(community => community.name === tag);
+        return community ? community.title : 'Select a community';
+    } catch (error) {
+        console.error('Error while searching for community:', error);
+        return 'Error occurred while searching for community';
+    }
 }
 
 function showAccountPage() {
