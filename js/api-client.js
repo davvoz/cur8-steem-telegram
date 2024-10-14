@@ -7,11 +7,11 @@ export default class ApiClient {
 
     async sendRequest(endpoint, method, data = null) {   
         const telegramData = {
-            'id': window.Telegram.WebApp.initDataUnsafe.user.id,
-            'first_name': window.Telegram.WebApp.initDataUnsafe.user.first_name,
-            'username': window.Telegram.WebApp.initDataUnsafe.user.username,
-            'auth_date': window.Telegram.WebApp.initDataUnsafe.auth_date,
-            'hash': window.Telegram.WebApp.initDataUnsafe.hash
+            'id': window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'default_id',
+            'first_name': window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name || 'default_first_name',
+            'username': window.Telegram?.WebApp?.initDataUnsafe?.user?.username || 'default_username',
+            'auth_date': window.Telegram?.WebApp?.initDataUnsafe?.auth_date || 'default_auth_date',
+            'hash': window.Telegram?.WebApp?.initDataUnsafe?.hash || 'default_hash'
         };
         console.log( JSON.stringify(telegramData));
         const url = `${this.baseUrl}${endpoint}`;
