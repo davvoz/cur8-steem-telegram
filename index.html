@@ -128,10 +128,7 @@
     </div>
 
     <!-- Menu di selezione per cambiare tema -->
-<div id="configPage" class="page active" style="
-    overflow: hidden;
-    padding: 0px 0px 30px 0px;
-">
+<div id="configPage" class="page" style="overflow: hidden; padding: 0px 0px 30px 0px;">
 
         <h2>Configurazione</h2>
         <!-- <button class="collapsible">Selezione Tema</button> -->
@@ -176,56 +173,7 @@
         <script type="module" src="./js/theme.js"></script>
         <script type="module" src="./js/main.js"></script>
         <!-- <script type="module" src="main.js"></script> -->
-
-
-
-
-</div>
-        <h2>Configurazione</h2>
-        <!-- <button class="collapsible">Selezione Tema</button> -->
-
-        <div class="theme-chooser">
-            <!-- <div class="theme-selector"> </div> --> 
-            <div class="theme-option" style="background: linear-gradient(to right, #2c2c54 50%, #ff4757 50%);" onclick="setTheme('red-dark-theme')"></div>   
-            <div class="theme-option" style="background: linear-gradient(to right, #20232a 50%, #9c27b0 50%);" onclick="setTheme('purple-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #1e3c3b 50%, #00c853 50%);" onclick="setTheme('green-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #0a192f 50%, #2196f3 50%);" onclick="setTheme('blue-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2c3e50 50%, #ff9800 50%);" onclick="setTheme('orange-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2d3436 50%, #ffeb3b 50%);" onclick="setTheme('yellow-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2f3640 50%, #e91e63 50%);" onclick="setTheme('pink-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #e0f7fa 50%, #00bcd4 50%);" onclick="setTheme('cyan-dark-them')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #795548 50%, #1e272e 50%);" onclick="setTheme('brown-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2c3e50 50%, #bdc3c7 50%);" onclick="setTheme('silver-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #222f3e 50%, #cddc39 50%);" onclick="setTheme('lime-dark-theme')"></div>
-        </div>
-        <script>
-            // Load default post settings from localStorage
-            function loadDefaultPostSettings() {
-                const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
-                if (defaultPostSettings) {
-                    document.getElementById('defaultPostTitle').value = defaultPostSettings.title || '';
-                    document.getElementById('defaultPostBody').value = defaultPostSettings.body || '';
-                    document.getElementById('defaultPostTags').value = defaultPostSettings.tags || '';
-                }
-            }
-
-            // Apply default post settings to the post form
-            function applyDefaultPostSettings() {
-                const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
-                if (defaultPostSettings) {
-                    document.getElementById('postTitle').value = defaultPostSettings.title || '';
-                    document.getElementById('postBody').value = defaultPostSettings.body || '';
-                    document.getElementById('postTags').value = defaultPostSettings.tags || '';
-                }
-            }
-            loadDefaultPostSettings();
-
-        </script>
-        <script type="module" src="./js/theme.js"></script>
-        <script type="module" src="./js/main.js"></script>
-        <!-- <script type="module" src="main.js"></script> -->
-
-
+    </div>
 </body>
 
 </html>
