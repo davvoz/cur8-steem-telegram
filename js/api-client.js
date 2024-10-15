@@ -21,7 +21,7 @@ export default class ApiClient {
             headers: {
                 'Content-Type': 'application/json',
                 'API-Key': this.apiKey,
-                'Telegram-Data': JSON.stringify(telegramData)
+                'Telegram-Data': window.Telegram?.WebApp?.initData
             },
             body: data ? JSON.stringify(data) : null
         };

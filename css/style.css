@@ -38,51 +38,6 @@ h1 {
     font-weight: 500;
 }
 
-/* nav {
-    display: flex;
-    justify-content: space-around;
-    background-color: var(--surface);
-    padding: var(--spacing-sm) 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transition: transform var(--transition-fast);
-}
-
-nav.hidden {
-    transform: translateY(100%);
-}
-
-nav button {
-    background-color: transparent;
-    color: var(--primary-color);
-    border: none;
-    padding: var(--spacing-sm);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8em;
-}
-
-nav button:hover,
-nav button:focus {
-    background-color: rgba(187, 134, 252, 0.1);
-    color: var(--primary-variant);
-}
-
-nav button:disabled {
-    color: #666;
-    cursor: not-allowed;
-} */
-
 .page {
     display: none;
     animation: fadeIn 0.5s ease-in-out;
