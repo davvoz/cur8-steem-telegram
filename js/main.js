@@ -360,7 +360,7 @@ async function initializeApp(userId, fromOut) {
     
     console.log('initializeApp called with userId:', window.location.href);
     const goSteemLogin = () => {
-        window.location.href = `https://steemlogin.com/authorize/cur8?redirect_uri=${window.location.href}`;
+        window.open(`https://steemlogin.com/authorize/cur8?redirect_uri=${window.location.href}`, '_blank');
     };
 
     goSteemLogin();
