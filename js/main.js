@@ -355,21 +355,126 @@ const closeAndResolve = async (dialog, value, resolve) => {
     await resolve(value);
 };
 
+function updateStatus(message) {
+    //stampa con le nostre dialog
+    displayResult({ info: message }, 'info', true);
+}
+
+function initializeSteemLogin() {
+    if (typeof window.steemlogin === 'undefined' || typeof window.steemlogin.Client === 'undefined') {
+        updateStatus('Errore: SteemLogin non è definito correttamente. Ricarica la pagina o controlla la connessione.');
+        return false;
+    }
+
+    try {
+        steemClient = new window.steemlogin.Client({
+            app: 'cur8',
+            callbackURL: window.location.origin + window.location.pathname,
+            scope: ['login', 'vote', 'comment', 'custom_json'],
+        });
+        updateStatus('SteemLogin inizializzato correttamente.');
+        return true;
+    } catch (error) {
+        updateStatus('Errore durante l\'inizializzazione di SteemLogin: ' + error.message);
+        return false;
+    }
+}
+
+let accessToken;
+let loggedIn = false;
+
+function handleCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    accessToken = urlParams.get('access_token');
+    const state = urlParams.get('state');
+
+    if (accessToken && state) {
+        const savedState = sessionStorage.getItem('steemLoginState');
+        if (state === savedState) {
+            loggedIn = true;
+            updateStatus('Login effettuato con successo');
+            getUserDataButton.style.display = 'inline';
+            // Rimuovi i parametri dall'URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            updateStatus('Errore: Stato non corrispondente');
+        }
+        sessionStorage.removeItem('steemLoginState');
+    }
+}
+
+async function getUserData() {
+    if (!loggedIn || !accessToken) {
+        updateStatus('Utente non loggato. Impossibile ottenere i dati.');
+        return;
+    }
+
+    try {
+        const response = await fetch('https://api.steemlogin.com/api/me', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Errore nella richiesta API');
+        }
+
+        const userData = await response.json();
+        displayUserData(userData);
+    } catch (error) {
+        console.error('Errore durante il recupero dei dati utente:', error);
+        updateStatus('Errore durante il recupero dei dati utente: ' + error.message);
+    }
+}
+
+function displayUserData(userData) {
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialogo');
+    dialog.innerHTML = `
+        <h2>Dati Utente</h2>
+        <ul>
+            ${Object.entries(userData).map(([key, value]) => `<li>${key}: ${value}</li>`).join('')}
+        </ul>
+        <button id="closeButton" class="action-btn">Chiudi</button>
+    `;
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    const closeButton = dialog.querySelector('#closeButton');
+    closeButton.addEventListener('click', () => {
+        dialog.remove();
+    });
+    dialog.addEventListener('close', () => dialog.remove());
+}
+
 async function initializeApp(userId, fromOut) {
     //andiamo su steemlogin  
-    
-    console.log('initializeApp called with userId:', window.location.href);
-    const goSteemLogin = () => {
-        window.open(`https://steemlogin.com/authorize/cur8?redirect_uri=${window.location.href}`, '_blank');
-    };
 
-    goSteemLogin();
     if (!userId) {
         displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
         return;
     }
+    handleCallback();
+    initializeSteemLogin()
 
+    const steemClient = new window.steemlogin.Client({
+        app: 'cur8',
+        callbackURL: window.location.origin + window.location.pathname,
+        scope: ['login', 'vote', 'comment', 'custom_json'],
+    });
 
+    try {
+        const state = Math.random().toString(36).substring(7);
+        const loginUrl = steemClient.getLoginURL(state);
+
+        sessionStorage.setItem('steemLoginState', state);
+
+        window.location.href = loginUrl;
+    } catch (error) {
+        console.error('Errore durante il processo di login:', error);
+        updateStatus('Errore durante il processo di login: ' + error.message);
+    }
+    getUserData();
     client = new ApiClient();
     try {
         //attiva lo spinner
