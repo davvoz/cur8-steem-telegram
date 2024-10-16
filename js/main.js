@@ -315,7 +315,7 @@ const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
         return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
-    return await getDialogTelegramId();
+    return 6999103418;
 };
 
 const getDialogTelegramId = () => {
@@ -391,8 +391,6 @@ function handleCallback() {
         const savedState = sessionStorage.getItem('steemLoginState');
         if (state === savedState) {
             //scrivilo nel local storage
-            localStorage.setItem('loggedIn', 'true');
-
             updateStatus('Login effettuato con successo');
             // Rimuovi i parametri dall'URL
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -401,12 +399,11 @@ function handleCallback() {
         }
         sessionStorage.removeItem('steemLoginState');
     }
-    
+
 }
 
 async function getUserData() {
-    loggedIn = localStorage.getItem('loggedIn') === 'true';
-    if (!loggedIn || !accessToken) {
+    if (!accessToken) {
         updateStatus('Utente non loggato. Impossibile ottenere i dati.');
         return;
     }
@@ -424,7 +421,6 @@ async function getUserData() {
 
         const userData = await response.json();
         console.log('Dati utente:', userData);
-        localStorage.setItem('userData', JSON.stringify(userData));
         displayUserData(userData);
     } catch (error) {
         console.error('Errore durante il recupero dei dati utente:', error);
@@ -452,76 +448,36 @@ function displayUserData(userData) {
 }
 
 async function initializeApp(userId, fromOut) {
-    const loggedIn = localStorage.getItem('loggedIn') === 'true';
-    if (loggedIn) {
-        client = new ApiClient();
-        try {
-            //attiva lo spinner
-            document.getElementById('spinner').classList.remove('hide');
-            const result = await client.checkLogin(userId);
-            if (fromOut && typeof result.usernames === 'undefined') {
-                //termina lo spinner
-                document.getElementById('spinner').classList.add('hide');
-                displayResult({ error: 'Nessun account trovato' }, 'error', true);
-                return;
-            }
-            localStorage.setItem('loggedIn', 'true');
-            usernames = result.usernames;
-            enableNavigationButtons();
-            initializeEnd(result);
-        } catch (error) {
-            showPage('loginPage');
-            displayResult({ error: 'Effettua il login' }, 'error', true);
-            console.error('Error in initialize app:', error);
-            document.getElementById('spinner').classList.add('hide');
-        }
-    } else {
-        if (!userId) {
-            displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
-            return;
-        }
-        handleCallback();
-        initializeSteemLogin()
 
-        const steemClient = new window.steemlogin.Client({
-            app: 'cur8',
-            callbackURL: window.location.origin + window.location.pathname,
-            scope: ['login', 'vote', 'comment', 'custom_json'],
-        });
-
-        try {
-            const state = Math.random().toString(36).substring(7);
-            const loginUrl = steemClient.getLoginURL(state);
-
-            sessionStorage.setItem('steemLoginState', state);
-
-            window.location.href = loginUrl;
-        } catch (error) {
-            console.error('Errore durante il processo di login:', error);
-            updateStatus('Errore durante il processo di login: ' + error.message);
-        }
-        getUserData();
-        client = new ApiClient();
-        try {
-            //attiva lo spinner
-            document.getElementById('spinner').classList.remove('hide');
-            const result = await client.checkLogin(userId);
-            if (fromOut && typeof result.usernames === 'undefined') {
-                //termina lo spinner
-                document.getElementById('spinner').classList.add('hide');
-                displayResult({ error: 'Nessun account trovato' }, 'error', true);
-                return;
-            }
-            usernames = result.usernames;
-            enableNavigationButtons();
-            initializeEnd(result);
-        } catch (error) {
-            showPage('loginPage');
-            displayResult({ error: 'Effettua il login' }, 'error', true);
-            console.error('Error in initialize app:', error);
-            document.getElementById('spinner').classList.add('hide');
-        }
+    if (!userId) {
+        displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
+        return;
     }
+
+    handleCallback();
+    initializeSteemLogin()
+
+    const steemClient = new window.steemlogin.Client({
+        app: 'cur8',
+        callbackURL: window.location.origin + window.location.pathname,
+        scope: ['login', 'vote', 'comment', 'custom_json'],
+    });
+
+    try {
+        const state = Math.random().toString(36).substring(7);
+        const loginUrl = steemClient.getLoginURL(state);
+        sessionStorage.setItem('steemLoginState', state);
+        window.location.href = loginUrl;
+    } catch (error) {
+        console.error('Errore durante il processo di login:', error);
+        updateStatus('Errore durante il processo di login: ' + error.message);
+    }
+    localStorage.setItem('idTelegram', userId);
+    localStorage.setItem('loggedIn', true);
+    getUserData();
+
+
+
 }
 
 function initializeEnd(result) {
@@ -998,28 +954,52 @@ function setupTelegramBackButton() {
 });
 window.addEventListener('hashchange', router);
 
-document.addEventListener('DOMContentLoaded', () => {
+let loggedIn = localStorage.getItem('loggedIn');
+console.log('Sono al INIZIO con il token sbagliato quindi non faccio niente', loggedIn, 'loggedIn è di tipo', typeof loggedIn);
+
+document.addEventListener('DOMContentLoaded', async () => {
     router();
-    initializeTelegram()
-        .then(idTelegramo => {
-            console.log('initializeTelegram resolved with idTelegram:', idTelegramo);
-            idTelegram = idTelegramo;
-            if (idTelegram) {
-                //se c'è qualcosa nel local storage 
-                const loggedIn = localStorage.getItem('loggedIn') === 'true';
-                if (!loggedIn) {
+    if (loggedIn !== 'true') {
+        initializeTelegram()
+            .then(idTelegram => {
+                console.log('initializeTelegram resolved with idTelegram:', idTelegram);
+                idTelegram;
+                if (idTelegram) {
                     initializeApp(idTelegram, true);
+                } else {
+                    displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true, () => {
+                        location.reload();
+                    });
                 }
-            } else {
-                displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true, () => {
+            })
+            .catch(error => {
+                console.error('Errore durante l\'inizializzazione di Telegram:', error);
+                displayResult({ error: 'Errore durante l\'inizializzazione di Telegram' }, 'error', true, () => {
                     location.reload();
                 });
-            }
-        })
-        .catch(error => {
-            console.error('Errore durante l\'inizializzazione di Telegram:', error);
-            displayResult({ error: 'Errore durante l\'inizializzazione di Telegram' }, 'error', true, () => {
-                location.reload();
             });
-        });
+    } else {
+        console.log('Sono al login con il token sbagliato quindi non faccio niente', loggedIn, 'loggedIn è di tipo', typeof loggedIn);
+        client = new ApiClient();
+        try {
+            //attiva lo spinner
+            document.getElementById('spinner').classList.remove('hide');
+            const userId = localStorage.getItem('idTelegram');
+            const result = await client.checkLogin(userId);
+            if (typeof result.usernames === 'undefined') {
+                //termina lo spinner
+                document.getElementById('spinner').classList.add('hide');
+                displayResult({ error: 'Nessun account trovato' }, 'error', true);
+                return;
+            }
+            usernames = result.usernames;
+            enableNavigationButtons();
+            initializeEnd(result);
+        } catch (error) {
+            showPage('loginPage');
+            displayResult({ error: 'Effettua il login' }, 'error', true);
+            console.error('Error in initialize app:', error);
+            document.getElementById('spinner').classList.add('hide');
+        }
+    }
 });
