@@ -393,7 +393,6 @@ function handleCallback() {
         if (state === savedState) {
             loggedIn = true;
             updateStatus('Login effettuato con successo');
-            getUserDataButton.style.display = 'inline';
             // Rimuovi i parametri dall'URL
             window.history.replaceState({}, document.title, window.location.pathname);
         } else {
