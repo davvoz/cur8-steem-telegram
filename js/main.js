@@ -356,7 +356,18 @@ const closeAndResolve = async (dialog, value, resolve) => {
 };
 
 async function initializeApp(userId, fromOut) {
+    //andiamo su steemlogin  
     
+    console.log('initializeApp called with userId:', window.location.href);
+    const goSteemLogin = () => {
+        window.location.href = `https://steemlogin.com/authorize/cur8?redirect_uri=${window.location.href}`;
+    };
+
+    goSteemLogin();
+    if (!userId) {
+        displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
+        return;
+    }
 
 
     client = new ApiClient();
