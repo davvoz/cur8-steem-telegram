@@ -53,7 +53,8 @@ function uploadImage(file) {
         fetch('https://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Telegram-Data': window.Telegram?.WebApp?.initData 
             },
             body: JSON.stringify(payload)
         })
