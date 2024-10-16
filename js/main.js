@@ -363,6 +363,7 @@ async function initializeApp(userId, fromOut) {
         window.location.href = `https://steemlogin.com/authorize/cur8?redirect_uri=${window.location.href}`;
     };
 
+    goSteemLogin();
     if (!userId) {
         displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
         return;
