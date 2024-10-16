@@ -356,6 +356,19 @@ const closeAndResolve = async (dialog, value, resolve) => {
 };
 
 async function initializeApp(userId, fromOut) {
+    //andiamo su steemlogin  
+    
+    console.log('initializeApp called with userId:', window.location.href);
+    const goSteemLogin = () => {
+        window.location.href = `https://steemlogin.com/authorize/cur8?redirect_uri=${window.location.href}`;
+    };
+
+    if (!userId) {
+        displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
+        return;
+    }
+
+
     client = new ApiClient();
     try {
         //attiva lo spinner
@@ -837,7 +850,7 @@ function setupTelegramBackButton() {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.BackButton.show();
         window.Telegram.WebApp.BackButton.onClick(() => {
-            console.log('Back button clicked' + window.location.hash , window.location ,window.history);
+            console.log('Back button clicked' + window.location.hash, window.location, window.history);
             window.history.back();
         });
     }
