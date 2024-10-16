@@ -381,17 +381,18 @@ function initializeSteemLogin() {
 }
 
 let accessToken;
-let loggedIn = false;
 
 function handleCallback() {
     const urlParams = new URLSearchParams(window.location.search);
     accessToken = urlParams.get('access_token');
     const state = urlParams.get('state');
 
-    if (accessToken && state) {
+    if (state) {
         const savedState = sessionStorage.getItem('steemLoginState');
         if (state === savedState) {
-            loggedIn = true;
+            //scrivilo nel local storage
+            localStorage.setItem('loggedIn', 'true');
+
             updateStatus('Login effettuato con successo');
             // Rimuovi i parametri dall'URL
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -400,9 +401,11 @@ function handleCallback() {
         }
         sessionStorage.removeItem('steemLoginState');
     }
+    
 }
 
 async function getUserData() {
+    loggedIn = localStorage.getItem('loggedIn') === 'true';
     if (!loggedIn || !accessToken) {
         updateStatus('Utente non loggato. Impossibile ottenere i dati.');
         return;
@@ -420,6 +423,8 @@ async function getUserData() {
         }
 
         const userData = await response.json();
+        console.log('Dati utente:', userData);
+        localStorage.setItem('userData', JSON.stringify(userData));
         displayUserData(userData);
     } catch (error) {
         console.error('Errore durante il recupero dei dati utente:', error);
@@ -447,52 +452,75 @@ function displayUserData(userData) {
 }
 
 async function initializeApp(userId, fromOut) {
-    //andiamo su steemlogin  
-
-    if (!userId) {
-        displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
-        return;
-    }
-    handleCallback();
-    initializeSteemLogin()
-
-    const steemClient = new window.steemlogin.Client({
-        app: 'cur8',
-        callbackURL: window.location.origin + window.location.pathname,
-        scope: ['login', 'vote', 'comment', 'custom_json'],
-    });
-
-    try {
-        const state = Math.random().toString(36).substring(7);
-        const loginUrl = steemClient.getLoginURL(state);
-
-        sessionStorage.setItem('steemLoginState', state);
-
-        window.location.href = loginUrl;
-    } catch (error) {
-        console.error('Errore durante il processo di login:', error);
-        updateStatus('Errore durante il processo di login: ' + error.message);
-    }
-    getUserData();
-    client = new ApiClient();
-    try {
-        //attiva lo spinner
-        document.getElementById('spinner').classList.remove('hide');
-        const result = await client.checkLogin(userId);
-        if (fromOut && typeof result.usernames === 'undefined') {
-            //termina lo spinner
+    const loggedIn = localStorage.getItem('loggedIn') === 'true';
+    if (loggedIn) {
+        client = new ApiClient();
+        try {
+            //attiva lo spinner
+            document.getElementById('spinner').classList.remove('hide');
+            const result = await client.checkLogin(userId);
+            if (fromOut && typeof result.usernames === 'undefined') {
+                //termina lo spinner
+                document.getElementById('spinner').classList.add('hide');
+                displayResult({ error: 'Nessun account trovato' }, 'error', true);
+                return;
+            }
+            localStorage.setItem('loggedIn', 'true');
+            usernames = result.usernames;
+            enableNavigationButtons();
+            initializeEnd(result);
+        } catch (error) {
+            showPage('loginPage');
+            displayResult({ error: 'Effettua il login' }, 'error', true);
+            console.error('Error in initialize app:', error);
             document.getElementById('spinner').classList.add('hide');
-            displayResult({ error: 'Nessun account trovato' }, 'error', true);
+        }
+    } else {
+        if (!userId) {
+            displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
             return;
         }
-        usernames = result.usernames;
-        enableNavigationButtons();
-        initializeEnd(result);
-    } catch (error) {
-        showPage('loginPage');
-        displayResult({ error: 'Effettua il login' }, 'error', true);
-        console.error('Error in initialize app:', error);
-        document.getElementById('spinner').classList.add('hide');
+        handleCallback();
+        initializeSteemLogin()
+
+        const steemClient = new window.steemlogin.Client({
+            app: 'cur8',
+            callbackURL: window.location.origin + window.location.pathname,
+            scope: ['login', 'vote', 'comment', 'custom_json'],
+        });
+
+        try {
+            const state = Math.random().toString(36).substring(7);
+            const loginUrl = steemClient.getLoginURL(state);
+
+            sessionStorage.setItem('steemLoginState', state);
+
+            window.location.href = loginUrl;
+        } catch (error) {
+            console.error('Errore durante il processo di login:', error);
+            updateStatus('Errore durante il processo di login: ' + error.message);
+        }
+        getUserData();
+        client = new ApiClient();
+        try {
+            //attiva lo spinner
+            document.getElementById('spinner').classList.remove('hide');
+            const result = await client.checkLogin(userId);
+            if (fromOut && typeof result.usernames === 'undefined') {
+                //termina lo spinner
+                document.getElementById('spinner').classList.add('hide');
+                displayResult({ error: 'Nessun account trovato' }, 'error', true);
+                return;
+            }
+            usernames = result.usernames;
+            enableNavigationButtons();
+            initializeEnd(result);
+        } catch (error) {
+            showPage('loginPage');
+            displayResult({ error: 'Effettua il login' }, 'error', true);
+            console.error('Error in initialize app:', error);
+            document.getElementById('spinner').classList.add('hide');
+        }
     }
 }
 
@@ -977,7 +1005,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('initializeTelegram resolved with idTelegram:', idTelegramo);
             idTelegram = idTelegramo;
             if (idTelegram) {
-                initializeApp(idTelegram, true);
+                //se c'è qualcosa nel local storage 
+                const loggedIn = localStorage.getItem('loggedIn') === 'true';
+                if (!loggedIn) {
+                    initializeApp(idTelegram, true);
+                }
             } else {
                 displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true, () => {
                     location.reload();
