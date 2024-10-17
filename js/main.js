@@ -278,18 +278,20 @@ async function salvaBozza() {
         return;
     }
     let scheduledDate = null;
-    const dateString = document.getElementById('openDatePicker').innerText;
-    if (dateString) {
-        const [datePart, timePart] = dateString.split(', ');
-        const [day, month, year] = datePart.split('/').map(Number);
-        const [hours, minutes, seconds] = timePart.split(':').map(Number);
-        scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
-        if (scheduledDate < Date.now()) {
-            displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-            document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-            document.getElementById('openDatePicker').classList.add('action-btn-mini');
-            document.getElementById('openDatePicker').classList.remove('action-btn');
-            return;
+    if (document.getElementById('openDatePicker').innerText && document.getElementById('openDatePicker').innerText !== 'schedule') {
+        const dateString = document.getElementById('openDatePicker').innerText;
+        if (dateString) {
+            const [datePart, timePart] = dateString.split(', ');
+            const [day, month, year] = datePart.split('/').map(Number);
+            const [hours, minutes, seconds] = timePart.split(':').map(Number);
+            scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
+            if (scheduledDate < Date.now()) {
+                displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
+                document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+                document.getElementById('openDatePicker').classList.add('action-btn-mini');
+                document.getElementById('openDatePicker').classList.remove('action-btn');
+                return;
+            }
         }
     }
 
@@ -518,6 +520,7 @@ function selectAccount(username, containerElement) {
     displayResult({ message: `Account ${username.username} selected` }, 'success');
     getUserDrafts(); // Carica i draft quando si seleziona un account
     applySavedTheme(); // Carica il tema salvato quando si seleziona un account
+    setUsernameForImageUpload(username.username);
 }
 
 
@@ -1031,3 +1034,4 @@ function goToSteemLogin() {
         updateStatus('Errore durante il processo di login: ' + error.message);
     }
 }
+
