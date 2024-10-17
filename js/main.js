@@ -329,7 +329,8 @@ const getDialogTelegramId = () => {
             document.getElementById('spinner').classList.remove('hide');
             const telegramId = document.getElementById('telegramId').value;
             closeAndResolve(dialog, telegramId, resolve).then(() => {
-                initializeApp(telegramId);
+                idTelegram = telegramId;
+                localStorage.setItem('idTelegram', telegramId);
             });
         });
         dialog.addEventListener('close', () => {
@@ -359,27 +360,6 @@ function updateStatus(message) {
     //stampa con le nostre dialog
     displayResult({ info: message }, 'info', true);
 }
-
-function initializeSteemLogin() {
-    if (typeof window.steemlogin === 'undefined' || typeof window.steemlogin.Client === 'undefined') {
-        updateStatus('Errore: SteemLogin non è definito correttamente. Ricarica la pagina o controlla la connessione.');
-        return false;
-    }
-
-    try {
-        const steemClient = new window.steemlogin.Client({
-            app: 'cur8',
-            callbackURL: window.location.origin + window.location.pathname,
-            scope: ['login', 'vote', 'comment', 'custom_json'],
-        });
-        updateStatus('SteemLogin inizializzato correttamente.');
-        return true;
-    } catch (error) {
-        updateStatus('Errore durante l\'inizializzazione di SteemLogin: ' + error.message);
-        return false;
-    }
-}
-
 
 
 function handleCallback() {
@@ -558,10 +538,24 @@ async function handleLogout(username) {
         dialog.remove();
         try {
             //attiva lo spinner
+            let id = localStorage.getItem('idTelegram');
             document.getElementById('spinner').classList.remove('hide');
-            const result = await client.logout(idTelegram, username);
+            const result = await client.logout(id, username).then(() => {
+                //ferma lo spinner
+                document.getElementById('spinner').classList.add('hide');
+            }).finally(async () => {
+                await client.checkLogin(id).then(async (result) => {
+                    if (typeof result.usernames === 'undefined') {
+                        //termina lo spinner
+                        document.getElementById('spinner').classList.add('hide');
+                        displayResult({ error: 'Nessun account trovato' }, 'error', true);
+                        return;
+                    }
+                    usernames = result.usernames;
+                    initializeEnd(result);
+                });
+            });
             displayResult(result, 'success');
-            initializeApp(idTelegram);
         } catch (error) {
             console.error('Error in handleLogout:', error);
             displayResult({ error: error.message }, 'error');
@@ -673,6 +667,7 @@ async function loginSteemLogin(username, idTelegram) {
 
 async function login() {
     idTelegram = localStorage.getItem('idTelegram');
+    alert
     try {
         await client.login(
             idTelegram,
