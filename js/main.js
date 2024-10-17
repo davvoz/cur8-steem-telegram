@@ -539,24 +539,24 @@ async function handleLogout(username) {
         try {
             //attiva lo spinner
             let id = localStorage.getItem('idTelegram');
-            document.getElementById('spinner').classList.remove('hide');
             const result = await client.logout(id, username).then(() => {
                 //ferma lo spinner
-                document.getElementById('spinner').classList.add('hide');
             }).finally(async () => {
                 await client.checkLogin(id).then(async (result) => {
                     if (typeof result.usernames === 'undefined') {
                         //termina lo spinner
-                        document.getElementById('spinner').classList.add('hide');
                         displayResult({ error: 'Nessun account trovato' }, 'error', true);
                         return;
                     }
                     usernames = result.usernames;
                     initializeEnd(result);
+                }).finally(() => {
+                    document.getElementById('spinner').classList.add('hide');
                 });
             });
             displayResult(result, 'success');
         } catch (error) {
+            document.getElementById('spinner').classList.remove('hide');
             console.error('Error in handleLogout:', error);
             displayResult({ error: error.message }, 'error');
         }
