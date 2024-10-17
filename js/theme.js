@@ -60,7 +60,7 @@ function setTheme(theme) {
         console.error('Il valore di window.usernameSelected non è valido.');
     }    
     applySavedTheme();
-    // localStorage.setItem('theme', theme);
+    localStorage.setItem('theme', theme);
 }
 
 export function applySavedTheme() {
