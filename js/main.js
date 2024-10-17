@@ -451,16 +451,10 @@ function displayUserData(userData) {
     dialog.addEventListener('close', () => dialog.remove());
 }
 
-async function initializeApp(userId) {
-
-    if (!userId) {
-        displayResult({ error: 'Impossibile ottenere l\'ID Telegram' }, 'error', true);
-        return;
-    }
-    initializeEnd();
-}
 
 function initializeEnd(result) {
+    enableNavigationButtons();
+    console.log('initializeEnd', result);
     listaComunities = getListaComunities();
     usernames = result.usernames;
     const accountList = document.getElementById('accountList');
@@ -672,21 +666,24 @@ async function loginSteemLogin(username, idTelegram) {
                 return;
             }
             usernames = result.usernames;
-            enableNavigationButtons();
             initializeEnd(result);
         });
     }
 }
 
 async function login() {
+    idTelegram = localStorage.getItem('idTelegram');
     try {
-        const result = await client.login(
+        await client.login(
             idTelegram,
             document.getElementById('username').value,
             document.getElementById('postingKey').value
         );
-        displayResult(result, 'success', true);
-        initializeApp(idTelegram);
+        await client.checkLogin(idTelegram).then(async (result) => {
+            displayResult(result, 'success', true);
+            initializeEnd(result);
+        });
+
     } catch (error) {
         console.error('Error in login:', error);
         displayResult({ error: error.message }, 'error', true);
