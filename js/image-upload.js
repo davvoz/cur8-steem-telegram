@@ -32,9 +32,10 @@ function handleFileSelect(e) {
 }
 
 let usernameSelected = 'default_username'; // Define the usernameSelected variable
-
-export function setUsernameForImageUpload(username) {
+let idTelegramSelected = 'default_id'; // Define the idTelegramSelected variable
+export function setUsernameForImageUpload(username,idTelegram) {
     usernameSelected = username;
+    idTelegramSelected = idTelegram;
 }
 
 function uploadImage(file) {
@@ -47,7 +48,8 @@ function uploadImage(file) {
 
         const payload = {
             image_base64: base64Image,
-            username: usernameSelected
+            username: usernameSelected,
+            id_telegram: idTelegramSelected
         };
 
         fetch('https://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image', {

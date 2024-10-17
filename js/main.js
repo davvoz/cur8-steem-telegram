@@ -445,7 +445,7 @@ function initializeEnd(result) {
     if (usernames.length > 0) {
         window.usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
-        setUsernameForImageUpload(window.usernameSelected.username);
+        setUsernameForImageUpload(window.usernameSelected.username,localStorage.getItem('idTelegram'));
         usernameSelected = usernames[0];
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
@@ -520,7 +520,7 @@ function selectAccount(username, containerElement) {
     displayResult({ message: `Account ${username.username} selected` }, 'success');
     getUserDrafts(); // Carica i draft quando si seleziona un account
     applySavedTheme(); // Carica il tema salvato quando si seleziona un account
-    setUsernameForImageUpload(username.username);
+    setUsernameForImageUpload(username.username,localStorage.getItem('idTelegram'));
 }
 
 
