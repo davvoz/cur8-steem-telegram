@@ -701,7 +701,6 @@ async function getUserDrafts() {
     }
 }
 
-// Create list of drafts
 async function createListaDrafts(drafts, username) {
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = ''; // Clear existing list
@@ -770,13 +769,12 @@ function createIconButton(iconName, onClick) {
     button.appendChild(icon);
     button.classList.add('action-btn-mini');
     button.onclick = (event) => {
-        event.stopPropagation(); // Prevent triggering the parent click event
+        event.stopPropagation(); 
         onClick();
     };
     return button;
 }
 
-// Load draft into the editor
 async function loadDraft(draft) {
     document.getElementById('postTitle').value = draft.title || '';
     document.getElementById('postTags').value = draft.tags || '';
@@ -977,11 +975,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (idTelegram) {
                 client = new ApiClient();
                 try {
-                    //attiva lo spinner
                     document.getElementById('spinner').classList.remove('hide');
                     const result = await client.checkLogin(idTelegram);
                     if (typeof result.usernames === 'undefined') {
-                        //termina lo spinner
                         document.getElementById('spinner').classList.add('hide');
                         displayResult({ error: 'Nessun account trovato' }, 'error', true);
                         return;
@@ -1007,16 +1003,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
     }
-
-
 });
 
-//steemlogin
+
 document.getElementById('steemlogin').addEventListener('click', goToSteemLogin);
 
 function goToSteemLogin() {
     handleCallback();
-    //initializeSteemLogin()
     const steemClient = new window.steemlogin.Client({
         app: 'cur8',
         callbackURL: window.location.origin + window.location.pathname,
