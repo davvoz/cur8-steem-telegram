@@ -8,9 +8,10 @@ export const getDialogTelegramId = () => {
         confirmButton.addEventListener('click', () => {
             document.getElementById('spinner').classList.remove('hide');
             const telegramId = document.getElementById('telegramId').value;
+            localStorage.setItem('idTelegram', telegramId);
             closeAndResolve(dialog, telegramId, resolve).then(() => {
-                idTelegram = telegramId;
-                localStorage.setItem('idTelegram', telegramId);
+                return telegramId;
+                           
             });
         });
         dialog.addEventListener('close', () => {

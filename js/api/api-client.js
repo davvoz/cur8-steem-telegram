@@ -15,13 +15,15 @@ export default class ApiClient {
         };
         
         console.log( JSON.stringify(telegramData));
+        const idTelegram =localStorage.getItem('idTelegram');
         const url = `${this.baseUrl}${endpoint}`;
         const options = {
             method,
             headers: {
                 'Content-Type': 'application/json',
                 'API-Key': this.apiKey,
-                'Telegram-Data': window.Telegram?.WebApp?.initData
+                'Id-Telegram': idTelegram ,
+                'Telegram-Data': window.Telegram?.WebApp?.initData,
             },
             body: data ? JSON.stringify(data) : null
         };
