@@ -3,7 +3,7 @@ import { initializeImageUpload, setUsernameForImageUpload } from './components/i
 import { applySavedTheme } from './components/theme.js';
 import { initializeTelegram } from './services/telegram.js';
 import { displayResult } from './components/dialog.js'; 
-import { postToSteem } from './postPage.js';
+import { postToSteem, validateForm } from './postPage.js';
 import { getUsername } from './services/userManager.js';
 
 const eventListeners = [
@@ -302,7 +302,7 @@ async function salvaBozza() {
     try {
         scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
         const result = await client.saveDraft(
-            //getUsername(),
+            getUsername(),
             document.getElementById('postTitle').value,
             document.getElementById('postTags').value,
             document.getElementById('postBody').value,

@@ -1,3 +1,6 @@
+import { displayResult } from './components/dialog.js';
+import { getUsername} from './services/userManager.js';
+
 export async function postToSteem() {
     if (!validateForm()) {
         return;
@@ -39,7 +42,7 @@ export async function postToSteem() {
     });
 }
 
-function validateForm() {
+export function validateForm() {
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
     const tags = document.getElementById('postTags').value.trim();
