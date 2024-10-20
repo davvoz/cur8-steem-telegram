@@ -359,19 +359,16 @@
 }
 
 .theme-selector-ancoramio-tema {
-    :root {
-        --primary-color: #dccccc; /* Colore neutro con una leggera sfumatura rosa */
-        --primary-variant: #ba0116; /* Rosso intenso per enfasi e dettagli */
-        --secondary-color: #e3bb50; /* Giallo dorato per creare contrasto e accenti */
-        --background: #2c2e3e; /* Sostituito con un viola-grigio scuro per maggiore armonia con il rosso */
-        --surface: #3a3b4f; /* Grigio scuro-blu per superfici, in modo da mantenere un contrasto visivo */
-        --error: #ff5252; /* Rosso acceso per segnalare errori */
-        --success: #69f0ae; /* Verde acqua per un messaggio di successo fresco e visibile */
-        --warning: #ffd740; /* Giallo caldo per avvertimenti */
-        --on-primary: #ffffff; /* Bianco per testi su sfondo primario */
-        --on-background: #e0e3ea; /* Grigio molto chiaro per un testo leggibile su sfondi scuri */
-        --on-surface: #f5f6fa; /* Quasi bianco per il testo su superfici scure */
-        --on-secondary: #000000; /* Nero per testi sui colori secondari per un forte contrasto */
-    }
-    
+    --primary-color: #dccccc;
+    --primary-variant: #ba0116;
+    --secondary-color: #e3bb50;
+    --background: #2c2e3e;
+    --surface: #3a3b4f;
+    --error: #ff5252;
+    --success: #69f0ae;
+    --warning: #ffd740;
+    --on-primary: #ffffff;
+    --on-background: #e0e3ea;
+    --on-surface: #f5f6fa;
+    --on-secondary: #000000;
 }
