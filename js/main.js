@@ -1,12 +1,11 @@
 import ApiClient from './api/api-client.js';
-import { initializeImageUpload, setUsernameForImageUpload } from './api/image-upload.js';
-import { applySavedTheme } from './components/theme.js';
+import { initializeImageUpload } from './api/image-upload.js';
 import { initializeTelegram } from './services/telegram.js';
 import { displayResult } from './components/dialog.js';
 import { postToSteem, salvaBozza } from './page/postPage.js';
 import { showPage } from './page/page.js';
-import { getUserDrafts } from './page/draftPage.js';
-import { openComunitiesAutocomplete, openDatePicker,togglePreview } from './page/postPage.js';
+import { openComunitiesAutocomplete, openDatePicker, togglePreview } from './page/postPage.js';
+import { enableNavigationButtons, initializeEnd } from './services/utils.js';
 
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
@@ -61,19 +60,6 @@ window.usernameSelected = '';
 initializeImageUpload();
 
 
-
-async function getListaComunities() {
-    try {
-        const result = await client.listaComunities();
-        displayResult(result, 'success');
-        return result;
-    } catch (error) {
-        console.error('Error in getListaComunities:', error);
-        displayResult({ error: error.message }, 'error');
-    }
-}
-
-
 function updateStatus(message) {
     displayResult({ info: message }, 'info', true);
 }
@@ -106,21 +92,17 @@ async function getSteemloginUsername(accessToken) {
         updateStatus('Utente non loggato. Impossibile ottenere i dati.');
         return;
     }
-
     try {
         const response = await fetch('https://api.steemlogin.com/api/me', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         });
-
         if (!response.ok) {
             throw new Error('Errore nella richiesta API');
         }
-
         const userData = await response.json();
         console.log('Dati utente:', userData);
-
         await loginSteemLogin(userData.username);
         displayUserData(userData);
     } catch (error) {
@@ -146,152 +128,6 @@ function displayUserData(userData) {
         dialog.remove();
     });
     dialog.addEventListener('close', () => dialog.remove());
-}
-
-
-function initializeEnd(result) {
-    enableNavigationButtons();
-    console.log('initializeEnd', result);
-    window.listaComunities = getListaComunities();
-    usernames = result.usernames;
-    const accountList = document.getElementById('accountList');
-    accountList.innerHTML = '';
-    usernames.forEach(createAccountListItem);
-    if (usernames.length > 0) {
-        window.usernameSelected = usernames[0];
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
-        setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
-        usernameSelected = usernames[0];
-        const firstAccountContainer = accountList.querySelector('.container-username');
-        if (firstAccountContainer) {
-            selectAccount(window.usernameSelected, firstAccountContainer);
-        }
-    }
-    document.getElementById('spinner').classList.add('hide');
-    showPage('accountPage');
-    displayResult(result);
-}
-
-function createAccountListItem(username) {
-    const li = document.createElement('li');
-    const container = document.createElement('div');
-    container.classList.add('container-username');
-    const imgNameContainer = document.createElement('div');
-    imgNameContainer.style.display = 'flex';
-    imgNameContainer.style.flexDirection = 'row';
-    imgNameContainer.style.alignItems = 'center';
-
-    const img = document.createElement('img');
-    img.alt = `${username.username}'s profile image`;
-    img.classList.add('profile-image-thumbnail'); // Add a class for thumbnail styling
-    if (username.profile_image) {
-        img.src = username.profile_image;
-    } else {
-        img.src = 'https://fonts.gstatic.com/s/i/materialiconsoutlined/account_circle/v6/24px.svg'; // URL for material icon
-    }
-
-    const spanUSername = document.createElement('span');
-    spanUSername.innerText = username.username;
-    spanUSername.classList.add('usernameElement');
-
-    container.onclick = () => {
-        selectAccount(username, container);
-        window.usernameSelected = username;
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
-    };
-
-    const buttonsContainer = document.createElement('div');
-    const logoutButton = document.createElement('button');
-    logoutButton.classList.add('action-btn');
-    logoutButton.innerText = 'Logout';
-    logoutButton.onclick = () => {
-        window.usernameSelected = '';
-        handleLogout(username.username);
-    };
-
-    buttonsContainer.classList.add('buttons-container');
-    buttonsContainer.style.display = 'flex';
-    buttonsContainer.style.flexDirection = 'row';
-    buttonsContainer.style.flexWrap = 'nowrap';
-    buttonsContainer.style.justifyContent = 'flex-end';
-    buttonsContainer.style.alignItems = 'baseline';
-
-    buttonsContainer.appendChild(logoutButton);
-    imgNameContainer.appendChild(img);
-    imgNameContainer.appendChild(spanUSername);
-    container.appendChild(imgNameContainer);
-    container.appendChild(buttonsContainer);
-    li.appendChild(container);
-    document.getElementById('accountList').appendChild(li);
-}
-
-function selectAccount(username, containerElement) {
-    window.usernameSelected = username;
-    document.querySelectorAll('.container-username').forEach(el => {
-        el.classList.remove('selected');
-    });
-
-    containerElement.classList.add('selected');
-    displayResult({ message: `Account ${username.username} selected` }, 'success');
-    getUserDrafts(); // Carica i draft quando si seleziona un account
-    applySavedTheme(); // Carica il tema salvato quando si seleziona un account
-    setUsernameForImageUpload(username.username, localStorage.getItem('idTelegram'));
-}
-
-
-async function handleLogout(username) {
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('dialogo');
-    dialog.innerHTML = `
-        <h2>Conferma Logout</h2>
-        <p>Sei sicuro di voler effettuare il logout?</p>
-        <button id="confirmButtonLogout" class="action-btn">Conferma</button>
-        <button id="cancelButtonLogout" class="action-btn">Annulla</button>
-    `;
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    const confirmButton = dialog.querySelector('#confirmButtonLogout');
-    const cancelButton = dialog.querySelector('#cancelButtonLogout');
-    confirmButton.addEventListener('click', async () => {
-        dialog.remove();
-        try {
-            //attiva lo spinner
-            let id = localStorage.getItem('idTelegram');
-            const result = await client.logout(id, username).then(() => {
-                //ferma lo spinner
-            }).finally(async () => {
-                await client.checkLogin(id).then(async (result) => {
-                    if (typeof result.usernames === 'undefined') {
-                        //termina lo spinner
-                        displayResult({ error: 'Nessun account trovato' }, 'error', true);
-                        return;
-                    }
-                    usernames = result.usernames;
-                    initializeEnd(result);
-                }).finally(() => {
-                    document.getElementById('spinner').classList.add('hide');
-                });
-            });
-            displayResult(result, 'success');
-        } catch (error) {
-            document.getElementById('spinner').classList.remove('hide');
-            console.error('Error in handleLogout:', error);
-            displayResult({ error: error.message }, 'error');
-        }
-    });
-    cancelButton.addEventListener('click', () => {
-        dialog.remove();
-    });
-
-    dialog.addEventListener('close', () => {
-        dialog.remove();
-    });
-}
-
-function enableNavigationButtons() {
-    ['draftBtn', 'postBtn', 'accountBtn', 'configBtn'].forEach(id => {
-        document.getElementById(id).disabled = false;
-    });
 }
 
 async function loginSteemLogin(username, idTelegram) {
