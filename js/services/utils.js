@@ -1,8 +1,8 @@
 import ApiClient from '../api/api-client.js';
 import { displayResult } from '../components/dialog.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
-import { showPage } from '../page/page.js';
-import { createAccountListItem, selectAccount } from '../page/accountListPage.js';
+import { showPage } from '../pages/page.js';
+import { createAccountListItem, selectAccount } from '../pages/accountListPage.js';
 
 let usernames = [];
 

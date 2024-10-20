@@ -3,10 +3,10 @@ import ApiClient from './api/api-client.js';
 import { initializeImageUpload } from './api/image-upload.js';
 import { initializeTelegram } from './services/telegram.js';
 import { displayResult } from './components/dialog.js';
-import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview } from './page/postPage.js';
-import { showPage } from './page/page.js';
+import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview } from './pages/postPage.js';
+import { showPage } from './pages/page.js';
 import { enableNavigationButtons, initializeEnd, setUsernames } from './services/utils.js';
-import { goToSteemLogin, login, loginSteemLogin } from './page/loginPage.js';
+import { goToSteemLogin, login, loginSteemLogin } from './pages/loginPage.js';
 
 // Global variables
 window.listaComunities = '';
