@@ -18,7 +18,6 @@ export function initializeEnd(result) {
         window.usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
         setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
-        usernameSelected = usernames[0];
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
             selectAccount(window.usernameSelected, firstAccountContainer);

@@ -111,6 +111,8 @@ export async function salvaBozza() {
 
     try {
         window.scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
+        //spinner
+        document.getElementById('spinner').classList.remove('hide');
         const result = await client.saveDraft(
             getUsername(),
             document.getElementById('postTitle').value,
@@ -119,7 +121,9 @@ export async function salvaBozza() {
             window.scheduledTime,
             Intl.DateTimeFormat().resolvedOptions().timeZone
         );
-        await getUserDrafts(); // Ricarica i draft dopo il salvataggio
+        await getUserDrafts().then(() => {
+            document.getElementById('spinner').classList.add('hide');
+        });
         displayResult(result, 'success', true);
     } catch (error) {
         console.error('Error in salvaBozza:', error);
