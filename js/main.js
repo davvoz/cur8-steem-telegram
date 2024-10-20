@@ -2,7 +2,7 @@ import ApiClient from './api/api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './components/image-upload.js';
 import { applySavedTheme } from './components/theme.js';
 import { initializeTelegram } from './services/telegram.js';
-import { displayResult } from './components/dialog.js'; 
+import { displayResult, createDatePickerDialog } from './components/dialog.js'; 
 import { postToSteem, validateForm, svuotaForm } from './page/postPage.js';
 import { getUsername } from './services/userManager.js';
 import { createIconButton } from './components/icon.js';
@@ -59,21 +59,6 @@ let usernames = [];
 window.idTelegram = '';
 window.usernameSelected = '';
 initializeImageUpload();
-
-// function svuotaForm() {
-//     document.getElementById('postTitle').value = '';
-//     document.getElementById('postTags').value = '';
-//     document.getElementById('postBody').value = '';
-//     document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-//     document.getElementById('openDatePicker').classList.add('action-btn-mini');
-//     document.getElementById('openDatePicker').classList.remove('action-btn');
-//     ['postTitle', 'postBody', 'postTags'].forEach(id => {
-//         document.getElementById(id).classList.remove('error');
-//     });
-
-//     document.getElementById('comunityName').innerText = 'Seleziona la comunità';
-//     scheduledTime = null;
-// }
 
 function markdownToHtml(markdown) {
     let html = marked.parse(markdown);
@@ -139,21 +124,21 @@ function openDatePicker() {
     dialog.addEventListener('close', () => dialog.remove());
 }
 
-function createDatePickerDialog() {
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('dialogo');
-    dialog.innerHTML = `
-        <h2>Seleziona la data e l'ora di pubblicazione</h2>
-        <input type="datetime-local" id="scheduledTime" name="scheduledTime">
-        <button id="confirmButtonDP" class="action-btn">Conferma</button>
-        <button id="cancelButtonDP" class="action-btn">Annulla</button>
-    `;
-    return dialog;
-}
+// function createDatePickerDialog() {
+//     const dialog = document.createElement('dialog');
+//     dialog.classList.add('dialogo');
+//     dialog.innerHTML = `
+//         <h2>Seleziona la data e l'ora di pubblicazione</h2>
+//         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
+//         <button id="confirmButtonDP" class="action-btn">Conferma</button>
+//         <button id="cancelButtonDP" class="action-btn">Annulla</button>
+//     `;
+//     return dialog;
+// }
 
 function handleDatePickerConfirm(dialog, scheduledTimeInput) {
     const scheduled = scheduledTimeInput.value;
-    scheduledTime = new Date(scheduled).getTime();
+    window.scheduledTime = new Date(scheduled).getTime();
     document.getElementById('openDatePicker').innerText = new Date(scheduled).toLocaleString();
     document.getElementById('openDatePicker').classList.add('action-btn');
     document.getElementById('openDatePicker').classList.remove('action-btn-mini');
@@ -301,7 +286,7 @@ async function salvaBozza() {
     }
 
     try {
-        scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
+        window.scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
         const result = await client.saveDraft(
             getUsername(),
             document.getElementById('postTitle').value,
@@ -682,7 +667,7 @@ async function loadDraft(draft) {
         document.getElementById('openDatePicker').classList.remove('action-btn');
     }
 
-    scheduledTime = draft.scheduled_time;
+    window.scheduledTime = draft.scheduled_time;
 }
 
 async function deleteDraft(id) {

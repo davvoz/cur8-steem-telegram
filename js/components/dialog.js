@@ -82,3 +82,15 @@ export function displayResult(result, type = 'success', enabled = false, callbac
         }
     }
 }
+
+export function createDatePickerDialog() {
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialogo');
+    dialog.innerHTML = `
+        <h2>Seleziona la data e l'ora di pubblicazione</h2>
+        <input type="datetime-local" id="scheduledTime" name="scheduledTime">
+        <button id="confirmButtonDP" class="action-btn">Conferma</button>
+        <button id="cancelButtonDP" class="action-btn">Annulla</button>
+    `;
+    return dialog;
+}

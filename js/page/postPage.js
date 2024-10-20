@@ -78,5 +78,5 @@ export function svuotaForm() {
     });
 
     document.getElementById('comunityName').innerText = 'Seleziona la comunità';
-    scheduledTime = null;
+    window.scheduledTime = null;
 }
