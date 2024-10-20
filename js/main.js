@@ -3,8 +3,9 @@ import { initializeImageUpload, setUsernameForImageUpload } from './components/i
 import { applySavedTheme } from './components/theme.js';
 import { initializeTelegram } from './services/telegram.js';
 import { displayResult } from './components/dialog.js'; 
-import { postToSteem, validateForm } from './postPage.js';
+import { postToSteem, validateForm, svuotaForm } from './page/postPage.js';
 import { getUsername } from './services/userManager.js';
+import { createIconButton } from './components/icon.js';
 
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
@@ -52,27 +53,27 @@ eventListeners.forEach(({ id, event, handler }) => {
 
 let listaComunities;
 let currentFocus = -1;
-let scheduledTime;
+window.scheduledTime = null;
 let client = new ApiClient();
 let usernames = [];
 window.idTelegram = '';
 window.usernameSelected = '';
 initializeImageUpload();
 
-function svuotaForm() {
-    document.getElementById('postTitle').value = '';
-    document.getElementById('postTags').value = '';
-    document.getElementById('postBody').value = '';
-    document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-    document.getElementById('openDatePicker').classList.add('action-btn-mini');
-    document.getElementById('openDatePicker').classList.remove('action-btn');
-    ['postTitle', 'postBody', 'postTags'].forEach(id => {
-        document.getElementById(id).classList.remove('error');
-    });
+// function svuotaForm() {
+//     document.getElementById('postTitle').value = '';
+//     document.getElementById('postTags').value = '';
+//     document.getElementById('postBody').value = '';
+//     document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+//     document.getElementById('openDatePicker').classList.add('action-btn-mini');
+//     document.getElementById('openDatePicker').classList.remove('action-btn');
+//     ['postTitle', 'postBody', 'postTags'].forEach(id => {
+//         document.getElementById(id).classList.remove('error');
+//     });
 
-    document.getElementById('comunityName').innerText = 'Seleziona la comunità';
-    scheduledTime = null;
-}
+//     document.getElementById('comunityName').innerText = 'Seleziona la comunità';
+//     scheduledTime = null;
+// }
 
 function markdownToHtml(markdown) {
     let html = marked.parse(markdown);
@@ -110,12 +111,12 @@ async function getListaComunities() {
     }
 }
 
-function prepareShowPage(fromBozze) {
-    if (!fromBozze) {
-        svuotaForm();
-    }
-    showPage('postPage');
-}
+// function prepareShowPage(fromBozze) {
+//     if (!fromBozze) {
+//         svuotaForm();
+//     }
+//     showPage('postPage');
+// }
 
 // function prepareShowPageBozze() {
 //     if (!window.usernameSelected.username) {
@@ -664,20 +665,6 @@ function createElementWithClass(tag, className, textContent = '') {
     element.classList.add(className);
     element.textContent = textContent;
     return element;
-}
-
-function createIconButton(iconName, onClick) {
-    const button = document.createElement('button');
-    const icon = document.createElement('i');
-    icon.classList.add('material-icons');
-    icon.innerText = iconName;
-    button.appendChild(icon);
-    button.classList.add('action-btn-mini');
-    button.onclick = (event) => {
-        event.stopPropagation(); 
-        onClick();
-    };
-    return button;
 }
 
 async function loadDraft(draft) {

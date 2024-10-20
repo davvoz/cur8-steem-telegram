@@ -1,5 +1,5 @@
-import { displayResult } from './components/dialog.js';
-import { getUsername} from './services/userManager.js';
+import { displayResult } from '../components/dialog.js';
+import { getUsername} from '../services/userManager.js';
 
 export async function postToSteem() {
     if (!validateForm()) {
@@ -64,4 +64,19 @@ export function validateForm() {
         displayResult({ error: errorMessage }, 'error', true, false, 5000);
     }
     return isValid;
+}
+
+export function svuotaForm() {
+    document.getElementById('postTitle').value = '';
+    document.getElementById('postTags').value = '';
+    document.getElementById('postBody').value = '';
+    document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+    document.getElementById('openDatePicker').classList.add('action-btn-mini');
+    document.getElementById('openDatePicker').classList.remove('action-btn');
+    ['postTitle', 'postBody', 'postTags'].forEach(id => {
+        document.getElementById(id).classList.remove('error');
+    });
+
+    document.getElementById('comunityName').innerText = 'Seleziona la comunità';
+    scheduledTime = null;
 }
