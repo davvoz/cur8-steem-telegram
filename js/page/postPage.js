@@ -1,5 +1,9 @@
 import { displayResult } from '../components/dialog.js';
 import { getUsername} from '../services/userManager.js';
+import { getUserDrafts } from './draftPage.js';
+import ApiClient from '../api/api-client.js';
+
+const client = new ApiClient();
 
 export async function postToSteem() {
     if (!validateForm()) {
@@ -80,3 +84,44 @@ export function svuotaForm() {
     document.getElementById('comunityName').innerText = 'Seleziona la comunità';
     window.scheduledTime = null;
 }
+
+export async function salvaBozza() {
+        if (!validateForm()) {
+            return;
+        }
+        let scheduledDate = null;
+        if (document.getElementById('openDatePicker').innerText && document.getElementById('openDatePicker').innerText !== 'schedule') {
+            const dateString = document.getElementById('openDatePicker').innerText;
+            if (dateString) {
+                const [datePart, timePart] = dateString.split(', ');
+                const [day, month, year] = datePart.split('/').map(Number);
+                const [hours, minutes, seconds] = timePart.split(':').map(Number);
+                scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
+                if (scheduledDate < Date.now()) {
+                    displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
+                    document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+                    document.getElementById('openDatePicker').classList.add('action-btn-mini');
+                    document.getElementById('openDatePicker').classList.remove('action-btn');
+                    return;
+                }
+            }
+        }
+    
+        try {
+            window.scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
+            const result = await client.saveDraft(
+                getUsername(),
+                document.getElementById('postTitle').value,
+                document.getElementById('postTags').value,
+                document.getElementById('postBody').value,
+                window.scheduledTime,
+                Intl.DateTimeFormat().resolvedOptions().timeZone
+            );
+            await getUserDrafts(); // Ricarica i draft dopo il salvataggio
+            displayResult(result, 'success', true);
+        } catch (error) {
+            console.error('Error in salvaBozza:', error);
+            displayResult({ error: error.message }, 'error', true);
+        }
+    }
+    
