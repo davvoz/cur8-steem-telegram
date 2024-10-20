@@ -37,6 +37,10 @@
     --border-radius-md: 10px;
     --border-radius-lg: 20px;
     --header-height: 80px;
+    /*facciamo la scrollbar stilosa elegante*/
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--background);
+    
 }
 
 .theme-chooser {

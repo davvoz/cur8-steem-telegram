@@ -2,12 +2,11 @@ import ApiClient from './api/api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './api/image-upload.js';
 import { applySavedTheme } from './components/theme.js';
 import { initializeTelegram } from './services/telegram.js';
-import { displayResult, createDatePickerDialog } from './components/dialog.js'; 
-import { postToSteem, validateForm, svuotaForm, salvaBozza } from './page/postPage.js';
-import { getUsername } from './services/userManager.js';
-import { createIconButton } from './components/icon.js';
+import { displayResult } from './components/dialog.js';
+import { postToSteem, salvaBozza } from './page/postPage.js';
 import { showPage } from './page/page.js';
 import { getUserDrafts } from './page/draftPage.js';
+import { openComunitiesAutocomplete, openDatePicker,togglePreview } from './page/postPage.js';
 
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
@@ -54,7 +53,6 @@ eventListeners.forEach(({ id, event, handler }) => {
 });
 
 window.listaComunities = '';
-let currentFocus = -1;
 window.scheduledTime = null;
 let client = new ApiClient();
 let usernames = [];
@@ -62,30 +60,7 @@ window.idTelegram = '';
 window.usernameSelected = '';
 initializeImageUpload();
 
-function markdownToHtml(markdown) {
-    let html = marked.parse(markdown);
-    html = DOMPurify.sanitize(html);
-    html = html.replace(/<img/g, '<img class="img-fluid"');
-    html = html.replace(/<video/g, '<video class="img-fluid"');
-    return html;
-}
 
-function togglePreview() {
-    const postBody = document.getElementById('postBody').value;
-    const previewContent = document.getElementById('previewContent');
-    previewContent.innerHTML = markdownToHtml(postBody);
-    const modal = document.getElementById('previewModal');
-    modal.style.display = 'block';
-    const closeButton = document.querySelector('.close-button');
-    closeButton.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-    window.addEventListener('click', (event) => {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    });
-}
 
 async function getListaComunities() {
     try {
@@ -98,203 +73,8 @@ async function getListaComunities() {
     }
 }
 
-// function prepareShowPage(fromBozze) {
-//     if (!fromBozze) {
-//         svuotaForm();
-//     }
-//     showPage('postPage');
-// }
-
-// function prepareShowPageBozze() {
-//     if (!window.usernameSelected.username) {
-//         displayResult({ error: 'Seleziona un account' }, 'error', true);
-//         return;
-//     }
-//     svuotaForm();
-//     showPage('draftPage');
-// }
-
-function openDatePicker() {
-    const dialog = createDatePickerDialog();
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    const confirmButton = dialog.querySelector('#confirmButtonDP');
-    const cancelButton = dialog.querySelector('#cancelButtonDP');
-    const scheduledTimeInput = dialog.querySelector('#scheduledTime');
-    confirmButton.addEventListener('click', () => handleDatePickerConfirm(dialog, scheduledTimeInput));
-    cancelButton.addEventListener('click', () => dialog.remove());
-    dialog.addEventListener('close', () => dialog.remove());
-}
-
-function handleDatePickerConfirm(dialog, scheduledTimeInput) {
-    const scheduled = scheduledTimeInput.value;
-    window.scheduledTime = new Date(scheduled).getTime();
-    document.getElementById('openDatePicker').innerText = new Date(scheduled).toLocaleString();
-    document.getElementById('openDatePicker').classList.add('action-btn');
-    document.getElementById('openDatePicker').classList.remove('action-btn-mini');
-    dialog.remove();
-}
-
-function openComunitiesAutocomplete() {
-    const dialog = createDialog();
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    const input = document.getElementById("myInput");
-    const confirmButton = document.getElementById('confirmButton');
-    const cancelButton = document.getElementById('cancelButton');
-    confirmButton.addEventListener('click', () => handleConfirm(dialog, input));
-    cancelButton.addEventListener('click', () => dialog.remove());
-    dialog.addEventListener('close', () => dialog.remove());
-    input.addEventListener("input", handleInput);
-    input.addEventListener("keydown", handleKeydown);
-}
-
-function createDialog() {
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('c-dialogo');
-    dialog.innerHTML = `
-        <div class="autocomplete-container">
-            <h2>Seleziona la comunità</h2>
-            <div class="c-container">
-            <input type="text" id="myInput" placeholder="Inizia a digitare...">
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-            </div>
-            <button id="confirmButton" class="action-btn">Conferma</button>
-            <button id="cancelButton" class="action-btn">Annulla</button>
-        </div>
-    `;
-    return dialog;
-}
-
-function handleConfirm(dialog, input) {
-    const selectedComunity = input.value;
-    document.getElementById('comunityName').innerText = selectedComunity;
-    dialog.remove();
-}
-
-function handleInput(e) {
-    const val = this.value;
-    closeAllLists(null, this);
-    if (!val) return false;
-    currentFocus = -1;
-    const div = createAutocompleteList(this);
-    window.listaComunities.then((communities) => {
-        communities.forEach((community) => {
-            if (community.title.toLowerCase().includes(val.toLowerCase())) {
-                const item = createAutocompleteItem(community, val);
-                item.addEventListener("click", () => handleItemClick(item, community));
-                div.appendChild(item);
-            }
-        });
-    });
-}
-
-function createAutocompleteList(inputElement) {
-    const div = document.createElement("div");
-    div.setAttribute("id", inputElement.id + "autocomplete-list");
-    div.setAttribute("class", "autocomplete-items");
-    inputElement.parentNode.appendChild(div);
-    return div;
-}
-
-function createAutocompleteItem(community, val) {
-    const item = document.createElement("div");
-    const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
-    const matchEnd = matchStart + val.length;
-    item.innerHTML = community.title.substr(0, matchStart);
-    item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
-    item.innerHTML += community.title.substr(matchEnd);
-    item.innerHTML += `<input type='hidden' value='${community.title}'>`;
-    return item;
-}
-
-function handleItemClick(item, community) {
-    const input = document.getElementById("myInput");
-    input.value = item.getElementsByTagName("input")[0].value;
-    document.getElementById('postTags').value = community.name;
-    closeAllLists(null, item);
-}
-
-function handleKeydown(e) {
-    let x = document.getElementById(this.id + "autocomplete-list");
-    if (x) x = x.getElementsByTagName("div");
-    if (e.keyCode == 40) {
-        currentFocus++;
-        addActive(x);
-    } else if (e.keyCode == 38) {
-        currentFocus--;
-        addActive(x);
-    } else if (e.keyCode == 13) {
-        e.preventDefault();
-        if (currentFocus > -1 && x) x[currentFocus].click();
-    }
-}
-
-function addActive(x) {
-    if (!x) return false;
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    x[currentFocus].classList.add("autocomplete-active");
-}
-
-function removeActive(x) {
-    for (let i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
-    }
-}
-
-function closeAllLists(elmnt, elmnt2) {
-    const x = document.getElementsByClassName("autocomplete-items");
-    for (let i = 0; i < x.length; i++) {
-        if (elmnt != x[i] && elmnt2 != x[i]) {
-            x[i].parentNode.removeChild(x[i]);
-        }
-    }
-}
-
-// async function salvaBozza() {
-//     if (!validateForm()) {
-//         return;
-//     }
-//     let scheduledDate = null;
-//     if (document.getElementById('openDatePicker').innerText && document.getElementById('openDatePicker').innerText !== 'schedule') {
-//         const dateString = document.getElementById('openDatePicker').innerText;
-//         if (dateString) {
-//             const [datePart, timePart] = dateString.split(', ');
-//             const [day, month, year] = datePart.split('/').map(Number);
-//             const [hours, minutes, seconds] = timePart.split(':').map(Number);
-//             scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
-//             if (scheduledDate < Date.now()) {
-//                 displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-//                 document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-//                 document.getElementById('openDatePicker').classList.add('action-btn-mini');
-//                 document.getElementById('openDatePicker').classList.remove('action-btn');
-//                 return;
-//             }
-//         }
-//     }
-
-//     try {
-//         window.scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
-//         const result = await client.saveDraft(
-//             getUsername(),
-//             document.getElementById('postTitle').value,
-//             document.getElementById('postTags').value,
-//             document.getElementById('postBody').value,
-//             window.scheduledTime,
-//             Intl.DateTimeFormat().resolvedOptions().timeZone
-//         );
-//         await getUserDrafts(); // Ricarica i draft dopo il salvataggio
-//         displayResult(result, 'success', true);
-//     } catch (error) {
-//         console.error('Error in salvaBozza:', error);
-//         displayResult({ error: error.message }, 'error', true);
-//     }
-// }
 
 function updateStatus(message) {
-    //stampa con le nostre dialog
     displayResult({ info: message }, 'info', true);
 }
 
@@ -380,7 +160,7 @@ function initializeEnd(result) {
     if (usernames.length > 0) {
         window.usernameSelected = usernames[0];
         document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
-        setUsernameForImageUpload(window.usernameSelected.username,localStorage.getItem('idTelegram'));
+        setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
         usernameSelected = usernames[0];
         const firstAccountContainer = accountList.querySelector('.container-username');
         if (firstAccountContainer) {
@@ -455,7 +235,7 @@ function selectAccount(username, containerElement) {
     displayResult({ message: `Account ${username.username} selected` }, 'success');
     getUserDrafts(); // Carica i draft quando si seleziona un account
     applySavedTheme(); // Carica il tema salvato quando si seleziona un account
-    setUsernameForImageUpload(username.username,localStorage.getItem('idTelegram'));
+    setUsernameForImageUpload(username.username, localStorage.getItem('idTelegram'));
 }
 
 
@@ -514,16 +294,6 @@ function enableNavigationButtons() {
     });
 }
 
-// function showPage(pageId) {
-//     const modal = document.getElementById('previewModal');
-//     modal.style.display = 'none';
-//     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-//     document.getElementById(pageId).classList.add('active');
-//     if (pageId !== 'postPage') {
-//         svuotaForm();
-//     }
-// }
-
 async function loginSteemLogin(username, idTelegram) {
     try {
         const result = await client.login(
@@ -568,196 +338,6 @@ async function login() {
         displayResult({ error: error.message }, 'error', true);
     }
 }
-
-// async function getUserDrafts() {
-//     const username = getUsername();
-//     if (!username) {
-//         return;
-//     }
-//     try {
-//         const result = await client.getUserDrafts(username);
-//         await createListaDrafts(result, username);
-//     } catch (error) {
-//         displayResult({ error: 'Failed to load drafts. Please try again.' }, 'error', true);
-//     }
-// }
-
-// async function createListaDrafts(drafts, username) {
-//     const draftList = document.getElementById('draftList');
-//     draftList.innerHTML = ''; // Clear existing list
-//     if (!Array.isArray(drafts) || drafts.length === 0) {
-//         const li = document.createElement('li');
-//         li.textContent = 'No drafts available';
-//         draftList.appendChild(li);
-//         return;
-//     }
-//     drafts.sort((a, b) => {
-//         if (!a.scheduled_time) return 1;
-//         if (!b.scheduled_time) return -1;
-//         return new Date(a.scheduled_time) - new Date(b.scheduled_time);
-//     });
-//     drafts.forEach(async (draft, index) => {
-//         const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags, draft);
-//         if (!draft.scheduled_time) {
-//             li.classList.add('unscheduled-draft');
-//         }
-//         draftList.appendChild(li);
-//     });
-// }
-
-// async function createDraftListItem(id, title, scheduledTime, tags, draft) {
-//     const li = document.createElement('li');
-//     li.classList.add('draft-item');
-//     const titleSpan = createElementWithClass('span', 'draft-title', title);
-//     const idDiv = createElementWithClass('div', 'draft-id', id);
-//     const titleContainer = createElementWithClass('div', 'title-container');
-//     titleContainer.append(idDiv, titleSpan);
-//     const infoDiv = createElementWithClass('div', 'draft-info');
-//     infoDiv.style.display = 'flex';
-//     infoDiv.style.flexDirection = 'column';
-//     infoDiv.style.marginRight = '10px';
-//     const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', scheduledTime ? new Date(scheduledTime).toLocaleString() : 'No scheduled time');
-//     infoDiv.appendChild(scheduledTimeSpan);
-//     const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
-//     titleScheduleContainer.append(titleContainer, infoDiv);
-//     li.appendChild(titleScheduleContainer);
-//     const communityNameSpan = createElementWithClass('div', 'community-name', await converiIlTagInNomeComunita(tags));
-//     infoDiv.appendChild(communityNameSpan);
-//     const buttonsContainer = createElementWithClass('div', 'buttons-container-draft');
-//     buttonsContainer.append(
-//         createIconButton('edit', () => {
-//             loadDraft(draft);
-//             showPage('postPage');
-//         }),
-//         createIconButton('delete', () => deleteDraft(draft.id))
-//     );
-//     li.appendChild(buttonsContainer);
-//     return li;
-// }
-
-// function createElementWithClass(tag, className, textContent = '') {
-//     const element = document.createElement(tag);
-//     element.classList.add(className);
-//     element.textContent = textContent;
-//     return element;
-// }
-
-// async function loadDraft(draft) {
-//     document.getElementById('postTitle').value = draft.title || '';
-//     document.getElementById('postTags').value = draft.tags || '';
-//     document.getElementById('postBody').value = draft.body || '';
-//     document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
-//     if (draft.scheduled_time) {
-//         document.getElementById('openDatePicker').innerText = new Date(draft.scheduled_time).toLocaleString();
-//         document.getElementById('openDatePicker').classList.add('action-btn');
-//         document.getElementById('openDatePicker').classList.remove('action-btn-mini');
-//     } else {
-//         document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-//         document.getElementById('openDatePicker').classList.add('action-btn-mini');
-//         document.getElementById('openDatePicker').classList.remove('action-btn');
-//     }
-
-//     window.scheduledTime = draft.scheduled_time;
-// }
-
-// async function deleteDraft(id) {
-//     const draftId = id;
-//     if (!draftId) return;
-//     const dialog = document.createElement('dialog');
-//     dialog.classList.add('dialogo');
-//     dialog.innerHTML = `
-//         <h2>Conferma Eliminazione</h2>
-//         <p>Sei sicuro di voler eliminare questa bozza?</p>
-//         <button id="confirmButtonDelete" class="action-btn">Conferma</button>
-//         <button id="cancelButtonDelete" class="action-btn">Annulla</button>
-//     `;
-//     document.body.appendChild(dialog);
-//     dialog.showModal();
-//     const confirmButton = dialog.querySelector('#confirmButtonDelete');
-//     const cancelButton = dialog.querySelector('#cancelButtonDelete');
-//     confirmButton.addEventListener('click', async () => {
-//         dialog.remove();
-//         try {
-//             const result = await client.deleteDraft(draftId, getUsername());
-//             getUserDrafts();
-//             displayResult(result, 'success', true);
-//         } catch (error) {
-//             console.error('Error in deleteDraft:', error);
-//             displayResult({ error: error.message }, 'error');
-//         }
-//     });
-//     cancelButton.addEventListener('click', () => {
-//         dialog.remove();
-//     });
-//     dialog.addEventListener('close', () => {
-//         dialog.remove();
-//     });
-// }
-
-// async function postToSteem() {
-//     if (!validateForm()) {
-//         return;
-//     }
-
-//     const dialog = document.createElement('dialog');
-//     dialog.classList.add('dialogo');
-//     dialog.innerHTML = `
-//         <h2>Conferma Pubblicazione</h2>
-//         <p>Sei sicuro di voler pubblicare questo post su Steem?</p>
-//         <button id="confirmButtonPost" class="action-btn">Conferma</button>
-//         <button id="cancelButtonPost" class="action-btn">Annulla</button>
-//     `;
-//     document.body.appendChild(dialog);
-//     dialog.showModal();
-//     const confirmButton = dialog.querySelector('#confirmButtonPost');
-//     const cancelButton = dialog.querySelector('#cancelButtonPost');
-//     confirmButton.addEventListener('click', async () => {
-//         dialog.remove();
-//         try {
-//             const result = await client.postToSteem(
-//                 getUsername(),
-//                 document.getElementById('postTitle').value,
-//                 document.getElementById('postBody').value,
-//                 document.getElementById('postTags').value,
-//                 scheduledTime,
-//             );
-//             displayResult(result, 'success', true);
-//         } catch (error) {
-//             console.error('Error in postToSteem:', error);
-//             displayResult({ error: error.message }, 'error', true);
-//         }
-//     });
-//     cancelButton.addEventListener('click', () => {
-//         dialog.remove();
-//     });
-//     dialog.addEventListener('close', () => {
-//         dialog.remove();
-//     });
-// }
-
-// function validateForm() {
-//     const title = document.getElementById('postTitle').value.trim();
-//     const body = document.getElementById('postBody').value.trim();
-//     const tags = document.getElementById('postTags').value.trim();
-//     let isValid = true;
-//     let errorMessage = '';
-//     if (title === '') {
-//         isValid = false;
-//         errorMessage += 'Il titolo del post è obbligatorio.\n';
-//     }
-//     if (body === '') {
-//         isValid = false;
-//         errorMessage += 'Il corpo del post è obbligatorio.\n';
-//     }
-//     if (tags === '') {
-//         isValid = false;
-//         errorMessage += 'Almeno un tag è obbligatorio.\n';
-//     }
-//     if (!isValid) {
-//         displayResult({ error: errorMessage }, 'error', true, false, 5000);
-//     }
-//     return isValid;
-// }
 
 function showAccountPage() {
     showPage('accountPage');
