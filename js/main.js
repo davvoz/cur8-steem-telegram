@@ -1,6 +1,8 @@
 import ApiClient from './api-client.js';
 import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
 import { applySavedTheme } from './theme.js';
+import { initializeTelegram } from './telegram.js';
+import { displayResult } from './dialog.js'; 
 
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
@@ -51,7 +53,7 @@ let currentFocus = -1;
 let scheduledTime;
 let client = new ApiClient();
 let usernames = [];
-let idTelegram;
+window.idTelegram = '';
 window.usernameSelected = '';
 initializeImageUpload();
 
@@ -298,7 +300,7 @@ async function salvaBozza() {
     try {
         scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
         const result = await client.saveDraft(
-            getUsername(),
+            //getUsername(),
             document.getElementById('postTitle').value,
             document.getElementById('postTags').value,
             document.getElementById('postBody').value,
@@ -312,51 +314,6 @@ async function salvaBozza() {
         displayResult({ error: error.message }, 'error', true);
     }
 }
-
-const initializeTelegram = async () => {
-    if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
-        return window.Telegram.WebApp.initDataUnsafe.user.id;
-    }
-    return getDialogTelegramId();
-};
-
-const getDialogTelegramId = () => {
-    return new Promise((resolve) => {
-        const dialog = createDialogo();
-        document.body.appendChild(dialog);
-        dialog.showModal();
-
-        const confirmButton = dialog.querySelector('#confirmButtonTelegramId');
-        confirmButton.addEventListener('click', () => {
-            document.getElementById('spinner').classList.remove('hide');
-            const telegramId = document.getElementById('telegramId').value;
-            closeAndResolve(dialog, telegramId, resolve).then(() => {
-                idTelegram = telegramId;
-                localStorage.setItem('idTelegram', telegramId);
-            });
-        });
-        dialog.addEventListener('close', () => {
-            closeAndResolve(dialog, null, resolve);
-        });
-    });
-};
-
-const createDialogo = () => {
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('dialogo');
-    dialog.innerHTML = `
-        <h2>Telegram ID</h2>
-        <input type="text" id="telegramId" placeholder="Inserisci il tuo ID Telegram">
-        <button id="confirmButtonTelegramId" class="action-btn">Conferma</button>
-    `;
-    return dialog;
-};
-
-const closeAndResolve = async (dialog, value, resolve) => {
-    dialog.close();
-    dialog.remove();
-    await resolve(value);
-};
 
 function updateStatus(message) {
     //stampa con le nostre dialog
@@ -584,53 +541,6 @@ function getUsername() {
         return usernames[0].username;
     }
     return window.usernameSelected.username;
-}
-
-function displayResult(result, type = 'success', enabled = false, callback, time = 2000) {
-    if (enabled) {
-        //crea una dialog con il risultato
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('dialog');
-        switch (type) {
-            case 'success':
-                dialog.innerHTML = `
-                <h2>Risultato</h2>
-                <p>${result.message}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
-                `;
-                break;
-            case 'error':
-                dialog.innerHTML = `
-                <h2>Errore</h2>
-                <p>${result.error}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
-                `;
-                break;
-            default:
-                dialog.innerHTML = `
-                <h2>Informazione</h2>
-                <p>${result.info}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
-                `;
-        }
-        document.body.appendChild(dialog);
-        dialog.classList.add(type);
-        dialog.showModal();
-        const closeButton = dialog.querySelector('#closeButton');
-        closeButton.addEventListener('click', () => {
-            dialog.remove();
-            if (callback) {
-                callback();
-            }
-        });
-
-        dialog.addEventListener('close', () => dialog.remove());
-        if (type !== 'error' && (!callback || !neverClose)) {
-            setTimeout(() => {
-                dialog.remove();
-            }, time);
-        }
-    }
 }
 
 function showPage(pageId) {
