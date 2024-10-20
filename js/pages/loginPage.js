@@ -140,3 +140,20 @@ export function goToSteemLogin() {
         updateStatus('Errore durante il processo di login: ' + error.message);
     }
 }
+
+export async function handleSteemLogin() {
+    const accessTokenPresente = window.location.search.includes('access_token');
+    console.log('accessTokenPresente:', accessTokenPresente);
+
+    if (accessTokenPresente) {
+        const token = window.location.search.split('access_token=')[1];
+        console.log('Token:', token);
+
+        const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
+        console.log('Username:', username);
+
+        const idTgr = localStorage.getItem('idTelegram');
+        await loginSteemLogin(username, idTgr);
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}

@@ -1,72 +1,4 @@
-:root {
-    /*tema chiaro , normale , non accecantemente bianco*/
-    --primary-color: #007bff;
-    --primary-variant: #0056b3;
-    --secondary-color: #6c757d;
-    --background: #e0e0e0;
-    /* Colore di sfondo chiaro */
-    --surface: #f5f5f5;
-    /* Colore delle superfici chiaro */
-    --error: #dc3545;
-    --success: #28a745;
-    --warning: #ffc107;
-    --on-primary: #ffffff;
-    /* Testo su colore primario */
-    --on-background: #212529;
-    /* Testo su sfondo */
-    --on-surface: #212529;
-    /* Testo su superfici */
-    --on-secondary: #ffffff;
-    /* Testo su colore secondario */
-
-    --font-main: 'Montserrat', sans-serif;
-    --font-accent: 'Oswald', sans-serif;
-    --font-size-base: 16px;
-    --line-height-base: 1.8;
-    --spacing-xs: 6px;
-    --spacing-sm: 12px;
-    --spacing-md: 20px;
-    --spacing-lg: 28px;
-    --spacing-xl: 40px;
-    --transition-fast: 0.2s ease-in;
-    --transition-medium: 0.4s ease-in-out;
-    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.5);
-    --border-radius-sm: 4px;
-    --border-radius-md: 10px;
-    --border-radius-lg: 20px;
-    --header-height: 80px;
-    /*facciamo la scrollbar stilosa elegante*/
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) var(--background);
-    
-}
-
-.theme-chooser {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  .theme-option {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid var(--secondary-color);
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease-in-out;
-  }
-  .theme-option:hover {
-    transform: scale(1.1);
-  }
-  .theme-option.active {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 10px var(--accent-color);
-  }
-
-.red-dark-theme {
+.theme-selector-red-dark-theme {
     --primary-color: #ff4757;
     --primary-variant: #ff6b6b;
     --secondary-color: #ff9ff3;
@@ -81,7 +13,7 @@
     --on-secondary: #2c2c54;
 }
 
-.purple-dark-theme {
+.theme-selector-purple-dark-theme {
     --primary-color: #9c27b0;
     --primary-variant: #d500f9;
     --secondary-color: #7c4dff;
@@ -96,7 +28,7 @@
     --on-secondary: #ffffff;
 }
 
-.green-dark-theme {
+.theme-selector-green-dark-theme {
     --primary-color: #00c853;
     --primary-variant: #69f0ae;
     --secondary-color: #64ffda;
@@ -111,7 +43,7 @@
     --on-secondary: #000000;
 }
 
-.blue-dark-theme {
+.theme-selector-blue-dark-theme {
     --primary-color: #2196f3;
     --primary-variant: #448aff;
     --secondary-color: #03a9f4;
@@ -126,7 +58,7 @@
     --on-secondary: #ffffff;
 }
 
-.orange-dark-theme {
+.theme-selector-orange-dark-theme {
     --primary-color: #ff9800;
     --primary-variant: #ffa726;
     --secondary-color: #ffb74d;
@@ -141,7 +73,7 @@
     --on-secondary: #000000;
 }
 
-.yellow-dark-theme {
+.theme-selector-yellow-dark-theme {
     --primary-color: #ffeb3b;
     --primary-variant: #ffd600;
     --secondary-color: #fff176;
@@ -156,7 +88,7 @@
     --on-secondary: #000000;
 }
 
-.pink-dark-theme {
+.theme-selector-pink-dark-theme {
     --primary-color: #e91e63;
     --primary-variant: #ff4081;
     --secondary-color: #f50057;
@@ -171,7 +103,7 @@
     --on-secondary: #ffffff;
 }
 
-.cyan-dark-theme {
+.theme-selector-cyan-dark-theme {
     --primary-color: #00bcd4;
     --primary-variant: #00e5ff;
     --secondary-color: #1de9b6;
@@ -186,7 +118,7 @@
     --on-secondary: #000000;
 }
 
-.brown-dark-theme {
+.theme-selector-brown-dark-theme {
     --primary-color: #795548;
     --primary-variant: #8d6e63;
     --secondary-color: #bcaaa4;
@@ -201,7 +133,7 @@
     --on-secondary: #000000;
 }
 
-.silver-dark-theme {
+.theme-selector-silver-dark-theme {
     --primary-color: #bdc3c7;
     --primary-variant: #95a5a6;
     --secondary-color: #7f8c8d;
@@ -216,7 +148,7 @@
     --on-secondary: #ecf0f1;
 }
 
-.lime-dark-theme {
+.theme-selector-lime-dark-theme {
     --primary-color: #cddc39;
     --primary-variant: #c0ca33;
     --secondary-color: #eeff41;
@@ -229,4 +161,217 @@
     --on-background: #f0f4c3;
     --on-surface: #e6ee9c;
     --on-secondary: #000000;
+}
+
+.theme-selector-cyberpunk-theme {
+    --primary-color: #ff2e63;
+    --primary-variant: #ff2e63;
+    --secondary-color: #00f0ff;
+    --background: #0f0f0f;
+    --surface: #171717;
+    --error: #ff2e63;
+    --success: #00f0ff;
+    --warning: #ffcc00;
+    --on-primary: #ffffff;
+    --on-background: #ffffff;
+    --on-surface: #ffffff;
+    --on-secondary: #000000;
+}
+
+.theme-selector-psicodelic-theme {
+    --primary-color: #ff00ff;
+    --primary-variant: #ff00ff;
+    --secondary-color: #00ff00;
+    --background: #000000;
+    --surface: #000000;
+    --error: #ff00ff;
+    --success: #00ff00;
+    --warning: #ffff00;
+    --on-primary: #a50d0d;
+    --on-background: #521352;
+    --on-surface: #ffffff;
+    --on-secondary: #000000;
+}
+
+.theme-selector-forest-theme {
+    --primary-color: #00ff00;
+    --primary-variant: #00ff00;
+    --secondary-color: #0000ff;
+    --background: #000000;
+    --surface: #000000;
+    --error: #00ff00;
+    --success: #0000ff;
+    --warning: #ffff00;
+    --on-primary: #ffffff;
+    --on-background: #ffffff;
+    --on-surface: #ffffff;
+    --on-secondary: #000000;
+}
+
+.theme-selector-dark-theme {
+    --primary-color: #212121;
+    --primary-variant: #484848;
+    --secondary-color: #757575;
+    --background: #2b1717;
+    --surface: #333333;
+    --error: #ff5252;
+    --success: #69f0ae;
+    --warning: #ffd740;
+    --on-primary: #ffffff;
+    --on-background: #f1f2f6;
+    --on-surface: #dfe4ea;
+    --on-secondary: #ffffff;
+}
+
+.theme-selector-horror-theme {
+    --primary-color: #ff3d00;
+    --primary-variant: #ff6e40;
+    --secondary-color: #ff9100;
+    --background: #000000;
+    --surface: #212121;
+    --error: #ff3d00;
+    --success: #00e676;
+    --warning: #ffab00;
+    --on-primary: #000000;
+    --on-background: #f1f2f6;
+    --on-surface: #dfe4ea;
+    --on-secondary: #220101;
+}
+
+.theme-selector-cringe-theme {
+    --primary-color: #ff1744;
+    --primary-variant: #ff5252;
+    --secondary-color: #ff4081;
+    --background: #000000;
+    --surface: #212121;
+    --error: #ff1744;
+    --success: #00e676;
+    --warning: #ffab00;
+    --on-primary: #000000;
+    --on-background: #f1f2f6;
+    --on-surface: #dfe4ea;
+    --on-secondary: #220101;
+}
+
+.theme-selector-emo-theme {
+    --primary-color: #ff4081;
+    --primary-variant: #ff4081;
+    --secondary-color: #ff4081;
+    --background: #000000;
+    --surface: #212121;
+    --error: #ff1744;
+    --success: #00e676;
+    --warning: #ffab00;
+    --on-primary: #000000;
+    --on-background: #f1f2f6;
+    --on-surface: #dfe4ea;
+    --on-secondary: #220101;
+}
+
+.theme-selector-clear-theme {
+    --primary-color: #0056b3;
+    --primary-variant: #0056b3;
+    --secondary-color: #6c757d;
+    --background: #e0e0e0;
+    --surface: #f5f5f5;
+    --error: #dc3545;
+    --success: #28a745;
+    --warning: #ffc107;
+    --on-primary: #ffffff;
+    --on-background: #212529;
+    --on-surface: #212529;
+    --on-secondary: #ffffff;
+}
+
+.theme-selector-sexy-theme {
+    --primary-color: #ff2e63;
+    --primary-variant: #ff2e63;
+    --secondary-color: #00f0ff;
+    --background: #0f0f0f;
+    --surface: #171717;
+    --error: #ff2e63;
+    --success: #00f0ff;
+    --warning: #ffcc00;
+    --on-primary: #ffffff;
+    --on-background: #ffffff;
+    --on-surface: #ffffff;
+    --on-secondary: #000000;
+}
+
+.theme-selector-water-theme {
+    --primary-color: #00f0ff;
+    --primary-variant: #00f0ff;
+    --secondary-color: #00f0ff;
+    --background: #0f0f0f;
+    --surface: #171717;
+    --error: #ff2e63;
+    --success: #00f0ff;
+    --warning: #ffcc00;
+    --on-primary: #ffffff;
+    --on-background: #ffffff;
+    --on-surface: #ffffff;
+    --on-secondary: #000000;
+}
+
+.theme-selector-banana-theme {
+    --primary-color: #ffcc00;
+    --primary-variant: #ffcc00;
+    --secondary-color: #ffcc00;
+    --background: #814900;
+    --surface: #422600;
+    --error: #ff2e63;
+    --success: #00f0ff;
+    --warning: #ffcc00;
+    --on-primary: #ffffff;
+    --on-background: #ffffff;
+    --on-surface: #ffffff;
+    --on-secondary: #000000;
+}
+
+.theme-selector-reverse-horror-theme {
+    --primary-color: #000000;
+    --primary-variant: #212121;
+    --secondary-color: #757575;
+    --background: #ff3d00;
+    --surface: #ff6e40;
+    --error: #ff3d00;
+    --success: #00e676;
+    --warning: #ffab00;
+    --on-primary: #000000;
+    --on-background: #f1f2f6;
+    --on-surface: #dfe4ea;
+    --on-secondary: #220101;
+}
+
+.theme-selector-mio-tema {
+    --primary-color: #FFD700;
+    --primary-variant: #B8860B;
+    --secondary-color: #32CD32;
+    --background: #2D2A55;
+    --surface: #383B4B;
+    --error: #FF4C4C;
+    --success: #4CAF50;
+    --warning: #FFA500;
+    --on-primary: #FFFFFF;
+    --on-background: #E0E0E0;
+    --on-surface: #FFFFFF;
+    --on-secondary: #000000;
+}
+
+.theme-selector-ancoramio-tema {
+    :root {
+        --primary-color: #dccccc; /* Colore neutro con una leggera sfumatura rosa */
+        --primary-variant: #ba0116; /* Rosso intenso per enfasi e dettagli */
+        --secondary-color: #e3bb50; /* Giallo dorato per creare contrasto e accenti */
+        --background: #2c2e3e; /* Sostituito con un viola-grigio scuro per maggiore armonia con il rosso */
+        --surface: #3a3b4f; /* Grigio scuro-blu per superfici, in modo da mantenere un contrasto visivo */
+        --error: #ff5252; /* Rosso acceso per segnalare errori */
+        --success: #69f0ae; /* Verde acqua per un messaggio di successo fresco e visibile */
+        --warning: #ffd740; /* Giallo caldo per avvertimenti */
+        --on-primary: #ffffff; /* Bianco per testi su sfondo primario */
+        --on-background: #e0e3ea; /* Grigio molto chiaro per un testo leggibile su sfondi scuri */
+        --on-surface: #f5f6fa; /* Quasi bianco per il testo su superfici scure */
+        --on-secondary: #000000; /* Nero per testi sui colori secondari per un forte contrasto */
+    }
+    
 }

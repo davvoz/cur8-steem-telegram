@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/themes.css">
     <link rel="stylesheet" href="./css/navigation.css">
+    <link rel="stylesheet" href="./css/mainStyle.css">
 </head>
 
 
@@ -54,8 +55,10 @@
     </div>
 
     <!-- Pagina Gestione Bozze -->
-    <div id="draftPage" class="page"><div class="header">
-        <h2 id="titleGestionBozze">Gestione Bozze</h2>  </div>
+    <div id="draftPage" class="page">
+        <div class="header">
+            <h2 id="titleGestionBozze">Gestione Bozze</h2>
+        </div>
         <!--lista delle bozze dell'username selezionato-->
         <ul id="draftList"></ul>
     </div>
@@ -69,7 +72,7 @@
 
         <div class="textarea-container">
             <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post" required></textarea>
-            
+
 
             <div id="dropZone">
                 Inserisci Immagine
@@ -80,7 +83,7 @@
             <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola" required>
             <br>
 
-            
+
             <div class="buttons-container">
 
                 <button class="action-btn buttons-containero" id="openComunities">
@@ -111,9 +114,12 @@
 
     <!-- Pagina Gestione Account CRUD -->
     <div id="accountPage" class="page">
-       <div class="header"> <h2>Account Manager</h2>
-        <!--logo di cur8-->   
-        <img src="assets/logo_tra.png" alt="cur8 logo" style="width: 81px;height: 81px;display: flex;/* background: black; */">    </div>
+        <div class="header">
+            <h2>Account Manager</h2>
+            <!--logo di cur8-->
+            <img src="assets/logo_tra.png" alt="cur8 logo"
+                style="width: 81px;height: 81px;display: flex;/* background: black; */">
+        </div>
         <ul id="accountList"></ul>
         <div class="actions-container">
             <button class="action-btn loginIn" id="loginInBtn">
@@ -130,24 +136,12 @@
     </div>
 
     <!-- Menu di selezione per cambiare tema -->
-<div id="configPage" class="page" >
+    <div id="configPage" class="page">
 
         <h2>Configurazione</h2>
         <!-- <button class="collapsible">Selezione Tema</button> -->
 
-        <div class="theme-chooser" style="overflow: hidden; padding: 0px 0px 2% 2%;">
-            <!-- <div class="theme-selector"> </div> --> 
-            <div class="theme-option" style="background: linear-gradient(to right, #2c2c54 50%, #ff4757 50%);" onclick="setTheme('red-dark-theme')"></div>   
-            <div class="theme-option" style="background: linear-gradient(to right, #20232a 50%, #9c27b0 50%);" onclick="setTheme('purple-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #1e3c3b 50%, #00c853 50%);" onclick="setTheme('green-dark-theme')"></div>
-            <div class="theme-option active" style="background: linear-gradient(to right, #0a192f 50%, #2196f3 50%);" onclick="setTheme('blue-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2c3e50 50%, #ff9800 50%);" onclick="setTheme('orange-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2d3436 50%, #ffeb3b 50%);" onclick="setTheme('yellow-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2f3640 50%, #e91e63 50%);" onclick="setTheme('pink-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #e0f7fa 50%, #00bcd4 50%);" onclick="setTheme('cyan-dark-them')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #795548 50%, #1e272e 50%);" onclick="setTheme('brown-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #2c3e50 50%, #bdc3c7 50%);" onclick="setTheme('silver-dark-theme')"></div>
-            <div class="theme-option" style="background: linear-gradient(to right, #222f3e 50%, #cddc39 50%);" onclick="setTheme('lime-dark-theme')"></div>
+        <div class="theme-chooser" style="overflow: hidden; padding: 2%">
         </div>
         <script>
             // Load default post settings from localStorage
@@ -177,5 +171,6 @@
         <!-- <script type="module" src="main.js"></script> -->
     </div>
 </body>
+
 
 </html>

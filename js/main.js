@@ -6,7 +6,7 @@ import { displayResult } from './components/dialog.js';
 import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview } from './pages/postPage.js';
 import { showPage } from './pages/page.js';
 import { enableNavigationButtons, initializeEnd, setUsernames } from './services/utils.js';
-import { goToSteemLogin, login, loginSteemLogin } from './pages/loginPage.js';
+import { goToSteemLogin, login, handleSteemLogin } from './pages/loginPage.js';
 
 // Global variables
 window.listaComunities = '';
@@ -111,23 +111,6 @@ function showLoginPage() {
 function showConfigPage() {
     showPage('configPage');
     setupTelegramBackButton();
-}
-
-async function handleSteemLogin() {
-    const accessTokenPresente = window.location.search.includes('access_token');
-    console.log('accessTokenPresente:', accessTokenPresente);
-
-    if (accessTokenPresente) {
-        const token = window.location.search.split('access_token=')[1];
-        console.log('Token:', token);
-
-        const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
-        console.log('Username:', username);
-
-        const idTgr = localStorage.getItem('idTelegram');
-        await loginSteemLogin(username, idTgr);
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
 }
 
 async function initializeApp() {
