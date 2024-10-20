@@ -4,6 +4,7 @@ import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getUserDrafts } from './draftPage.js';
 import ApiClient from '../api/api-client.js';
 import { setUsernames } from '../services/utils.js';
+import { initializeEnd } from '../services/utils.js';
 
 export function createAccountListItem(username) {
     const li = document.createElement('li');
