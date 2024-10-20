@@ -1,5 +1,5 @@
 
-import { getDialogTelegramId } from './dialog.js';
+import { getDialogTelegramId } from '../components/dialog.js';
 
 export const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {

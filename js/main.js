@@ -1,10 +1,10 @@
-import ApiClient from './api-client.js';
-import { initializeImageUpload, setUsernameForImageUpload } from './image-upload.js';
-import { applySavedTheme } from './theme.js';
-import { initializeTelegram } from './telegram.js';
-import { displayResult } from './dialog.js'; 
+import ApiClient from './api/api-client.js';
+import { initializeImageUpload, setUsernameForImageUpload } from './components/image-upload.js';
+import { applySavedTheme } from './components/theme.js';
+import { initializeTelegram } from './services/telegram.js';
+import { displayResult } from './components/dialog.js'; 
 import { postToSteem } from './postPage.js';
-import { getUsername } from './userManager.js';
+import { getUsername } from './services/userManager.js';
 
 const eventListeners = [
     { id: 'goLogin', event: 'click', handler: login },
