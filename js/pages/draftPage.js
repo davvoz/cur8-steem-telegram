@@ -53,7 +53,10 @@ async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
     infoDiv.style.marginRight = '10px';
-    const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', scheduledTime ? new Date(scheduledTime).toLocaleString() : 'No scheduled time');
+    
+    const message = scheduledTime == "0000-00-00 00:00:00" ? "No scheduled time" : new Date(scheduledTime).toLocaleString();
+
+    const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', message);
     infoDiv.appendChild(scheduledTimeSpan);
     const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
     titleScheduleContainer.append(titleContainer, infoDiv);
