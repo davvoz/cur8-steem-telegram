@@ -137,10 +137,9 @@ async function initializeApp() {
             throw new Error('Impossibile ottenere l\'ID Telegram');
         }
     } catch (error) {
-        showPage('loginPage');
         displayResult({ error: error.message || 'Errore durante l\'inizializzazione' }, 'error', true, () => {
-            location.reload();
-        });
+            showPage('loginPage');
+        }); 
     } finally {
         document.getElementById('spinner').classList.add('hide');
     }
