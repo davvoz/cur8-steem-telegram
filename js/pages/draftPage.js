@@ -87,7 +87,7 @@ async function loadDraft(draft) {
     document.getElementById('postTags').value = draft.tags || '';
     document.getElementById('postBody').value = draft.body || '';
     document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
-    if (draft.scheduled_time) {
+    if (draft.scheduled_time !== '0000-00-00 00:00:00') {
         document.getElementById('openDatePicker').innerText = new Date(draft.scheduled_time).toLocaleString();
         document.getElementById('openDatePicker').classList.add('action-btn');
         document.getElementById('openDatePicker').classList.remove('action-btn-mini');
