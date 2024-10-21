@@ -137,9 +137,14 @@ async function initializeApp() {
             throw new Error('Impossibile ottenere l\'ID Telegram');
         }
     } catch (error) {
-        displayResult({ error: error.message || 'Errore durante l\'inizializzazione' }, 'error', true, () => {
-            showPage('loginPage');
-        }); 
+        if (error.message.includes('HTTP error! status: 404')) {
+            displayResult({ info:'Complimenti! 🎉 Perché non aggiungere un tuo account? 😊' }, 'info', true, () => {
+                showPage('loginPage');
+
+            });
+        } else {
+            displayResult({ error: error.message || 'Errore durante l\'inizializzazione ricarica la pagina' }, 'error', true);
+        }
     } finally {
         document.getElementById('spinner').classList.add('hide');
     }
