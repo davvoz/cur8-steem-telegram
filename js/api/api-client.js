@@ -1,5 +1,5 @@
 
-export default class ApiClient {
+export class ApiClient {
     constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com/api/steem') {
         this.apiKey = 'your_secret_api_key';
         this.baseUrl = baseUrl;

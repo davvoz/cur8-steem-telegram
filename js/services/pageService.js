@@ -1,4 +1,4 @@
-import { svuotaForm } from './postPage.js';
+import { svuotaForm } from '../pages/postPage.js';
 
 export function showPage(pageId) {
     const modal = document.getElementById('previewModal');

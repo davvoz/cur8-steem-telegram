@@ -1,9 +1,8 @@
 import { getUsername } from "../services/userManager.js";
 import { displayResult } from "../components/dialog.js";
-import { showPage } from "./page.js";
-import ApiClient from '../api/api-client.js';
+import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
-
+import { Router } from "../router/Router.js";
 const client = new ApiClient();
 
 export async function getUserDrafts() {
@@ -53,7 +52,7 @@ async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
     infoDiv.style.marginRight = '10px';
-    
+
     const message = scheduledTime == "0000-00-00 00:00:00" ? "No scheduled time" : new Date(scheduledTime).toLocaleString();
 
     const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', message);
@@ -67,7 +66,8 @@ async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     buttonsContainer.append(
         createIconButton('edit', () => {
             loadDraft(draft);
-            showPage('postPage');
+            const router = new Router();
+            router.showPostPage();
         }),
         createIconButton('delete', () => deleteDraft(draft.id))
     );

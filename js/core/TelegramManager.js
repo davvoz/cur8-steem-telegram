@@ -1,14 +1,20 @@
+export  class TelegramManager {
+    static instance = null;
 
-import { getDialogTelegramId } from '../components/dialog.js';
-
-export const initializeTelegram = async () => {
-    if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
-        return window.Telegram.WebApp.initDataUnsafe.user.id;
+    constructor() {
+        if (TelegramManager.instance) {
+            return TelegramManager.instance;
+        }
+        TelegramManager.instance = this;
     }
-    return getDialogTelegramId();
-};
 
-export default class TelegramService {
+    static getInstance() {
+        if (!TelegramManager.instance) {
+            TelegramManager.instance = new TelegramManager();
+        }
+        return TelegramManager.instance;
+    }
+
     setupBackButton() {
         if (!window.Telegram?.WebApp) return;
 

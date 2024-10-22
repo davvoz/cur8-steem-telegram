@@ -1,7 +1,7 @@
 
 import { displayResult } from '../components/dialog.js';
 import { setUsernames, initializeEnd } from '../services/utils.js';
-import ApiClient from '../api/api-client.js';
+import {ApiClient} from '../api/api-client.js';
 
 
 const client = new ApiClient();

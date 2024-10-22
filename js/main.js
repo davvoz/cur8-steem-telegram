@@ -4,7 +4,7 @@ import { initializeImageUpload } from './api/image-upload.js';
 import { initializeTelegram } from './services/telegram.js';
 import { displayResult } from './components/dialog.js';
 import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview } from './pages/postPage.js';
-import { showPage } from './pages/page.js';
+import { showPage } from './services/pageService.js';
 import { enableNavigationButtons, initializeEnd, setUsernames } from './services/utils.js';
 import { goToSteemLogin, login, handleSteemLogin } from './pages/loginPage.js';
 

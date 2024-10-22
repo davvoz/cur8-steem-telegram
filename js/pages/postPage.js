@@ -2,7 +2,7 @@ import { displayResult } from '../components/dialog.js';
 import { getUsername } from '../services/userManager.js';
 import { getUserDrafts } from './draftPage.js';
 import { createDatePickerDialog } from '../components/dialog.js';
-import ApiClient from '../api/api-client.js';
+import {ApiClient} from '../api/api-client.js';
 
 const client = new ApiClient();
 let currentFocus = -1;

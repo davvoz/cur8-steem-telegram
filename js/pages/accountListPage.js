@@ -2,7 +2,7 @@ import { displayResult } from '../components/dialog.js';
 import { applySavedTheme } from '../components/theme.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getUserDrafts } from './draftPage.js';
-import ApiClient from '../api/api-client.js';
+import { ApiClient } from '../api/api-client.js';
 import { setUsernames } from '../services/utils.js';
 import { initializeEnd } from '../services/utils.js';
 
