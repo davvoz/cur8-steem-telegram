@@ -1,4 +1,6 @@
 import { ApiClient } from '../api/api-client.js';
+import { Router } from '../router/Router.js';
+
 export class AppState {
     static instance = null;
 
@@ -7,7 +9,7 @@ export class AppState {
             return AppState.instance;
         }
         AppState.instance = this;
-
+        this.currentDraft = null;
         this.listaComunities = '';
         this.scheduledTime = null;
         this.idTelegram = '';
@@ -15,6 +17,14 @@ export class AppState {
         this.client = new ApiClient();
         this.navigationHistory = [];
         this.telegramLoginData = null;
+        this._router = null; // Use a private property for lazy initialization
+    }
+
+    get router() {
+        if (!this._router) {
+            this._router = Router.getInstance();
+        }
+        return this._router;
     }
 
     static getInstance() {
@@ -22,6 +32,14 @@ export class AppState {
             AppState.instance = new AppState();
         }
         return AppState.instance;
+    }
+
+    setCurrentDraft(draft) {
+        this.currentDraft = draft;
+    }
+
+    getCurrentDraft() {
+        return this.currentDraft;
     }
 }
 

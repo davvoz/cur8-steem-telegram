@@ -15,7 +15,8 @@ export class EventManager {
             { id: 'accountBtn', event: 'click', handler: () => window.location.hash = '#/' },
             { id: 'loginInBtn', event: 'click', handler: () => window.location.hash = '#/login' },
             { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' },
-            { id: 'steemlogin', event: 'click', handler: goToSteemLogin }
+            { id: 'steemlogin', event: 'click', handler: goToSteemLogin },
+
         ];
     }
 

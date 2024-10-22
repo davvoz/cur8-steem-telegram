@@ -1,18 +1,18 @@
 import { initializeImageUpload } from './api/image-upload.js';
 import { handleSteemLogin } from './pages/loginPage.js';
-import { Router } from './router/Router.js';
+import { appState, AppState } from './core/AppState.js';
 import { AppInitializer } from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
 
 class App {
     constructor() {
-        this.router = new Router();
         this.eventManager = new EventManager();
     }
 
     async initialize() {
         // Initialize base components
-        this.router.handleRoute();
+
+        appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
 
@@ -26,7 +26,7 @@ class App {
         this.eventManager.initializeInputValidation();
 
         // Set up event listeners
-        window.addEventListener('hashchange', () => this.router.handleRoute());
+        window.addEventListener('hashchange', () => appState.router.handleRoute());
     }
 }
 

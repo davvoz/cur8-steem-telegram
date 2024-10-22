@@ -2,7 +2,8 @@ import { getUsername } from "../services/userManager.js";
 import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
-import { Router } from "../router/Router.js";
+import { appState } from '../core/AppState.js';
+
 const client = new ApiClient();
 
 export async function getUserDrafts() {
@@ -44,36 +45,57 @@ async function createListaDrafts(drafts, username) {
 async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
+
+    // Create title and ID elements
     const titleSpan = createElementWithClass('span', 'draft-title', title);
     const idDiv = createElementWithClass('div', 'draft-id', id);
     const titleContainer = createElementWithClass('div', 'title-container');
     titleContainer.append(idDiv, titleSpan);
+
+    // Create info container
     const infoDiv = createElementWithClass('div', 'draft-info');
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
     infoDiv.style.marginRight = '10px';
 
-    const message = scheduledTime == "0000-00-00 00:00:00" ? "No scheduled time" : new Date(scheduledTime).toLocaleString();
+    // Format scheduled time
+    const message = scheduledTime == "0000-00-00 00:00:00"
+        ? "No scheduled time"
+        : new Date(scheduledTime).toLocaleString();
 
+    // Add scheduled time to info container
     const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', message);
     infoDiv.appendChild(scheduledTimeSpan);
+
+    // Create container for title and schedule
     const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
     titleScheduleContainer.append(titleContainer, infoDiv);
     li.appendChild(titleScheduleContainer);
-    const communityNameSpan = createElementWithClass('div', 'community-name', await converiIlTagInNomeComunita(tags));
-    infoDiv.appendChild(communityNameSpan);
+
+    // Create buttons container with edit and delete functionality
     const buttonsContainer = createElementWithClass('div', 'buttons-container-draft');
-    buttonsContainer.append(
-        createIconButton('edit', () => {
-            loadDraft(draft);
-            const router = new Router();
-            router.showPostPage();
-        }),
-        createIconButton('delete', () => deleteDraft(draft.id))
-    );
+
+    appState.setCurrentDraft(draft);
+    // Create edit button with unique ID and proper routing
+    const editButton = createIconButton('edit', () => {
+        loadDraft(draft);
+    });
+    editButton.setAttribute('data-draft-id', draft.id);
+    editButton.classList.add('edit-button');
+    // Creare un ID unico per ogni bottone edit
+    editButton.id = `edit-draft-${draft.id}`;
+
+    // Create delete button with unique ID
+    const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
+    deleteButton.id = `delete-draft-${draft.id}`;
+
+    // Add buttons to container
+    buttonsContainer.append(editButton, deleteButton);
     li.appendChild(buttonsContainer);
+
     return li;
 }
+
 
 function createElementWithClass(tag, className, textContent = '') {
     const element = document.createElement(tag);
@@ -83,6 +105,7 @@ function createElementWithClass(tag, className, textContent = '') {
 }
 
 async function loadDraft(draft) {
+    console.log('Loading draft:', draft);
     document.getElementById('postTitle').value = draft.title || '';
     document.getElementById('postTags').value = draft.tags || '';
     document.getElementById('postBody').value = draft.body || '';
@@ -98,6 +121,7 @@ async function loadDraft(draft) {
     }
 
     window.scheduledTime = draft.scheduled_time;
+    window.location.hash = `#/draft/edit/${draft.id}`;
 }
 
 async function deleteDraft(id) {

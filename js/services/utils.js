@@ -1,4 +1,4 @@
-import {ApiClient} from '../api/api-client.js';
+import { ApiClient } from '../api/api-client.js';
 import { displayResult } from '../components/dialog.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { showPage } from '../services/pageService.js';
@@ -52,4 +52,36 @@ export function getUsernames() {
 
 export function setUsernames(value) {
     usernames = value;
+}
+
+export async function converiIlTagInNomeComunita(tags) {
+    if (!tags) return 'Select a community';
+    const tag = tags.split(' ')[0];
+    try {
+        const communities = await window.listaComunities;
+        const community = communities.find(community => community.name === tag);
+        return community ? community.title : 'Select a community';
+    } catch (error) {
+        console.error('Error while searching for community:', error);
+        return 'Error occurred while searching for community';
+    }
+}
+
+export async function loadDraftData(draft) {
+    
+    document.getElementById('postTitle').value = draft.title || '';
+    document.getElementById('postTags').value = draft.tags || '';
+    document.getElementById('postBody').value = draft.body || '';
+    document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
+    if (draft.scheduled_time !== '0000-00-00 00:00:00') {
+        document.getElementById('openDatePicker').innerText = new Date(draft.scheduled_time).toLocaleString();
+        document.getElementById('openDatePicker').classList.add('action-btn');
+        document.getElementById('openDatePicker').classList.remove('action-btn-mini');
+    } else {
+        document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+        document.getElementById('openDatePicker').classList.add('action-btn-mini');
+        document.getElementById('openDatePicker').classList.remove('action-btn');
+    }
+
+    window.scheduledTime = draft.scheduled_time;
 }

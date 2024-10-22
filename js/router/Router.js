@@ -1,16 +1,43 @@
 import { TelegramManager } from '../core/TelegramManager.js';
 import { appState } from '../core/AppState.js';
 import { showPage } from '../services/pageService.js';
+import { loadDraftData } from '../services/utils.js';
 export class Router {
     constructor() {
+        if (Router.instance) {
+            return Router.instance;
+        }
+
         this.routes = {
             '/': this.showAccountPage,
             '/post': this.showPostPage,
             '/draft': this.showDraftPage,
             '/login': this.showLoginPage,
-            '/config': this.showConfigPage
+            '/config': this.showConfigPage,
+            '/draft/edit/:id': this.showPostPage.bind(this), // Add new route for draft editing
+
         };
         this.navigationHistory = appState.navigationHistory;
+
+        Router.instance = this;
+       
+    }
+
+    parseRoute(path) {
+        // Check if path matches any route pattern with parameters
+        for (const [pattern, handler] of Object.entries(this.routes)) {
+            const regexPattern = pattern.replace(/:\w+/g, '([^/]+)');
+            const regex = new RegExp(`^${regexPattern}$`);
+            const match = path.match(regex);
+            
+            if (match) {
+                const params = match.slice(1);
+                return { handler, params };
+            }
+        }
+        
+        // Direct route match
+        return { handler: this.routes[path], params: [] };
     }
 
     showAccountPage() {
@@ -58,13 +85,23 @@ export class Router {
     handleRoute() {
         const path = window.location.hash.slice(1) || '/';
         this.navigationHistory.push(path);
-
-        const route = this.routes[path];
-        if (route) {
-            route();
+        
+        const { handler, params } = this.parseRoute(path);
+        if (handler) {
+            handler(...params);
             this.updateBackButton();
         } else {
             console.log('404 Not Found');
         }
     }
+
+    static getInstance() {
+        if (!Router.instance) {
+            Router.instance = new Router();
+        }
+        return Router.instance;
+    }
 }
+
+// Usage
+//const router = Router.getInstance();
