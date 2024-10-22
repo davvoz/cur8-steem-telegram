@@ -119,38 +119,40 @@ async function initializeApp() {
         console.log('initializeTelegram resolved with idTelegram:', idTelegram);
         localStorage.setItem('idTelegram', idTelegram);
 
-        if (idTelegram) {
-            client = new ApiClient();
-            document.getElementById('spinner').classList.remove('hide');
-            const result = await client.checkLogin(idTelegram);
-
-            if (typeof result.usernames === 'undefined') {
-                document.getElementById('spinner').classList.add('hide');
-                displayResult({ error: 'Nessun account trovato' }, 'error', true);
-                return;
-            }
-
-            setUsernames(result.usernames);
-            enableNavigationButtons();
-            initializeEnd(result);
-        } else {
+        if (!idTelegram) {
             throw new Error('Impossibile ottenere l\'ID Telegram');
         }
-    } catch (error) {
-        if (error.message.includes('HTTP error! status: 404')) {
-            displayResult({ info:'Complimenti! 🎉 Perché non aggiungere un tuo account? 😊' }, 'info', true, () => {
-                showPage('loginPage');
 
-            });
-        } else {
-            displayResult({ error: error.message || 'Errore durante l\'inizializzazione ricarica la pagina' }, 'error', true);
+        client = new ApiClient();
+        document.getElementById('spinner').classList.remove('hide');
+
+        const result = await client.checkLogin(idTelegram);
+        if (!result.usernames) {
+            document.getElementById('spinner').classList.add('hide');
+            displayResult({ error: 'Nessun account trovato' }, 'error', true);
+            return;
         }
+
+        setUsernames(result.usernames);
+        enableNavigationButtons();
+        initializeEnd(result);
+    } catch (error) {
+        handleInitializationError(error);
     } finally {
         document.getElementById('spinner').classList.add('hide');
     }
 }
 
-// Initialization
+function handleInitializationError(error) {
+    if (error.message.includes('HTTP error! status: 404')) {
+        displayResult({ info: 'Complimenti! 🎉 Perché non aggiungere un tuo account? 😊' }, 'info', true, () => {
+            showPage('loginPage');
+        });
+    } else {
+        displayResult({ error: error.message || 'Errore durante l\'inizializzazione ricarica la pagina' }, 'error', true);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     router();
     initializeEventListeners();
@@ -161,7 +163,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         await initializeApp();
     }
 
-    // Add input event listeners to remove error class when user starts typing
     ['postTitle', 'postBody', 'postTags'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', function () {
             this.classList.remove('error');
