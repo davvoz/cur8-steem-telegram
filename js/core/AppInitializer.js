@@ -1,10 +1,14 @@
 import { initializeTelegram } from '../services/telegram.js';
 import { displayResult } from '../components/dialog.js';
-import { enableNavigationButtons, initializeEnd, setUsernames } from '../services/utils.js';
+import { enableNavigationButtons } from '../services/utils.js';
 import { ApiClient } from '../api/api-client.js';
 import { showPage } from '../services/pageService.js';
-import { appState } from './AppState.js';   
+import { appState } from './AppState.js';
+import { setUsernameForImageUpload } from '../api/image-upload.js';
+import { createAccountListItem, selectAccount } from '../pages/accountListPage.js';
+import { getListaComunities } from '../services/utils.js';
 // App Initializer Class
+let usernames = [];
 export class AppInitializer {
     static async initializeApp() {
         try {
@@ -28,7 +32,7 @@ export class AppInitializer {
 
             setUsernames(result.usernames);
             enableNavigationButtons();
-            initializeEnd(result);
+            AppInitializer.initializeEnd(result);
         } catch (error) {
             AppInitializer.handleInitializationError(error);
         } finally {
@@ -52,4 +56,35 @@ export class AppInitializer {
             );
         }
     }
+
+    static initializeEnd(result) {
+        enableNavigationButtons();
+        console.log('initializeEnd', result);
+        window.listaComunities = getListaComunities();
+        usernames = result.usernames;
+        const accountList = document.getElementById('accountList');
+        accountList.innerHTML = '';
+        usernames.forEach(createAccountListItem);
+        if (usernames.length > 0) {
+            window.usernameSelected = usernames[0];
+            document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
+            setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
+            const firstAccountContainer = accountList.querySelector('.container-username');
+            if (firstAccountContainer) {
+                selectAccount(window.usernameSelected, firstAccountContainer);
+            }
+        }
+        document.getElementById('spinner').classList.add('hide');
+        showPage('accountPage');
+        displayResult(result);
+    }
+
+
+}
+export function getUsernames() {
+    return usernames;
+}
+
+export function setUsernames(value) {
+    usernames = value;
 }

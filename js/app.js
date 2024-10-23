@@ -1,6 +1,6 @@
 import { initializeImageUpload } from './api/image-upload.js';
 import { handleSteemLogin } from './pages/loginPage.js';
-import { appState, AppState } from './core/AppState.js';
+import { appState } from './core/AppState.js';
 import { AppInitializer } from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
 

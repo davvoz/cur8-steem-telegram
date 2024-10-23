@@ -1,7 +1,6 @@
 import { TelegramManager } from '../core/TelegramManager.js';
 import { appState } from '../core/AppState.js';
 import { showPage } from '../services/pageService.js';
-import { loadDraftData } from '../services/utils.js';
 export class Router {
     constructor() {
         if (Router.instance) {

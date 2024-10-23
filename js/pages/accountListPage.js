@@ -3,8 +3,7 @@ import { applySavedTheme } from '../components/theme.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
-import { setUsernames } from '../services/utils.js';
-import { initializeEnd } from '../services/utils.js';
+import { AppInitializer, setUsernames } from '../core/AppInitializer.js';
 
 export function createAccountListItem(username) {
     const li = document.createElement('li');
@@ -73,6 +72,26 @@ export function selectAccount(username, containerElement) {
 }
 
 async function handleLogout(username) {
+    const dialog = createLogoutDialog();
+    document.body.appendChild(dialog);
+    dialog.showModal();
+
+    const confirmButton = dialog.querySelector('#confirmButtonLogout');
+    const cancelButton = dialog.querySelector('#cancelButtonLogout');
+
+    const closeDialog = () => dialog.remove();
+
+    const handleConfirmLogout = async () => {
+        closeDialog();
+        await performLogout(username);
+    };
+
+    confirmButton.addEventListener('click', handleConfirmLogout);
+    cancelButton.addEventListener('click', closeDialog);
+    dialog.addEventListener('close', closeDialog);
+}
+
+function createLogoutDialog() {
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
@@ -81,41 +100,38 @@ async function handleLogout(username) {
         <button id="confirmButtonLogout" class="action-btn">Conferma</button>
         <button id="cancelButtonLogout" class="action-btn">Annulla</button>
     `;
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    const confirmButton = dialog.querySelector('#confirmButtonLogout');
-    const cancelButton = dialog.querySelector('#cancelButtonLogout');
-    confirmButton.addEventListener('click', async () => {
-        dialog.remove();
-        try {
-            const client = new ApiClient();
-            let id = localStorage.getItem('idTelegram');
-            const result = await client.logout(id, username).then(() => {
-            }).finally(async () => {
-                await client.checkLogin(id).then(async (result) => {
-                    if (typeof result.usernames === 'undefined') {
-                        displayResult({ error: 'Nessun account trovato' }, 'error', true);
-                        return;
-                    }
-                    setUsernames(result.usernames);
-                    // TODO non so se serve
-                    initializeEnd(result);
-                }).finally(() => {
-                    document.getElementById('spinner').classList.add('hide');
-                });
-            });
-            displayResult(result, 'success');
-        } catch (error) {
-            document.getElementById('spinner').classList.remove('hide');
-            console.error('Error in handleLogout:', error);
-            displayResult({ error: error.message }, 'error');
-        }
-    });
-    cancelButton.addEventListener('click', () => {
-        dialog.remove();
-    });
+    return dialog;
+}
 
-    dialog.addEventListener('close', () => {
-        dialog.remove();
-    });
-}   
+async function performLogout(username) {
+    try {
+        const client = new ApiClient();
+        const id = localStorage.getItem('idTelegram');
+        await client.logout(id, username);
+        await handlePostLogout(id);
+        displayResult({ message: 'Logout successful' }, 'success');
+    } catch (error) {
+        document.getElementById('spinner').classList.remove('hide');
+        console.error('Error in handleLogout:', error);
+        displayResult({ error: error.message }, 'error');
+    }
+}
+
+async function handlePostLogout(id) {
+    try {
+        const client = new ApiClient();
+        const result = await client.checkLogin(id);
+        if (!result.usernames) {
+            displayResult({ error: 'Nessun account trovato' }, 'error', true);
+            return;
+        }
+        setUsernames(result.usernames);
+        AppInitializer.initializeEnd(result);
+    } catch (error) {
+        console.error('Error in handlePostLogout:', error);
+        displayResult({ error: error.message }, 'error');
+        AppInitializer.initializeApp();
+    } finally {
+        document.getElementById('spinner').classList.add('hide');
+    }
+} 

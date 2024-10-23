@@ -1,8 +1,7 @@
 
 import { displayResult } from '../components/dialog.js';
-import { setUsernames, initializeEnd } from '../services/utils.js';
-import {ApiClient} from '../api/api-client.js';
-
+import { ApiClient } from '../api/api-client.js';
+import { AppInitializer , setUsernames} from '../core/AppInitializer.js';
 
 const client = new ApiClient();
 
@@ -96,7 +95,7 @@ export async function loginSteemLogin(username, idTelegram) {
                 return;
             }
             setUsernames(result.usernames);
-            initializeEnd(result);
+            AppInitializer.initializeEnd(result);
         });
     }
 }
@@ -112,7 +111,7 @@ export async function login() {
         );
         await client.checkLogin(idTelegram).then(async (result) => {
             displayResult(result, 'success', true);
-            initializeEnd(result);
+            AppInitializer.initializeEnd(result);
         });
 
     } catch (error) {
