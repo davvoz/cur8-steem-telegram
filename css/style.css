@@ -1010,7 +1010,6 @@ table td {
 
 .tab-button:hover {
     color: var(--primary-color);
-    background-color: var(--hover-color);
 }
 
 .draft-list {
