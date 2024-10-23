@@ -953,3 +953,39 @@ table td {
     box-shadow: var(--shadow-md);
     border-radius: 4px;
 }
+
+.tabs-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+.tab-button {
+    background-color:var(--background);
+    color: var(--on-background);
+    border: none;
+    border-radius: 4px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-weight: 500;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-md);
+
+}
+
+.tab-button.active {
+    background-color: var(--primary-variant);
+    color: var(--on-primary);
+}
+
+.draft-list {
+    display: none;
+}
+
+.draft-list.active {
+    display: block;
+}

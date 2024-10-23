@@ -3,6 +3,7 @@ import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
 import { appState } from '../core/AppState.js';
+import { converiIlTagInNomeComunita } from "../services/utils.js";
 
 const client = new ApiClient();
 
@@ -20,82 +21,130 @@ export async function getUserDrafts() {
 }
 
 async function createListaDrafts(drafts, username) {
+    // Create tabs container
+    const tabsContainer = document.createElement('div');
+    tabsContainer.classList.add('tabs-container');
+    
+    // Create tab buttons
+    const scheduledTab = document.createElement('button');
+    scheduledTab.textContent = 'Scheduled';
+    scheduledTab.classList.add('tab-button', 'active');
+    
+    const unscheduledTab = document.createElement('button');
+    unscheduledTab.textContent = 'Unscheduled';
+    unscheduledTab.classList.add('tab-button');
+    
+    tabsContainer.append(scheduledTab, unscheduledTab);
+    
+    // Create lists containers
+    const scheduledList = document.createElement('ul');
+    scheduledList.id = 'scheduledList';
+    scheduledList.classList.add('draft-list', 'active');
+    
+    const unscheduledList = document.createElement('ul');
+    unscheduledList.id = 'unscheduledList';
+    unscheduledList.classList.add('draft-list');
+    
+    // Clear and update the main container
     const draftList = document.getElementById('draftList');
-    draftList.innerHTML = ''; // Clear existing list
+    draftList.innerHTML = '';
+    draftList.append(tabsContainer, scheduledList, unscheduledList);
+
+    // Handle empty drafts case
     if (!Array.isArray(drafts) || drafts.length === 0) {
         const li = document.createElement('li');
         li.textContent = 'No drafts available';
-        draftList.appendChild(li);
+        scheduledList.appendChild(li);
         return;
     }
+
+    // Sort drafts
     drafts.sort((a, b) => {
         if (!a.scheduled_time) return 1;
         if (!b.scheduled_time) return -1;
         return new Date(a.scheduled_time) - new Date(b.scheduled_time);
     });
-    drafts.forEach(async (draft, index) => {
-        const li = await createDraftListItem(index + 1, draft.title || 'Untitled Draft', draft.scheduled_time, draft.tags, draft);
-        if (!draft.scheduled_time) {
+
+    // Separate drafts into scheduled and unscheduled
+    let scheduledCount = 1;
+    let unscheduledCount = 1;
+
+    for (const draft of drafts) {
+        const li = await createDraftListItem(
+            draft.scheduled_time ? scheduledCount++ : unscheduledCount++,
+            draft.title || 'Untitled Draft',
+            draft.scheduled_time,
+            draft.tags,
+            draft
+        );
+
+        if (draft.scheduled_time && draft.scheduled_time !== "0000-00-00 00:00:00") {
+            scheduledList.appendChild(li);
+        } else {
             li.classList.add('unscheduled-draft');
+            unscheduledList.appendChild(li);
         }
-        draftList.appendChild(li);
+    }
+
+    // Add tab switching functionality
+    scheduledTab.addEventListener('click', () => {
+        scheduledTab.classList.add('active');
+        unscheduledTab.classList.remove('active');
+        scheduledList.classList.add('active');
+        unscheduledList.classList.remove('active');
+    });
+
+    unscheduledTab.addEventListener('click', () => {
+        unscheduledTab.classList.add('active');
+        scheduledTab.classList.remove('active');
+        unscheduledList.classList.add('active');
+        scheduledList.classList.remove('active');
     });
 }
+
 
 async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
 
-    // Create title and ID elements
     const titleSpan = createElementWithClass('span', 'draft-title', title);
     const idDiv = createElementWithClass('div', 'draft-id', id);
     const titleContainer = createElementWithClass('div', 'title-container');
     titleContainer.append(idDiv, titleSpan);
 
-    // Create info container
     const infoDiv = createElementWithClass('div', 'draft-info');
     infoDiv.style.display = 'flex';
     infoDiv.style.flexDirection = 'column';
     infoDiv.style.marginRight = '10px';
 
-    // Format scheduled time
     const message = scheduledTime == "0000-00-00 00:00:00"
         ? "No scheduled time"
         : new Date(scheduledTime).toLocaleString();
 
-    // Add scheduled time to info container
     const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', message);
     infoDiv.appendChild(scheduledTimeSpan);
 
-    // Create container for title and schedule
     const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
     titleScheduleContainer.append(titleContainer, infoDiv);
     li.appendChild(titleScheduleContainer);
-
-    // Create buttons container with edit and delete functionality
     const buttonsContainer = createElementWithClass('div', 'buttons-container-draft');
 
     appState.setCurrentDraft(draft);
-    // Create edit button with unique ID and proper routing
     const editButton = createIconButton('edit', () => {
         loadDraft(draft);
     });
     editButton.setAttribute('data-draft-id', draft.id);
     editButton.classList.add('edit-button');
-    // Creare un ID unico per ogni bottone edit
     editButton.id = `edit-draft-${draft.id}`;
 
-    // Create delete button with unique ID
     const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
     deleteButton.id = `delete-draft-${draft.id}`;
 
-    // Add buttons to container
     buttonsContainer.append(editButton, deleteButton);
     li.appendChild(buttonsContainer);
 
     return li;
 }
-
 
 function createElementWithClass(tag, className, textContent = '') {
     const element = document.createElement(tag);
@@ -158,15 +207,3 @@ async function deleteDraft(id) {
     });
 }
 
-async function converiIlTagInNomeComunita(tags) {
-    if (!tags) return 'Select a community';
-    const tag = tags.split(' ')[0];
-    try {
-        const communities = await window.listaComunities;
-        const community = communities.find(community => community.name === tag);
-        return community ? community.title : 'Select a community';
-    } catch (error) {
-        console.error('Error while searching for community:', error);
-        return 'Error occurred while searching for community';
-    }
-}
