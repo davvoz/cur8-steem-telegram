@@ -24,27 +24,22 @@ async function createListaDrafts(drafts, username) {
     // Create tabs container
     const tabsContainer = document.createElement('div');
     tabsContainer.classList.add('tabs-container');
-    
+
     // Create tab buttons
-    const scheduledTab = document.createElement('button');
-    scheduledTab.textContent = 'Scheduled';
-    scheduledTab.classList.add('tab-button', 'active');
-    
-    const unscheduledTab = document.createElement('button');
-    unscheduledTab.textContent = 'Unscheduled';
-    unscheduledTab.classList.add('tab-button');
-    
+    const scheduledTab = createTabButton('Scheduled', true);
+    const unscheduledTab = createTabButton('Unscheduled', false);
+
     tabsContainer.append(scheduledTab, unscheduledTab);
-    
+
     // Create lists containers
     const scheduledList = document.createElement('ul');
     scheduledList.id = 'scheduledList';
     scheduledList.classList.add('draft-list', 'active');
-    
+
     const unscheduledList = document.createElement('ul');
     unscheduledList.id = 'unscheduledList';
     unscheduledList.classList.add('draft-list');
-    
+
     // Clear and update the main container
     const draftList = document.getElementById('draftList');
     draftList.innerHTML = '';
@@ -86,22 +81,34 @@ async function createListaDrafts(drafts, username) {
         }
     }
 
-    // Add tab switching functionality
+    // Add tab switching functionality with smooth transitions
+    function switchTab(activeTab, activeList, inactiveTab, inactiveList) {
+        inactiveTab.classList.remove('active');
+        inactiveList.classList.remove('active');
+        
+        requestAnimationFrame(() => {
+            activeTab.classList.add('active');
+            activeList.classList.add('active');
+        });
+    }
+
     scheduledTab.addEventListener('click', () => {
-        scheduledTab.classList.add('active');
-        unscheduledTab.classList.remove('active');
-        scheduledList.classList.add('active');
-        unscheduledList.classList.remove('active');
+        switchTab(scheduledTab, scheduledList, unscheduledTab, unscheduledList);
     });
 
     unscheduledTab.addEventListener('click', () => {
-        unscheduledTab.classList.add('active');
-        scheduledTab.classList.remove('active');
-        unscheduledList.classList.add('active');
-        scheduledList.classList.remove('active');
+        switchTab(unscheduledTab, unscheduledList, scheduledTab, scheduledList);
     });
 }
 
+// Helper function to create tab buttons
+function createTabButton(text, isActive = false) {
+    const button = document.createElement('button');
+    button.textContent = text;
+    button.classList.add('tab-button');
+    if (isActive) button.classList.add('active');
+    return button;
+}
 
 async function createDraftListItem(id, title, scheduledTime, tags, draft) {
     const li = document.createElement('li');
