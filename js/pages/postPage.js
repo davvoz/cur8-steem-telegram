@@ -48,7 +48,7 @@ export async function postToSteem() {
     });
 }
 
-export function validateForm() {
+function validateForm() {
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
     const tags = document.getElementById('postTags').value.trim();
@@ -91,28 +91,15 @@ export async function salvaBozza() {
     if (!validateForm()) {
         return;
     }
-    let scheduledDate = null;
-    if (document.getElementById('openDatePicker').innerText && document.getElementById('openDatePicker').innerText !== 'schedule') {
-        const dateString = document.getElementById('openDatePicker').innerText;
-        if (dateString) {
-            const [datePart, timePart] = dateString.split(', ');
-            const [day, month, year] = datePart.split('/').map(Number);
-            const [hours, minutes, seconds] = timePart.split(':').map(Number);
-            scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
-            if (scheduledDate < Date.now()) {
-                displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
-                document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-                document.getElementById('openDatePicker').classList.add('action-btn-mini');
-                document.getElementById('openDatePicker').classList.remove('action-btn');
-                return;
-            }
-        }
+
+    const scheduledDate = getScheduledDate();
+    if (scheduledDate === false) {
+        return;
     }
 
     try {
         window.scheduledTime = scheduledDate ? new Date(scheduledDate).toISOString() : '';
-        //spinner
-        document.getElementById('spinner').classList.remove('hide');
+        toggleSpinner(true);
         const result = await client.saveDraft(
             getUsername(),
             document.getElementById('postTitle').value,
@@ -121,13 +108,45 @@ export async function salvaBozza() {
             window.scheduledTime,
             Intl.DateTimeFormat().resolvedOptions().timeZone
         );
-        await getUserDrafts().then(() => {
-            document.getElementById('spinner').classList.add('hide');
-        });
+        await getUserDrafts();
+        toggleSpinner(false);
         displayResult(result, 'success', true);
     } catch (error) {
         console.error('Error in salvaBozza:', error);
+        toggleSpinner(false);
         displayResult({ error: error.message }, 'error', true);
+    }
+}
+
+function getScheduledDate() {
+    const dateString = document.getElementById('openDatePicker').innerText;
+    if (dateString && dateString !== 'schedule') {
+        const [datePart, timePart] = dateString.split(', ');
+        const [day, month, year] = datePart.split('/').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        const scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
+        if (scheduledDate < Date.now()) {
+            displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
+            resetDatePicker();
+            return false;
+        }
+        return scheduledDate;
+    }
+    return null;
+}
+
+function resetDatePicker() {
+    document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+    document.getElementById('openDatePicker').classList.add('action-btn-mini');
+    document.getElementById('openDatePicker').classList.remove('action-btn');
+}
+
+function toggleSpinner(show) {
+    const spinner = document.getElementById('spinner');
+    if (show) {
+        spinner.classList.remove('hide');
+    } else {
+        spinner.classList.add('hide');
     }
 }
 
