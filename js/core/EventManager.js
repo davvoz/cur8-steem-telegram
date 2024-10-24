@@ -1,4 +1,4 @@
-import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview } from '../pages/postPage.js';
+import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview,cancellaBozza } from '../pages/postPage.js';
 import { goToSteemLogin, login } from '../pages/loginPage.js';
 
 export class EventManager {
@@ -16,7 +16,7 @@ export class EventManager {
             { id: 'loginInBtn', event: 'click', handler: () => window.location.hash = '#/login' },
             { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' },
             { id: 'steemlogin', event: 'click', handler: goToSteemLogin },
-
+            { id: 'cancellaBozza', event: 'click', handler: () => { cancellaBozza() } },
         ];
     }
 
@@ -24,6 +24,7 @@ export class EventManager {
         this.eventListeners.forEach(({ id, event, handler }) => {
             const element = document.getElementById(id);
             if (element) {
+                console.log('Adding event listener:', id, event);
                 element.addEventListener(event, handler);
             }
         });

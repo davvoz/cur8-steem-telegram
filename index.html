@@ -56,8 +56,8 @@
 
     <!-- Pagina Gestione Bozze -->
     <div id="draftPage" class="page">
-        <div class="header">
-            <h2 id="titleGestionBozze">Gestione Bozze</h2>
+        <div class="header" id="headerDraft">
+            <!--contenitore dei tab -->
         </div>
         <!--lista delle bozze dell'username selezionato-->
         <ul id="draftList"></ul>
@@ -97,6 +97,9 @@
                 <button id="previewBtn" class="action-btn-mini success">
                     <i class="material-icons">visibility</i>
                 </button>
+                <button id="cancellaBozza" class="action-btn-mini success">
+                    <i class="material-icons">delete</i>
+                </button>
             </div>
         </div>
         <div class="buttons-container-center">
@@ -107,7 +110,6 @@
     <div id="previewModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h3>Anteprima del post</h3>
             <div id="previewContent" class="preview-content"></div>
         </div>
     </div>

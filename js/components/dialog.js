@@ -91,7 +91,8 @@ export function createDatePickerDialog() {
         <h2>Seleziona la data e l'ora di pubblicazione</h2>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
         <button id="confirmButtonDP" class="action-btn">Conferma</button>
-        <button id="cancelButtonDP" class="action-btn">Annulla</button>
+        <button id="annullaButtonDP" class="action-btn">Cancella</button>
+        <button id="cancelButtonDP" class="action-btn">Chiudi</button>
     `;
     return dialog;
 }

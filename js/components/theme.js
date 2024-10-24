@@ -1,12 +1,21 @@
 window.onload = function () {
+    const cssClasses = getCssClassesFromStylesheet('themes.css', '.theme-selector');
+    const themeChooser = document.querySelector('.theme-chooser');
+    cssClasses.forEach(theme => {
+        const themeOption = createThemeOption(theme, 'themes.css');
+        themeOption.onclick = () => setTheme(theme);
+        themeChooser.appendChild(themeOption);
+    });
+};
 
+function getCssClassesFromStylesheet(stylesheetName, selector) {
     const cssClasses = [];
-    const themeStylesheet = Array.from(document.styleSheets).find(sheet => sheet.href && sheet.href.includes('themes.css'));
+    const themeStylesheet = Array.from(document.styleSheets).find(sheet => sheet.href && sheet.href.includes(stylesheetName));
     if (themeStylesheet) {
         try {
             const cssRules = themeStylesheet.cssRules || themeStylesheet.rules;
             Array.from(cssRules).forEach(rule => {
-                if (rule.selectorText && rule.selectorText.includes('.theme-selector') && rule.selectorText !== '.theme-selector') {
+                if (rule.selectorText && rule.selectorText.includes(selector) && rule.selectorText !== selector) {
                     const noPoint = rule.selectorText.replace('.', '');
                     cssClasses.push(noPoint);
                 }
@@ -15,33 +24,31 @@ window.onload = function () {
             console.warn(`Cannot access stylesheet: ${themeStylesheet.href}`);
         }
     }
-    const themeChooser = document.querySelector('.theme-chooser');
-    cssClasses.forEach(theme => {
-        const themeOption = document.createElement('div');
-        themeOption.classList.add('theme-option');
-        const themeStyle = Array.from(document.styleSheets).find(sheet => sheet.href && sheet.href.includes('themes.css'));
-        const themeRules = themeStyle.cssRules || themeStyle.rules;
-        Array.from(themeRules).forEach(rule => {
-            if (rule.selectorText && rule.selectorText.includes(`.${theme}`)) {
-                const cssVars = rule.style.cssText.split(';').filter(cssVar => cssVar.includes('--'));
-                const toSplitBg = cssVars.find(cssVar => cssVar.includes('--background'));
-                if (toSplitBg === undefined) {
-                    return;
-                }
-                const background = toSplitBg.split(':')[1].trim();
-                const toSplitPrimaryColor = cssVars.find(cssVar => cssVar.includes('--primary-color'));
-                if (toSplitPrimaryColor === undefined) {
-                    return;
-                }
-                const primaryColor = toSplitPrimaryColor.split(':')[1].trim();
+    return cssClasses;
+}
+
+function createThemeOption(theme, stylesheetName) {
+    const themeOption = document.createElement('div');
+    themeOption.classList.add('theme-option');
+    const themeStyle = Array.from(document.styleSheets).find(sheet => sheet.href && sheet.href.includes(stylesheetName));
+    const themeRules = themeStyle.cssRules || themeStyle.rules;
+    Array.from(themeRules).forEach(rule => {
+        if (rule.selectorText && rule.selectorText.includes(`.${theme}`)) {
+            const cssVars = rule.style.cssText.split(';').filter(cssVar => cssVar.includes('--'));
+            const background = getCssVariableValue(cssVars, '--background');
+            const primaryColor = getCssVariableValue(cssVars, '--primary-color');
+            if (background && primaryColor) {
                 themeOption.style.background = `linear-gradient(to right, ${background} 50%, ${primaryColor} 50%)`;
             }
-        });
-        themeOption.onclick = () => setTheme(`${theme}`);
-
-        themeChooser.appendChild(themeOption);
+        }
     });
-};
+    return themeOption;
+}
+
+function getCssVariableValue(cssVars, variableName) {
+    const cssVar = cssVars.find(cssVar => cssVar.includes(variableName));
+    return cssVar ? cssVar.split(':')[1].trim() : null;
+}
 
 function setTheme(theme) {
     if (typeof window.usernameSelected === 'string') {

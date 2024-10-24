@@ -276,8 +276,16 @@ export function openDatePicker() {
     const cancelButton = dialog.querySelector('#cancelButtonDP');
     const scheduledTimeInput = dialog.querySelector('#scheduledTime');
     confirmButton.addEventListener('click', () => handleDatePickerConfirm(dialog, scheduledTimeInput));
-    cancelButton.addEventListener('click', () => dialog.remove());
+    cancelButton.addEventListener('click', () => handleDatePickerCancel(dialog));
     dialog.addEventListener('close', () => dialog.remove());
+}
+
+function handleDatePickerCancel(dialog) {
+    dialog.remove();
+    document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
+    document.getElementById('openDatePicker').classList.add('action-btn-mini');
+    document.getElementById('openDatePicker').classList.remove('action-btn');
+    window.scheduledTime = null;
 }
 
 function handleDatePickerConfirm(dialog, scheduledTimeInput) {
@@ -300,8 +308,15 @@ function markdownToHtml(markdown) {
 export function togglePreview() {
     const postBody = document.getElementById('postBody').value;
     const previewContent = document.getElementById('previewContent');
-    previewContent.innerHTML = markdownToHtml(postBody);
+    //titolo del post
+    const title = document.getElementById('postTitle').value;
+    previewContent.innerHTML = `<h1>${title}</h1>`;
+    //corpo del post
+    previewContent.innerHTML += markdownToHtml(postBody);
     const modal = document.getElementById('previewModal');
+    //classi per il modal 
+    modal.classList.add('modalio');
+
     modal.style.display = 'block';
     const closeButton = document.querySelector('.close-button');
     closeButton.addEventListener('click', () => {
@@ -311,5 +326,32 @@ export function togglePreview() {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
+    });
+
+}
+
+export  function cancellaBozza() {
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dialogo');
+    dialog.innerHTML = `
+        <h2>Conferma</h2>
+        <p>Pulisci i campi</p>
+        <button id="confirmButtonDelete" class="action-btn">Conferma</button>
+        <button id="cancelButtonDelete" class="action-btn">Annulla</button>
+    `;
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    const confirmButton = dialog.querySelector('#confirmButtonDelete');
+    const cancelButton = dialog.querySelector('#cancelButtonDelete');
+    
+    //svuota il form se conferma
+    confirmButton.addEventListener('click', async () => {
+        dialog.remove();
+        svuotaForm();
+    });
+
+    //chiudi la dialog se annulla
+    cancelButton.addEventListener('click', () => {
+        dialog.remove();
     });
 }

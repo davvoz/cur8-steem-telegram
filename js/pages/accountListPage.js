@@ -30,7 +30,6 @@ export function createAccountListItem(username) {
     container.onclick = () => {
         selectAccount(username, container);
         window.usernameSelected = username;
-        document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
     };
 
     const buttonsContainer = document.createElement('div');

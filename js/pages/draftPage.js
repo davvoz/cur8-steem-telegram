@@ -22,28 +22,42 @@ export async function getUserDrafts() {
 
 async function createListaDrafts(drafts, username) {
     // Create tabs container
+    // Crea l'elemento tabsContainer
     const tabsContainer = document.createElement('div');
     tabsContainer.classList.add('tabs-container');
 
-    // Create tab buttons
+    // Crea i pulsanti per le tab
     const scheduledTab = createTabButton('Scheduled', true);
-    const unscheduledTab = createTabButton('Unscheduled', false);
+    const unscheduledTab = createTabButton('Drafts', false);
 
-    tabsContainer.append(scheduledTab, unscheduledTab);
+    // Aggiungi i pulsanti delle tab al contenitore delle tab
+    tabsContainer.appendChild(scheduledTab);
+    tabsContainer.appendChild(unscheduledTab);
 
-    // Create lists containers
+    // Crea l'elemento header e aggiungi tabsContainer al suo interno
+    const header = document.createElement('div');
+    header.classList.add('header');
+    header.appendChild(tabsContainer);
+
+    // Trova l'elemento draftList e aggiungi header al suo interno
+    const draftList = document.getElementById('draftList');
+    draftList.appendChild(header);
+
+    // Crea le liste per le bozze programmate e non programmate
     const scheduledList = document.createElement('ul');
-    scheduledList.id = 'scheduledList';
     scheduledList.classList.add('draft-list', 'active');
 
     const unscheduledList = document.createElement('ul');
-    unscheduledList.id = 'unscheduledList';
     unscheduledList.classList.add('draft-list');
 
-    // Clear and update the main container
-    const draftList = document.getElementById('draftList');
-    draftList.innerHTML = '';
-    draftList.append(tabsContainer, scheduledList, unscheduledList);
+    // Aggiungi le liste alla draftList
+    draftList.appendChild(scheduledList);
+    draftList.appendChild(unscheduledList);
+
+    // Trova l'elemento headerDraft e aggiungi header al suo interno
+    const headerDraft = document.getElementById('headerDraft');
+    headerDraft.appendChild(header);
+
 
     // Handle empty drafts case
     if (!Array.isArray(drafts) || drafts.length === 0) {
@@ -85,7 +99,7 @@ async function createListaDrafts(drafts, username) {
     function switchTab(activeTab, activeList, inactiveTab, inactiveList) {
         inactiveTab.classList.remove('active');
         inactiveList.classList.remove('active');
-        
+
         requestAnimationFrame(() => {
             activeTab.classList.add('active');
             activeList.classList.add('active');

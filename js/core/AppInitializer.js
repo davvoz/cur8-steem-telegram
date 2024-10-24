@@ -67,7 +67,6 @@ export class AppInitializer {
         usernames.forEach(createAccountListItem);
         if (usernames.length > 0) {
             window.usernameSelected = usernames[0];
-            document.getElementById('titleGestionBozze').innerText = `Gestione Bozze di ${window.usernameSelected.username}`;
             setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
             const firstAccountContainer = accountList.querySelector('.container-username');
             if (firstAccountContainer) {
