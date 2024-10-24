@@ -162,6 +162,26 @@ export function openComunitiesAutocomplete() {
     dialog.addEventListener('close', () => dialog.remove());
     input.addEventListener("input", handleInput);
     input.addEventListener("keydown", handleKeydown);
+    
+    // Aggiungi questa riga per mostrare tutte le community all'apertura
+    showAllCommunities();
+}
+
+function showAllCommunities() {
+    const div = document.getElementById("autocomplete-list");
+if (div) {
+    div.innerHTML = ''; // Pulisce la lista esistente
+    
+    window.listaComunities.then((communities) => {
+        communities.forEach((community) => {
+            const item = createAutocompleteItem(community, '');
+            item.addEventListener("click", () => handleItemClick(item, community));
+            div.appendChild(item);
+        });
+    });
+} else {
+    console.error("Elemento con ID 'autocomplete-list' non trovato.");
+}
 }
 
 function createDialog() {
@@ -186,11 +206,13 @@ function handleConfirm(dialog, input) {
     document.getElementById('comunityName').innerText = selectedComunity;
     dialog.remove();
 }
-
 function handleInput(e) {
     const val = this.value;
     closeAllLists(null, this);
-    if (!val) return false;
+    if (!val) {
+        showAllCommunities();
+        return false;
+    }
     currentFocus = -1;
     const div = createAutocompleteList(this);
     window.listaComunities.then((communities) => {
@@ -214,11 +236,15 @@ function createAutocompleteList(inputElement) {
 
 function createAutocompleteItem(community, val) {
     const item = document.createElement("div");
-    const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
-    const matchEnd = matchStart + val.length;
-    item.innerHTML = community.title.substr(0, matchStart);
-    item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
-    item.innerHTML += community.title.substr(matchEnd);
+    if (val) {
+        const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
+        const matchEnd = matchStart + val.length;
+        item.innerHTML = community.title.substr(0, matchStart);
+        item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
+        item.innerHTML += community.title.substr(matchEnd);
+    } else {
+        item.innerHTML = community.title;
+    }
     item.innerHTML += `<input type='hidden' value='${community.title}'>`;
     return item;
 }
