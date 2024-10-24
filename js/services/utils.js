@@ -20,15 +20,27 @@ export async function getListaComunities() {
     }
 }
 
-export async function converiIlTagInNomeComunita(tags) {
-    if (!tags) return 'Select a community';
-    const tag = tags.split(' ')[0];
+export async function converiIlTagInNomeComunita(communityName) {
+    if (!communityName) return 'Select a community';
+    const tag = communityName.split(' ')[0];
     try {
         const communities = await window.listaComunities;
-        const community = communities.find(community => community.name === tag);
+        const community = communities.find(community => community.name === communityName);
         return community ? community.title : 'Select a community';
     } catch (error) {
         console.error('Error while searching for community:', error);
         return 'Error occurred while searching for community';
+    }
+}
+
+export async function convertiNomeComunitaInTag(title) {
+    if (!communityName) return '';
+    try {
+        const communities = await window.listaComunities;
+        const community = communities.find(community => community.title === title);
+        return community ? community.name : '';
+    } catch (error) {
+        console.error('Error while searching for community:', error);
+        return '';
     }
 }
