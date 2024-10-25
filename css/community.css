@@ -1,14 +1,9 @@
 .autocomplete-items div {
     padding: 10px;
     cursor: pointer;
-    background-color: var(--background);
+    background-color: var(--surface);
     border-bottom: 1px solid var(--on-surface);
-    color: var(--on-primary);
-}
-
-.autocomplete-active {
-    background-color: DodgerBlue !important;
-    color: 'red';
+    color: var(--on-background);
 }
 
 .autocomplete-items {
