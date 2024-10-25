@@ -12,12 +12,18 @@ export async function getUserDrafts() {
     if (!username) {
         return;
     }
+    cleanDraftPage();
     try {
         const result = await client.getUserDrafts(username);
         await createListaDrafts(result, username);
     } catch (error) {
         displayResult({ error: 'Failed to load drafts. Please try again.' }, 'error', true);
     }
+}
+
+function cleanDraftPage() {
+    const draftList = document.getElementById('draftList');
+    draftList.innerHTML = '';
 }
 
 async function createListaDrafts(drafts, username) {
