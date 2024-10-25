@@ -1,0 +1,22 @@
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--on-surface);
+    color: var(--on-primary);
+}
+
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: 'red';
+}
+
+.autocomplete-items {
+    position: absolute;
+    z-index: 99;
+    left: 0;
+    right: 0;
+    max-height: 350px;
+    overflow-y: auto;
+    top: 164px;
+}

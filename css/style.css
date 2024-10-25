@@ -437,29 +437,6 @@ ul li {
     display: none;
 }
 
-.autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid #d4d4d4;
-    color: black;
-}
-
-.autocomplete-active {
-    background-color: DodgerBlue !important;
-    color: 'red';
-}
-
-.autocomplete-items {
-    position: absolute;
-    z-index: 99;
-    left: 0;
-    right: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    top: 164px;
-}
-
 .modal {
     display: none;
     position: fixed;

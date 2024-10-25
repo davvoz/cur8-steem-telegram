@@ -150,150 +150,6 @@ function toggleSpinner(show) {
     }
 }
 
-export function openComunitiesAutocomplete() {
-    const dialog = createDialog();
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    const input = document.getElementById("myInput");
-    const confirmButton = document.getElementById('confirmButton');
-    const cancelButton = document.getElementById('cancelButton');
-    confirmButton.addEventListener('click', () => handleConfirm(dialog, input));
-    cancelButton.addEventListener('click', () => dialog.remove());
-    dialog.addEventListener('close', () => dialog.remove());
-    input.addEventListener("input", handleInput);
-    input.addEventListener("keydown", handleKeydown);
-    
-    // Aggiungi questa riga per mostrare tutte le community all'apertura
-    showAllCommunities();
-}
-
-function showAllCommunities() {
-    const div = document.getElementById("autocomplete-list");
-if (div) {
-    div.innerHTML = ''; // Pulisce la lista esistente
-    
-    window.listaComunities.then((communities) => {
-        communities.forEach((community) => {
-            const item = createAutocompleteItem(community, '');
-            item.addEventListener("click", () => handleItemClick(item, community));
-            div.appendChild(item);
-        });
-    });
-} else {
-    console.error("Elemento con ID 'autocomplete-list' non trovato.");
-}
-}
-
-function createDialog() {
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('c-dialogo');
-    dialog.innerHTML = `
-            <div class="autocomplete-container">
-                <h2>Seleziona la comunità</h2>
-                <div class="c-container">
-                <input type="text" id="myInput" placeholder="Inizia a digitare...">
-                <div id="autocomplete-list" class="autocomplete-items"></div>
-                </div>
-                <button id="confirmButton" class="action-btn">Conferma</button>
-                <button id="cancelButton" class="action-btn">Annulla</button>
-            </div>
-        `;
-    return dialog;
-}
-
-function handleConfirm(dialog, input) {
-    const selectedComunity = input.value;
-    document.getElementById('comunityName').innerText = selectedComunity;
-    dialog.remove();
-}
-function handleInput(e) {
-    const val = this.value;
-    closeAllLists(null, this);
-    if (!val) {
-        showAllCommunities();
-        return false;
-    }
-    currentFocus = -1;
-    const div = createAutocompleteList(this);
-    window.listaComunities.then((communities) => {
-        communities.forEach((community) => {
-            if (community.title.toLowerCase().includes(val.toLowerCase())) {
-                const item = createAutocompleteItem(community, val);
-                item.addEventListener("click", () => handleItemClick(item, community));
-                div.appendChild(item);
-            }
-        });
-    });
-}
-
-function createAutocompleteList(inputElement) {
-    const div = document.createElement("div");
-    div.setAttribute("id", inputElement.id + "autocomplete-list");
-    div.setAttribute("class", "autocomplete-items");
-    inputElement.parentNode.appendChild(div);
-    return div;
-}
-
-function createAutocompleteItem(community, val) {
-    const item = document.createElement("div");
-    if (val) {
-        const matchStart = community.title.toLowerCase().indexOf(val.toLowerCase());
-        const matchEnd = matchStart + val.length;
-        item.innerHTML = community.title.substr(0, matchStart);
-        item.innerHTML += "<strong>" + community.title.substr(matchStart, val.length) + "</strong>";
-        item.innerHTML += community.title.substr(matchEnd);
-    } else {
-        item.innerHTML = community.title;
-    }
-    item.innerHTML += `<input type='hidden' value='${community.title}'>`;
-    return item;
-}
-
-function handleItemClick(item, community) {
-    const input = document.getElementById("myInput");
-    input.value = item.getElementsByTagName("input")[0].value;
-    document.getElementById('postTags').value = community.name;
-    closeAllLists(null, item);
-}
-
-function handleKeydown(e) {
-    let x = document.getElementById(this.id + "autocomplete-list");
-    if (x) x = x.getElementsByTagName("div");
-    if (e.keyCode == 40) {
-        currentFocus++;
-        addActive(x);
-    } else if (e.keyCode == 38) {
-        currentFocus--;
-        addActive(x);
-    } else if (e.keyCode == 13) {
-        e.preventDefault();
-        if (currentFocus > -1 && x) x[currentFocus].click();
-    }
-}
-
-function addActive(x) {
-    if (!x) return false;
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    x[currentFocus].classList.add("autocomplete-active");
-}
-
-function removeActive(x) {
-    for (let i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
-    }
-}
-
-function closeAllLists(elmnt, elmnt2) {
-    const x = document.getElementsByClassName("autocomplete-items");
-    for (let i = 0; i < x.length; i++) {
-        if (elmnt != x[i] && elmnt2 != x[i]) {
-            x[i].parentNode.removeChild(x[i]);
-        }
-    }
-}
-
 export function openDatePicker() {
     const dialog = createDatePickerDialog();
     document.body.appendChild(dialog);
@@ -380,4 +236,205 @@ export  function cancellaBozza() {
     cancelButton.addEventListener('click', () => {
         dialog.remove();
     });
+}
+
+class CommunityManager {
+    constructor() {
+        this.currentFocus = -1;
+        this.selectedCommunity = null;
+    }
+
+    async initialize() {
+        const dialog = this.createDialog();
+        document.body.appendChild(dialog);
+        dialog.showModal();
+
+        const input = document.getElementById("myInput");
+        const cancelButton = document.getElementById('cancelButton');
+
+        this.setupEventListeners(dialog, input, cancelButton);
+        await this.showAllCommunities();
+    }
+
+    createDialog() {
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('c-dialogo');
+        dialog.innerHTML = `
+            <div class="autocomplete-container">
+                <h2>Seleziona la comunità</h2>
+                <div class="c-container">
+                    <input 
+                        type="text" 
+                        id="myInput" 
+                        placeholder="Inizia a digitare..."
+                    >
+                    <div id="autocomplete-list" class="autocomplete-items"></div>
+                </div>
+            </div>
+        `;
+        return dialog;
+    }
+
+    setupEventListeners(dialog, input, cancelButton) {
+        input.addEventListener("input", (e) => this.handleInput(e));
+        input.addEventListener("keydown", (e) => this.handleKeydown(e));
+        
+        //cancelButton.addEventListener('click', () => dialog.remove());
+        dialog.addEventListener('close', () => dialog.remove());
+    }
+
+    async showAllCommunities() {
+        const listElement = document.getElementById("autocomplete-list");
+        if (!listElement) return;
+
+        listElement.innerHTML = '';
+        
+        // Aggiungi l'opzione "No Community" come primo elemento
+        const noCommunityItem = this.createCommunityItem({
+            title: "No Community",
+            name: "",
+            isNoCommunity: true
+        });
+        listElement.appendChild(noCommunityItem);
+
+        try {
+            const communities = await window.listaComunities;
+            communities.forEach(community => {
+                const item = this.createCommunityItem(community);
+                listElement.appendChild(item);
+            });
+        } catch (error) {
+            console.error("Errore nel caricamento delle community:", error);
+            this.showError("Impossibile caricare le community");
+        }
+    }
+
+    createCommunityItem(community) {
+        const item = document.createElement("div");
+        item.className = "community-item";
+        if (community.isNoCommunity) {
+            item.style.borderBottom = "2px solid #eee";
+            item.style.paddingBottom = "8px";
+            item.style.marginBottom = "8px";
+        }
+        item.innerHTML = community.title;
+        item.innerHTML += `<input type='hidden' value='${community.title}'>`;
+        
+        // Click handler direttamente nel createCommunityItem
+        item.addEventListener("click", () => {
+            // Aggiorna UI
+            document.getElementById('comunityName').textContent = 
+                community.isNoCommunity ? 'Seleziona la comunità' : community.title;
+            document.getElementById('postTags').value = community.name;
+            
+            // Chiudi il dialog
+            const dialog = document.querySelector('.c-dialogo');
+            if (dialog) {
+                dialog.remove();
+            }
+        });
+
+        return item;
+    }
+
+    async handleInput(e) {
+        const searchText = e.target.value.toLowerCase();
+        const listElement = document.getElementById("autocomplete-list");
+        
+        if (!searchText) {
+            await this.showAllCommunities();
+            return;
+        }
+
+        listElement.innerHTML = '';
+        
+        // Mantieni sempre visibile l'opzione "No Community"
+        const noCommunityItem = this.createCommunityItem({
+            title: "No Community",
+            name: "",
+            isNoCommunity: true
+        });
+        listElement.appendChild(noCommunityItem);
+
+        const communities = await window.listaComunities;
+        const filteredCommunities = communities.filter(community => 
+            community.title.toLowerCase().includes(searchText)
+        );
+
+        filteredCommunities.forEach(community => {
+            const item = this.createCommunityItem(community);
+            // Evidenzia il testo cercato
+            const title = community.title;
+            const matchStart = title.toLowerCase().indexOf(searchText);
+            const matchEnd = matchStart + searchText.length;
+
+            item.innerHTML = title.substring(0, matchStart) +
+                "<strong>" + title.substring(matchStart, matchEnd) + "</strong>" +
+                title.substring(matchEnd);
+            item.innerHTML += `<input type='hidden' value='${title}'>`;
+            
+            listElement.appendChild(item);
+        });
+    }
+
+    handleKeydown(e) {
+        const listElement = document.getElementById("autocomplete-list");
+        if (!listElement) return;
+
+        const items = listElement.getElementsByTagName("div");
+        if (!items.length) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                this.currentFocus++;
+                if (this.currentFocus >= items.length) this.currentFocus = 0;
+                this.updateActiveItem(items);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                this.currentFocus--;
+                if (this.currentFocus < 0) this.currentFocus = items.length - 1;
+                this.updateActiveItem(items);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (this.currentFocus > -1) {
+                    if (items[this.currentFocus]) {
+                        items[this.currentFocus].click();
+                    }
+                }
+                break;
+            case 'Escape':
+                e.preventDefault();
+                document.querySelector('.c-dialogo')?.remove();
+                break;
+        }
+    }
+
+    updateActiveItem(items) {
+        Array.from(items).forEach(item => {
+            item.classList.remove('autocomplete-active');
+        });
+        if (items[this.currentFocus]) {
+            items[this.currentFocus].classList.add('autocomplete-active');
+            items[this.currentFocus].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    showError(message) {
+        const listElement = document.getElementById("autocomplete-list");
+        if (listElement) {
+            listElement.innerHTML = `
+                <div class="error-message">
+                    ${message}
+                </div>
+            `;
+        }
+    }
+}
+
+export function openComunitiesAutocomplete() {
+    const manager = new CommunityManager();
+    manager.initialize();
 }
