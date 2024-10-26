@@ -95,22 +95,22 @@ function showAccountPage() {
 
 function showPostPage() {
     showPage('postPage');
-    setupTelegramBackButton();
+    //setupTelegramBackButton();
 }
 
 function showDraftPage() {
     showPage('draftPage');
-    setupTelegramBackButton();
+    //setupTelegramBackButton();
 }
 
 function showLoginPage() {
     showPage('loginPage');
-    setupTelegramBackButton();
+    //setupTelegramBackButton();
 }
 
 function showConfigPage() {
     showPage('configPage');
-    setupTelegramBackButton();
+    //setupTelegramBackButton();
 }
 
 async function initializeApp() {
