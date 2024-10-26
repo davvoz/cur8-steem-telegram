@@ -22,7 +22,10 @@ export class CommunityManager {
         dialog.classList.add('c-dialogo');
         dialog.innerHTML = `
             <div class="autocomplete-container">
-                <h2>Seleziona la comunità</h2>
+                <div class="dialog-header">
+                    <h2>Seleziona la comunità</h2>
+                    <button class="close-button" id="close-button" aria-label="Chiudi">✕</button>
+                </div>
                 <div class="c-container">
                     <input 
                         type="text" 
@@ -40,7 +43,9 @@ export class CommunityManager {
         input.addEventListener("input", (e) => this.handleInput(e));
         input.addEventListener("keydown", (e) => this.handleKeydown(e));
         
-        //cancelButton.addEventListener('click', () => dialog.remove());
+        const closeButton = dialog.querySelector('.close-button');
+        closeButton.addEventListener('click', () => dialog.remove());
+        
         dialog.addEventListener('close', () => dialog.remove());
     }
 
