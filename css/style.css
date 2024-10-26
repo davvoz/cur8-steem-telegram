@@ -477,7 +477,7 @@ dialog::backdrop {
     background: rgba(0, 0, 0, 0.9);
 }
 
-.close-button {
+/* .close-button {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -489,7 +489,7 @@ dialog::backdrop {
     color: black;
     text-decoration: none;
     cursor: pointer;
-}
+} */
 
 .preview-content {
     margin-top: 20px;

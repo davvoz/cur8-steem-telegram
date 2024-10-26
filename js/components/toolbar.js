@@ -36,11 +36,34 @@ export function applyStyle(style) {
         }
         break;
       case 'link':
-        const url = prompt("Enter URL:");
-        if (url) {
-          replacement = `[${selection || url}](${url})`;
-        }
-        break;
+          Swal.fire({
+            title: 'Insert link',
+            html: `
+                <input type="text" id="linkText" class="swal2-input" placeholder="Link Text" value="${selection || ''}">
+                <input type="text" id="linkUrl" class="swal2-input" placeholder="URL">
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Insert',
+            cancelButtonText: 'Cancel',
+            background: 'var(--background)',
+            preConfirm: () => {
+                const linkText = document.getElementById('linkText').value;
+                const linkUrl = document.getElementById('linkUrl').value;
+                if (!linkText || !linkUrl) {
+                    Swal.showValidationMessage('Please fill in both fields');
+                }
+                return { linkText, linkUrl }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { linkText, linkUrl } = result.value;
+                replacement = `[${linkText}](${linkUrl})`;
+                postBody.value = postBody.value.substring(0, start) + replacement + postBody.value.substring(end);
+                postBody.focus();
+                // updatePreview();
+            }
+        });
+        return;
       case 'table':
         replacement = `| Header | Header |\n|--------|--------|\n| Cell   | Cell   |`;
         break;
@@ -54,7 +77,7 @@ export function applyStyle(style) {
     if (replacement) {
       postBody.value = postBody.value.substring(0, start) + replacement + postBody.value.substring(end);
       postBody.focus();
-      updatePreview();
+      // updatePreview();
     }
   }
 

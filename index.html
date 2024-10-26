@@ -11,12 +11,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.1/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/steemlogin@latest/dist/steemlogin.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-default/default.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/themes.css">
     <link rel="stylesheet" href="./css/navigation.css">
     <link rel="stylesheet" href="./css/mainStyle.css">
     <link rel="stylesheet" href="./css/community.css">
+    <link rel="stylesheet" href="./css/toolbar.css">
 </head>
 
 
@@ -66,13 +69,28 @@
 
     <!-- Pagina Pubblica Post -->
     <div id="postPage" class="page">
-        <label for="postTitle">Titolo Post:</label>
-        <input type="text" id="postTitle" placeholder="Inserisci Titolo Post" required>
+        <!-- <label for="postTitle">Titolo Post:</label> -->
+        <input type="text" id="postTitle" placeholder="Insert Title" required>
 
-        <label for="postBody">Corpo Post:</label>
+        <!-- <label for="postBody">Corpo Post:</label> -->
 
         <div class="textarea-container">
-            <textarea id="postBody" rows="5" placeholder="Inserisci Corpo del Post" required></textarea>
+            <div class="toolbar">
+                <button type="button" onclick="applyStyle('bold')" title="Bold"><strong>B</strong></button>
+                <button type="button" onclick="applyStyle('italic')" title="Italic"><em>I</em></button>
+                <button type="button" onclick="applyStyle('heading')" title="Heading">H</button>
+                <button type="button" onclick="applyStyle('underline')" title="Underline"><u>U</u></button>
+                <button type="button" onclick="applyStyle('strikethrough')" title="Strikethrough"><s>S</s></button>
+                <button type="button" onclick="applyStyle('quote')" title="Quote">"</button>
+                <button type="button" onclick="applyStyle('orderedList')" title="Ordered List">1.</button>
+                <button type="button" onclick="applyStyle('unorderedList')" title="Unordered List">•</button>
+                <button type="button" onclick="applyStyle('image')" title="Insert Image">🖼️</button>
+                <button type="button" onclick="applyStyle('link')" title="Insert Link">🔗</button>
+                <button type="button" onclick="applyStyle('table')" title="Insert Table">☷</button>
+                <button type="button" onclick="applyStyle('code')" title="Code">⟨⟩</button>
+                <button type="button" onclick="showHelp()" title="Help">?</button>
+            </div>
+            <textarea id="postBody" rows="5" placeholder="Insert Body" required></textarea>
 
 
             <div id="dropZone">
@@ -80,8 +98,8 @@
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
             </div>
 
-            <label for="postTags">Tag Post:</label>
-            <input type="text" id="postTags" placeholder="Inserisci Tag separati da virgola" required>
+            <!-- <label for="postTags">Tag Post:</label> -->
+            <input type="text" id="postTags" placeholder="Insert Tag separati da virgola" required>
             <br>
 
 
@@ -110,7 +128,7 @@
     </div>
     <div id="previewModal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <span class="close-button" id="close-button">&times;</span>
             <div id="previewContent" class="preview-content"></div>
         </div>
     </div>
@@ -170,7 +188,9 @@
 
         </script>
         <script type="module" src="./js/components/theme.js"></script>
+        <script type="module" src="./js/components/toolbar.js"></script>
         <script type="module" src="./js/app.js"></script>
+        
         <!-- <script type="module" src="main.js"></script> -->
     </div>
 </body>

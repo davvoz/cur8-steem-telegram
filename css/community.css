@@ -25,6 +25,7 @@
 
 #close-button {
     background: none;
+    color: var(--on-background);
     border: none;
     font-size: 20px;
     cursor: pointer;
