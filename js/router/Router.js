@@ -41,29 +41,29 @@ export class Router {
 
     showAccountPage() {
         showPage('accountPage');
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.BackButton.hide();
-        }
+        // if (window.Telegram?.WebApp) {
+        //     window.Telegram.WebApp.BackButton.hide();
+        // }
     }
 
     showPostPage() {
         showPage('postPage');
-        TelegramManager.getInstance().setupBackButton();
+        // TelegramManager.getInstance().setupBackButton();
     }
 
     showDraftPage() {
         showPage('draftPage');
-        TelegramManager.getInstance().setupBackButton();
+        //TelegramManager.getInstance().setupBackButton();
     }
 
     showLoginPage() {
         showPage('loginPage');
-        TelegramManager.getInstance().setupBackButton();
+        //TelegramManager.getInstance().setupBackButton();
     }
 
     showConfigPage() {
         showPage('configPage');
-        TelegramManager.getInstance().setupBackButton();
+        //TelegramManager.getInstance().setupBackButton();
     }
 
     updateBackButton() {
@@ -88,7 +88,7 @@ export class Router {
         const { handler, params } = this.parseRoute(path);
         if (handler) {
             handler(...params);
-            this.updateBackButton();
+            //this.updateBackButton();
         } else {
             console.log('404 Not Found');
         }
