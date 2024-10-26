@@ -70,7 +70,7 @@ function router() {
     const route = routes[path];
     if (route) {
         route();
-        updateBackButton();
+        // updateBackButton();
     } else {
         console.log('404 Not Found');
     }
