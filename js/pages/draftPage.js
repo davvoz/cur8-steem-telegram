@@ -2,249 +2,247 @@ import { getUsername } from "../services/userManager.js";
 import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
-import { appState } from '../core/AppState.js';
 import { converiIlTagInNomeComunita } from "../services/utils.js";
 
-const client = new ApiClient();
-
-export async function getUserDrafts() {
-    const username = getUsername();
-    if (!username) {
-        return;
-    }
-    cleanDraftPage();
-    try {
-        const result = await client.getUserDrafts(username);
-        await createListaDrafts(result, username);
-    } catch (error) {
-        displayResult({ error: 'Failed to load drafts. Please try again.' }, 'error', true);
-    }
-}
-
-function cleanDraftPage() {
-    const draftList = document.getElementById('draftList');
-    draftList.innerHTML = '';
-}
-
-async function createListaDrafts(drafts, username) {
-    const draftList = document.getElementById('draftList');
-    const headerDraft = document.getElementById('headerDraft');
-
-    // Create and append header with tabs
-    const header = createHeaderWithTabs();
-    draftList.appendChild(header);
-    headerDraft.appendChild(header);
-
-    // Create and append draft lists
-    const { scheduledList, unscheduledList } = createDraftLists();
-    draftList.appendChild(scheduledList);
-    draftList.appendChild(unscheduledList);
-
-    // Handle empty drafts case
-    if (!Array.isArray(drafts) || drafts.length === 0) {
-        appendNoDraftsMessage(scheduledList);
-        return;
+// ApiService class to handle API interactions
+class ApiService {
+    constructor(client) {
+        this.client = client;
     }
 
-    // Sort and separate drafts
-    const { scheduledDrafts, unscheduledDrafts } = sortAndSeparateDrafts(drafts);
-
-    // Populate draft lists
-    await populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList);
-
-    // Add tab switching functionality
-    addTabSwitchingFunctionality(header);
-}
-
-function createHeaderWithTabs() {
-    const tabsContainer = document.createElement('div');
-    tabsContainer.classList.add('tabs-container');
-
-    const scheduledTab = createTabButton('Scheduled', true);
-    const unscheduledTab = createTabButton('Drafts', false);
-
-    tabsContainer.appendChild(scheduledTab);
-    tabsContainer.appendChild(unscheduledTab);
-
-    const header = document.createElement('div');
-    header.classList.add('header');
-    header.appendChild(tabsContainer);
-
-    return header;
-}
-
-function createDraftLists() {
-    const scheduledList = document.createElement('ul');
-    scheduledList.classList.add('draft-list', 'active');
-
-    const unscheduledList = document.createElement('ul');
-    unscheduledList.classList.add('draft-list');
-
-    return { scheduledList, unscheduledList };
-}
-
-function appendNoDraftsMessage(list) {
-    const li = document.createElement('li');
-    li.textContent = 'No drafts available';
-    list.appendChild(li);
-}
-
-function sortAndSeparateDrafts(drafts) {
-    drafts.sort((a, b) => {
-        if (!a.scheduled_time) return 1;
-        if (!b.scheduled_time) return -1;
-        return new Date(a.scheduled_time) - new Date(b.scheduled_time);
-    });
-
-    const scheduledDrafts = drafts.filter(draft => draft.scheduled_time && draft.scheduled_time !== "0000-00-00 00:00:00");
-    const unscheduledDrafts = drafts.filter(draft => !draft.scheduled_time || draft.scheduled_time === "0000-00-00 00:00:00");
-
-    return { scheduledDrafts, unscheduledDrafts };
-}
-
-async function populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList) {
-    let scheduledCount = 0;
-    let unscheduledCount = 0;
-
-    for (const draft of scheduledDrafts) {
-        scheduledCount++;
-        const li = await createDraftListItem(scheduledCount, draft.title || 'Untitled Draft', draft.scheduled_time, draft);
-        scheduledList.appendChild(li);
-    }
-
-    for (const draft of unscheduledDrafts) {
-        unscheduledCount++;
-        const li = await createDraftListItem(unscheduledCount, draft.title || 'Untitled Draft', draft.scheduled_time, draft);
-        li.classList.add('unscheduled-draft');
-        unscheduledList.appendChild(li);
-    }
-}
-
-function addTabSwitchingFunctionality(header) {
-    const tabs = header.querySelectorAll('.tab-button');
-    const lists = document.querySelectorAll('.draft-list');
-
-    tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            lists.forEach(list => list.classList.remove('active'));
-
-            tab.classList.add('active');
-            lists[index].classList.add('active');
-        });
-    });
-}
-
-// Helper function to create tab buttons
-function createTabButton(text, isActive = false) {
-    const button = document.createElement('button');
-    button.textContent = text;
-    button.classList.add('tab-button');
-    if (isActive) button.classList.add('active');
-    return button;
-}
-
-async function createDraftListItem(id, title, scheduledTime, draft) {
-    const li = document.createElement('li');
-    li.classList.add('draft-item');
-
-    const titleSpan = createElementWithClass('span', 'draft-title', title);
-    const idDiv = createElementWithClass('div', 'draft-id', id);
-    const titleContainer = createElementWithClass('div', 'title-container');
-    titleContainer.append(idDiv, titleSpan);
-
-    const infoDiv = createElementWithClass('div', 'draft-info');
-    infoDiv.style.display = 'flex';
-    infoDiv.style.flexDirection = 'column';
-    infoDiv.style.marginRight = '10px';
-
-    const message = scheduledTime == "0000-00-00 00:00:00"
-        ? "No scheduled time"
-        : new Date(scheduledTime).toLocaleString();
-
-    const scheduledTimeSpan = createElementWithClass('div', 'scheduled-time', message);
-    infoDiv.appendChild(scheduledTimeSpan);
-
-    const titleScheduleContainer = createElementWithClass('div', 'title-schedule-container');
-    titleScheduleContainer.append(titleContainer, infoDiv);
-    li.appendChild(titleScheduleContainer);
-    const buttonsContainer = createElementWithClass('div', 'buttons-container-draft');
-
-    appState.setCurrentDraft(draft);
-    const editButton = createIconButton('edit', () => {
-        loadDraft(draft);
-    });
-    editButton.setAttribute('data-draft-id', draft.id);
-    editButton.classList.add('edit-button');
-    editButton.id = `edit-draft-${draft.id}`;
-
-    const deleteButton = createIconButton('delete', () => deleteDraft(draft.id));
-    deleteButton.id = `delete-draft-${draft.id}`;
-
-    buttonsContainer.append(editButton, deleteButton);
-    li.appendChild(buttonsContainer);
-
-    return li;
-}
-
-function createElementWithClass(tag, className, textContent = '') {
-    const element = document.createElement(tag);
-    element.classList.add(className);
-    element.textContent = textContent;
-    return element;
-}
-
-async function loadDraft(draft) {
-    console.log('Loading draft:', draft);
-    document.getElementById('postTitle').value = draft.title || '';
-    document.getElementById('postTags').value = draft.tags || '';
-    document.getElementById('postBody').value = draft.body || '';
-    document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
-    if (draft.scheduled_time !== '0000-00-00 00:00:00') {
-        document.getElementById('openDatePicker').innerText = new Date(draft.scheduled_time).toLocaleString();
-        document.getElementById('openDatePicker').classList.add('action-btn');
-        document.getElementById('openDatePicker').classList.remove('action-btn-mini');
-    } else {
-        document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
-        document.getElementById('openDatePicker').classList.add('action-btn-mini');
-        document.getElementById('openDatePicker').classList.remove('action-btn');
-    }
-
-    window.scheduledTime = draft.scheduled_time;
-    window.location.hash = `#/draft/edit/${draft.id}`;
-}
-
-async function deleteDraft(id) {
-    const draftId = id;
-    if (!draftId) return;
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('dialogo');
-    dialog.innerHTML = `
-        <h2>Conferma Eliminazione</h2>
-        <p>Sei sicuro di voler eliminare questa bozza?</p>
-        <button id="confirmButtonDelete" class="action-btn">Conferma</button>
-        <button id="cancelButtonDelete" class="action-btn">Annulla</button>
-    `;
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    const confirmButton = dialog.querySelector('#confirmButtonDelete');
-    const cancelButton = dialog.querySelector('#cancelButtonDelete');
-    confirmButton.addEventListener('click', async () => {
-        dialog.remove();
+    async getUserDrafts(username) {
         try {
-            const result = await client.deleteDraft(draftId, getUsername());
-            getUserDrafts();
-            displayResult(result, 'success', true);
+            return await this.client.getUserDrafts(username);
         } catch (error) {
-            console.error('Error in deleteDraft:', error);
-            displayResult({ error: error.message }, 'error');
+            throw new Error('Failed to load drafts. Please try again.');
         }
-    });
-    cancelButton.addEventListener('click', () => {
-        dialog.remove();
-    });
-    dialog.addEventListener('close', () => {
-        dialog.remove();
-    });
+    }
+
+    async deleteDraft(draftId, username) {
+        try {
+            return await this.client.deleteDraft(draftId, username);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
 
+// DraftManager class to handle draft operations
+class DraftManager {
+    constructor(apiService) {
+        this.apiService = apiService;
+    }
+
+    async loadUserDrafts() {
+        const username = getUsername();
+        if (!username) return;
+
+        this.cleanDraftPage();
+        try {
+            const drafts = await this.apiService.getUserDrafts(username);
+            this.createDraftList(drafts);
+        } catch (error) {
+            displayResult({ error: error.message }, 'error', true);
+        }
+    }
+
+    cleanDraftPage() {
+        const draftList = document.getElementById('draftList');
+        draftList.innerHTML = '';
+    }
+
+    createHeaderWithTabs() {
+        const tabsContainer = this.createElementWithClass('div', 'tabs-container');
+        const scheduledTab = this.createTabButton('Scheduled', true);
+        const unscheduledTab = this.createTabButton('Drafts', false);
+        
+        // Aggiungiamo i click listener direttamente qui
+        scheduledTab.addEventListener('click', () => {
+            this.switchTab(0);
+        });
+        
+        unscheduledTab.addEventListener('click', () => {
+            this.switchTab(1);
+        });
+
+        tabsContainer.append(scheduledTab, unscheduledTab);
+
+        const header = this.createElementWithClass('div', 'header');
+        header.appendChild(tabsContainer);
+        return header;
+    }
+
+    switchTab(index) {
+        const tabs = document.querySelectorAll('.tab-button');
+        const lists = document.querySelectorAll('.draft-list');
+
+        tabs.forEach(t => t.classList.remove('active'));
+        lists.forEach(list => list.classList.remove('active'));
+
+        tabs[index].classList.add('active');
+        lists[index].classList.add('active');
+    }
+
+    createDraftLists() {
+        // Creiamo la lista "scheduled" già con la classe active
+        const scheduledList = this.createElementWithClass('ul', 'draft-list');
+        scheduledList.classList.add('active'); // Aggiungiamo active alla prima lista
+        const unscheduledList = this.createElementWithClass('ul', 'draft-list');
+        return { scheduledList, unscheduledList };
+    }
+
+    createDraftList(drafts) {
+        const draftList = document.getElementById('draftList');
+        const headerDraft = document.getElementById('headerDraft');
+
+        const header = this.createHeaderWithTabs();
+        draftList.appendChild(header);
+        headerDraft.appendChild(header);
+
+        const { scheduledList, unscheduledList } = this.createDraftLists();
+        draftList.append(scheduledList, unscheduledList);
+
+        if (!Array.isArray(drafts) || drafts.length === 0) {
+            this.appendNoDraftsMessage(scheduledList);
+            return;
+        }
+
+        const { scheduledDrafts, unscheduledDrafts } = this.sortAndSeparateDrafts(drafts);
+        this.populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList);
+    }
+
+    createTabButton(text, isActive = false) {
+        const button = this.createElementWithClass('button', 'tab-button', text);
+        if (isActive) button.classList.add('active');
+        return button;
+    }
+
+    appendNoDraftsMessage(list) {
+        const li = this.createElementWithClass('li', '', 'No drafts available');
+        list.appendChild(li);
+    }
+
+    sortAndSeparateDrafts(drafts) {
+        drafts.sort((a, b) => new Date(a.scheduled_time || 0) - new Date(b.scheduled_time || 0));
+
+        const scheduledDrafts = drafts.filter(d => d.scheduled_time && d.scheduled_time !== "0000-00-00 00:00:00");
+        const unscheduledDrafts = drafts.filter(d => !d.scheduled_time || d.scheduled_time === "0000-00-00 00:00:00");
+
+        return { scheduledDrafts, unscheduledDrafts };
+    }
+
+    populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList) {
+        scheduledDrafts.forEach((draft, index) => {
+            const li = this.createDraftListItem(index + 1, draft);
+            scheduledList.appendChild(li);
+        });
+
+        unscheduledDrafts.forEach((draft, index) => {
+            const li = this.createDraftListItem(index + 1, draft);
+            li.classList.add('unscheduled-draft');
+            unscheduledList.appendChild(li);
+        });
+    }
+
+    createDraftListItem(id, draft) {
+        const li = this.createElementWithClass('li', 'draft-item');
+
+        const titleSpan = this.createElementWithClass('span', 'draft-title', draft.title || 'Untitled Draft');
+        const idDiv = this.createElementWithClass('div', 'draft-id', id);
+        const titleContainer = this.createElementWithClass('div', 'title-container');
+        titleContainer.append(idDiv, titleSpan);
+
+        const infoDiv = this.createElementWithClass('div', 'draft-info');
+        infoDiv.style.flexDirection = 'column';
+
+        const message = draft.scheduled_time === "0000-00-00 00:00:00" ? "No scheduled time" : new Date(draft.scheduled_time).toLocaleString();
+        const scheduledTimeSpan = this.createElementWithClass('div', 'scheduled-time', message);
+        infoDiv.appendChild(scheduledTimeSpan);
+
+        const titleScheduleContainer = this.createElementWithClass('div', 'title-schedule-container');
+        titleScheduleContainer.append(titleContainer, infoDiv);
+        li.appendChild(titleScheduleContainer);
+
+        const buttonsContainer = this.createElementWithClass('div', 'buttons-container-draft');
+        const editButton = createIconButton('edit', () => this.loadDraft(draft));
+        const deleteButton = createIconButton('delete', () => this.confirmAndDeleteDraft(draft.id));
+
+        buttonsContainer.append(editButton, deleteButton);
+        li.appendChild(buttonsContainer);
+
+        return li;
+    }
+
+    createElementWithClass(tag, className, textContent = '') {
+        const element = document.createElement(tag);
+        element.classList.add(className);
+        element.textContent = textContent;
+        return element;
+    }
+
+    async loadDraft(draft) {
+        document.getElementById('postTitle').value = draft.title || '';
+        document.getElementById('postTags').value = draft.tags || '';
+        document.getElementById('postBody').value = draft.body || '';
+        document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
+
+        const scheduledTimeEl = document.getElementById('openDatePicker');
+        if (draft.scheduled_time !== '0000-00-00 00:00:00') {
+            scheduledTimeEl.innerText = new Date(draft.scheduled_time).toLocaleString();
+        } else {
+            scheduledTimeEl.innerHTML = '<i class="material-icons">schedule</i>';
+        }
+    }
+
+    async confirmAndDeleteDraft(draftId) {
+        const confirm = await this.showDeleteConfirmation();
+        if (confirm) {
+            try {
+                const result = await this.apiService.deleteDraft(draftId, getUsername());
+                this.loadUserDrafts();
+                displayResult(result, 'success', true);
+            } catch (error) {
+                displayResult({ error: error.message }, 'error');
+            }
+        }
+    }
+
+    showDeleteConfirmation() {
+        return new Promise((resolve) => {
+            const dialog = document.createElement('dialog');
+            dialog.classList.add('dialogo');
+            dialog.innerHTML = `
+                <h2>Conferma Eliminazione</h2>
+                <p>Sei sicuro di voler eliminare questa bozza?</p>
+                <button id="confirmButtonDelete" class="action-btn">Conferma</button>
+                <button id="cancelButtonDelete" class="action-btn">Annulla</button>
+            `;
+            document.body.appendChild(dialog);
+            dialog.showModal();
+
+            dialog.querySelector('#confirmButtonDelete').addEventListener('click', () => {
+                dialog.close();
+                resolve(true);
+            });
+
+            dialog.querySelector('#cancelButtonDelete').addEventListener('click', () => {
+                dialog.close();
+                resolve(false);
+            });
+
+            dialog.addEventListener('close', () => {
+                dialog.remove();
+            });
+        });
+    }
+}
+
+// Instantiating classes and initiating operations
+const client = new ApiClient();
+const apiService = new ApiService(client);
+const draftManager = new DraftManager(apiService);
+
+// Exporting a single function for initiating the draft loading
+export async function getUserDrafts() {
+    draftManager.loadUserDrafts();
+}
