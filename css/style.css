@@ -21,7 +21,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-fast);
     overflow: auto;
-    caret-color: transparent  ;
+    caret-color: transparent;
+}
+
+input , textarea {
+    caret-color: var(--primary-color);
 }
 
 .container {
@@ -471,7 +475,7 @@ ul li {
 }
 
 .modal-content p {
-    margin: var(--spacing-md) ;
+    margin: var(--spacing-md);
     color: var(--on-surface);
     background-color: var(--background);
 }
@@ -1104,4 +1108,3 @@ table td {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-variant);
 }
-
