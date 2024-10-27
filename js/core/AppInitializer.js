@@ -8,13 +8,18 @@ import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getListaComunities } from './utils.js';
 import { AccountManager } from '../pages/accountListPage.js';
 
-// App Initializer Class
-let usernames = [];
-const accountManager = new AccountManager();
+class AppInitializer {
+    constructor() {
+        if (AppInitializer.instance) {
+            return AppInitializer.instance;
+        }
 
-export class AppInitializer {
-    static async initializeApp() {
+        this.usernames = [];
+        this.accountManager = new AccountManager();
+        AppInitializer.instance = this;
+    }
 
+    async initializeApp() {
         try {
             const idTelegram = await initializeTelegram();
             console.log('initializeTelegram resolved with idTelegram:', idTelegram);
@@ -25,30 +30,34 @@ export class AppInitializer {
             }
 
             appState.client = new ApiClient();
-            document.getElementById('spinner').classList.remove('hide');
+            this.showSpinner();
 
             const result = await appState.client.checkLogin(idTelegram);
             if (!result.usernames) {
-                document.getElementById('spinner').classList.add('hide');
-                displayResult({ error: 'Nessun account trovato' }, 'error', true);
+                this.handleNoUsernamesFound();
                 return;
             }
             this.initializeAccountList(result.usernames);
-            setUsernames(result.usernames);
+            this.setUsernames(result.usernames);
             enableNavigationButtons();
-            AppInitializer.initializeEnd(result);
+            this.initializeEnd(result);
         } catch (error) {
-            AppInitializer.handleInitializationError(error);
+            this.handleInitializationError(error);
         } finally {
-            document.getElementById('spinner').classList.add('hide');
+            this.hideSpinner();
         }
     }
 
-    static async initializeAccountList(usernames) {
-        usernames.forEach(username => accountManager.createAccountListItem(username));
+    handleNoUsernamesFound() {
+        this.hideSpinner();
+        displayResult({ error: 'Nessun account trovato' }, 'error', true);
     }
 
-    static handleInitializationError(error) {
+    async initializeAccountList(usernames) {
+        usernames.forEach(username => this.accountManager.createAccountListItem(username));
+    }
+
+    handleInitializationError(error) {
         if (error.message.includes('HTTP error! status: 404')) {
             displayResult(
                 { info: 'Complimenti! 🎉 Perché non aggiungere un tuo account? 😊' },
@@ -65,33 +74,51 @@ export class AppInitializer {
         }
     }
 
-    static initializeEnd(result) {
+    initializeEnd(result) {
         enableNavigationButtons();
         console.log('initializeEnd', result);
         window.listaComunities = getListaComunities();
-        usernames = result.usernames;
-        const accountList = document.getElementById('accountList');
-        accountList.innerHTML = '';
-        this.initializeAccountList(usernames);
-        if (usernames.length > 0) {
-            window.usernameSelected = usernames[0];
-            setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
-            const firstAccountContainer = accountList.querySelector('.container-username');
-            if (firstAccountContainer) {
-                accountManager.selectAccount(window.usernameSelected, firstAccountContainer);
-            }
+        this.usernames = result.usernames;
+        this.updateAccountList(this.usernames);
+        if (this.usernames.length > 0) {
+            this.selectFirstAccount(this.usernames);
         }
-        document.getElementById('spinner').classList.add('hide');
+        this.hideSpinner();
         showPage('accountPage');
         displayResult(result);
     }
 
+    updateAccountList(usernames) {
+        const accountList = document.getElementById('accountList');
+        accountList.innerHTML = '';
+        this.initializeAccountList(usernames);
+    }
 
-}
-export function getUsernames() {
-    return usernames;
+    selectFirstAccount(usernames) {
+        window.usernameSelected = usernames[0];
+        setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
+        const firstAccountContainer = document.getElementById('accountList').querySelector('.container-username');
+        if (firstAccountContainer) {
+            this.accountManager.selectAccount(window.usernameSelected, firstAccountContainer);
+        }
+    }
+
+    showSpinner() {
+        document.getElementById('spinner').classList.remove('hide');
+    }
+
+    hideSpinner() {
+        document.getElementById('spinner').classList.add('hide');
+    }
+
+    getUsernames() {
+        return this.usernames;
+    }
+
+    setUsernames(value) {
+        this.usernames = value;
+    }
 }
 
-export function setUsernames(value) {
-    usernames = value;
-}
+const appInitializerInstance = new AppInitializer();
+export default appInitializerInstance;

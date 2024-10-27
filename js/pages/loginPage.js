@@ -1,7 +1,7 @@
 
 import { displayResult } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
-import { AppInitializer , setUsernames} from '../core/AppInitializer.js';
+import appInitializerInstance from '../core/AppInitializer.js';
 
 const client = new ApiClient();
 

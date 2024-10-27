@@ -3,7 +3,7 @@ import { applySavedTheme } from '../components/theme.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
-import { AppInitializer, setUsernames } from '../core/AppInitializer.js';
+import  appInitializerInstance  from '../core/AppInitializer.js';
 
 export class AccountManager {
     constructor(apiClient = new ApiClient()) {
@@ -141,12 +141,12 @@ export class AccountManager {
                 displayResult({ error: 'Nessun account trovato' }, 'error', true);
                 return;
             }
-            setUsernames(result.usernames);
-            AppInitializer.initializeEnd(result);
+            appInitializerInstance.setUsernames(result.usernames);
+            appInitializerInstance.initializeEnd(result);
         } catch (error) {
             console.error('Error in handlePostLogout:', error);
             displayResult({ error: error.message }, 'error');
-            AppInitializer.initializeApp();
+            appInitializerInstance.initializeApp();
         } finally {
             document.getElementById('spinner').classList.add('hide');
         }

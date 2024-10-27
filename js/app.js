@@ -1,7 +1,7 @@
 import { initializeImageUpload } from './api/image-upload.js';
 import { handleSteemLogin } from './pages/loginPage.js';
 import { appState } from './core/AppState.js';
-import { AppInitializer } from './core/AppInitializer.js';
+import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
 
 class App {
@@ -19,7 +19,7 @@ class App {
         // Handle authentication and initialization
         await handleSteemLogin();
         if (!window.location.search.includes('access_token')) {
-            await AppInitializer.initializeApp();
+            await appInitializerInstance.initializeApp();
         }
 
         // Initialize input validation
