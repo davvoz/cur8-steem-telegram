@@ -3,7 +3,7 @@ import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
 import { converiIlTagInNomeComunita } from "../services/utils.js";
-
+import { appState } from "../core/AppState.js";
 // ApiService class to handle API interactions
 class ApiService {
     constructor(client) {
@@ -164,7 +164,15 @@ class DraftManager {
         li.appendChild(titleScheduleContainer);
 
         const buttonsContainer = this.createElementWithClass('div', 'buttons-container-draft');
-        const editButton = createIconButton('edit', () => this.loadDraft(draft));
+    
+        appState.setCurrentDraft(draft);
+        const editButton = createIconButton('edit', () => {
+            this.loadDraft(draft);
+        });
+        editButton.setAttribute('data-draft-id', draft.id);
+        editButton.classList.add('edit-button');
+        editButton.id = `edit-draft-${draft.id}`;
+
         const deleteButton = createIconButton('delete', () => this.confirmAndDeleteDraft(draft.id));
 
         buttonsContainer.append(editButton, deleteButton);
@@ -192,6 +200,9 @@ class DraftManager {
         } else {
             scheduledTimeEl.innerHTML = '<i class="material-icons">schedule</i>';
         }
+        window.scheduledTime = draft.scheduled_time;
+        window.location.hash = `#/draft/edit/${draft.id}`;
+
     }
 
     async confirmAndDeleteDraft(draftId) {
