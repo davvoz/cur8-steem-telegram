@@ -79,6 +79,10 @@ textarea:focus {
     outline: none;
 }
 
+#username {
+    text-transform: lowercase;
+}
+
 label {
     font-weight: 500;
     color: var(--primary-color);
