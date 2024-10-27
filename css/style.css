@@ -21,6 +21,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-fast);
     overflow: auto;
+    caret-color: transparent  ;
 }
 
 .container {
@@ -1058,3 +1059,45 @@ table td {
     color: var(--on-background);
     border: none;
 }
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-button {
+    background: var(--surface);
+    color: var(--on-background);
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: var(--on-background);
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+    transition: all 0.2s;
+}
+
+.close-button:hover {
+    color: rgba(240, 5, 5, 0.9);
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/*fai la scrollbar adeguata al tuo tema come colori e dimensioni*/
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-variant);
+}
+

@@ -11,7 +11,7 @@ export const getDialogTelegramId = () => {
             localStorage.setItem('idTelegram', telegramId);
             closeAndResolve(dialog, telegramId, resolve).then(() => {
                 return telegramId;
-                           
+
             });
         });
         dialog.addEventListener('close', () => {
@@ -88,11 +88,13 @@ export function createDatePickerDialog() {
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
+    <div class="dialog-header">
         <h2>Seleziona la data e l'ora di pubblicazione</h2>
+        <button class="close-button" id="cancelButtonDP" aria-label="Chiudi">✕</button>
+    </div>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
         <button id="confirmButtonDP" class="action-btn">Conferma</button>
         <button id="annullaButtonDP" class="action-btn">Cancella</button>
-        <button id="cancelButtonDP" class="action-btn">Chiudi</button>
     `;
     return dialog;
 }
