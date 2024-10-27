@@ -27,97 +27,111 @@ function cleanDraftPage() {
 }
 
 async function createListaDrafts(drafts, username) {
-    // Create tabs container
-    // Crea l'elemento tabsContainer
+    const draftList = document.getElementById('draftList');
+    const headerDraft = document.getElementById('headerDraft');
+
+    // Create and append header with tabs
+    const header = createHeaderWithTabs();
+    draftList.appendChild(header);
+    headerDraft.appendChild(header);
+
+    // Create and append draft lists
+    const { scheduledList, unscheduledList } = createDraftLists();
+    draftList.appendChild(scheduledList);
+    draftList.appendChild(unscheduledList);
+
+    // Handle empty drafts case
+    if (!Array.isArray(drafts) || drafts.length === 0) {
+        appendNoDraftsMessage(scheduledList);
+        return;
+    }
+
+    // Sort and separate drafts
+    const { scheduledDrafts, unscheduledDrafts } = sortAndSeparateDrafts(drafts);
+
+    // Populate draft lists
+    await populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList);
+
+    // Add tab switching functionality
+    addTabSwitchingFunctionality(header);
+}
+
+function createHeaderWithTabs() {
     const tabsContainer = document.createElement('div');
     tabsContainer.classList.add('tabs-container');
 
-    // Crea i pulsanti per le tab
     const scheduledTab = createTabButton('Scheduled', true);
     const unscheduledTab = createTabButton('Drafts', false);
 
-    // Aggiungi i pulsanti delle tab al contenitore delle tab
     tabsContainer.appendChild(scheduledTab);
     tabsContainer.appendChild(unscheduledTab);
 
-    // Crea l'elemento header e aggiungi tabsContainer al suo interno
     const header = document.createElement('div');
     header.classList.add('header');
     header.appendChild(tabsContainer);
 
-    // Trova l'elemento draftList e aggiungi header al suo interno
-    const draftList = document.getElementById('draftList');
-    draftList.appendChild(header);
+    return header;
+}
 
-    // Crea le liste per le bozze programmate e non programmate
+function createDraftLists() {
     const scheduledList = document.createElement('ul');
     scheduledList.classList.add('draft-list', 'active');
 
     const unscheduledList = document.createElement('ul');
     unscheduledList.classList.add('draft-list');
 
-    // Aggiungi le liste alla draftList
-    draftList.appendChild(scheduledList);
-    draftList.appendChild(unscheduledList);
+    return { scheduledList, unscheduledList };
+}
 
-    // Trova l'elemento headerDraft e aggiungi header al suo interno
-    const headerDraft = document.getElementById('headerDraft');
-    headerDraft.appendChild(header);
+function appendNoDraftsMessage(list) {
+    const li = document.createElement('li');
+    li.textContent = 'No drafts available';
+    list.appendChild(li);
+}
 
-
-    // Handle empty drafts case
-    if (!Array.isArray(drafts) || drafts.length === 0) {
-        const li = document.createElement('li');
-        li.textContent = 'No drafts available';
-        scheduledList.appendChild(li);
-        return;
-    }
-
-    // Sort drafts
+function sortAndSeparateDrafts(drafts) {
     drafts.sort((a, b) => {
         if (!a.scheduled_time) return 1;
         if (!b.scheduled_time) return -1;
         return new Date(a.scheduled_time) - new Date(b.scheduled_time);
     });
 
-    // Separate drafts into scheduled and unscheduled
-    let scheduledCount = 1;
-    let unscheduledCount = 1;
+    const scheduledDrafts = drafts.filter(draft => draft.scheduled_time && draft.scheduled_time !== "0000-00-00 00:00:00");
+    const unscheduledDrafts = drafts.filter(draft => !draft.scheduled_time || draft.scheduled_time === "0000-00-00 00:00:00");
 
-    for (const draft of drafts) {
-        const li = await createDraftListItem(
-            draft.scheduled_time ? scheduledCount++ : unscheduledCount++,
-            draft.title || 'Untitled Draft',
-            draft.scheduled_time,
-            draft.tags,
-            draft
-        );
+    return { scheduledDrafts, unscheduledDrafts };
+}
 
-        if (draft.scheduled_time && draft.scheduled_time !== "0000-00-00 00:00:00") {
-            scheduledList.appendChild(li);
-        } else {
-            li.classList.add('unscheduled-draft');
-            unscheduledList.appendChild(li);
-        }
+async function populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList) {
+    let scheduledCount = 0;
+    let unscheduledCount = 0;
+
+    for (const draft of scheduledDrafts) {
+        scheduledCount++;
+        const li = await createDraftListItem(scheduledCount, draft.title || 'Untitled Draft', draft.scheduled_time, draft);
+        scheduledList.appendChild(li);
     }
 
-    // Add tab switching functionality with smooth transitions
-    function switchTab(activeTab, activeList, inactiveTab, inactiveList) {
-        inactiveTab.classList.remove('active');
-        inactiveList.classList.remove('active');
+    for (const draft of unscheduledDrafts) {
+        unscheduledCount++;
+        const li = await createDraftListItem(unscheduledCount, draft.title || 'Untitled Draft', draft.scheduled_time, draft);
+        li.classList.add('unscheduled-draft');
+        unscheduledList.appendChild(li);
+    }
+}
 
-        requestAnimationFrame(() => {
-            activeTab.classList.add('active');
-            activeList.classList.add('active');
+function addTabSwitchingFunctionality(header) {
+    const tabs = header.querySelectorAll('.tab-button');
+    const lists = document.querySelectorAll('.draft-list');
+
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            lists.forEach(list => list.classList.remove('active'));
+
+            tab.classList.add('active');
+            lists[index].classList.add('active');
         });
-    }
-
-    scheduledTab.addEventListener('click', () => {
-        switchTab(scheduledTab, scheduledList, unscheduledTab, unscheduledList);
-    });
-
-    unscheduledTab.addEventListener('click', () => {
-        switchTab(unscheduledTab, unscheduledList, scheduledTab, scheduledList);
     });
 }
 
@@ -130,7 +144,7 @@ function createTabButton(text, isActive = false) {
     return button;
 }
 
-async function createDraftListItem(id, title, scheduledTime, tags, draft) {
+async function createDraftListItem(id, title, scheduledTime, draft) {
     const li = document.createElement('li');
     li.classList.add('draft-item');
 
