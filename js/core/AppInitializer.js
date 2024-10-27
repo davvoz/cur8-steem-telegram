@@ -5,12 +5,16 @@ import { ApiClient } from '../api/api-client.js';
 import { showPage } from '../services/pageService.js';
 import { appState } from './AppState.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
-import { createAccountListItem, selectAccount } from '../pages/accountListPage.js';
 import { getListaComunities } from '../services/utils.js';
+import { AccountManager } from '../pages/accountListPage.js';
+
 // App Initializer Class
 let usernames = [];
+const accountManager = new AccountManager();
+
 export class AppInitializer {
     static async initializeApp() {
+
         try {
             const idTelegram = await initializeTelegram();
             console.log('initializeTelegram resolved with idTelegram:', idTelegram);
@@ -29,7 +33,7 @@ export class AppInitializer {
                 displayResult({ error: 'Nessun account trovato' }, 'error', true);
                 return;
             }
-
+            this.initializeAccountList(result.usernames);
             setUsernames(result.usernames);
             enableNavigationButtons();
             AppInitializer.initializeEnd(result);
@@ -38,6 +42,10 @@ export class AppInitializer {
         } finally {
             document.getElementById('spinner').classList.add('hide');
         }
+    }
+
+    static async initializeAccountList(usernames) {
+        usernames.forEach(username => accountManager.createAccountListItem(username));
     }
 
     static handleInitializationError(error) {
@@ -64,13 +72,13 @@ export class AppInitializer {
         usernames = result.usernames;
         const accountList = document.getElementById('accountList');
         accountList.innerHTML = '';
-        usernames.forEach(createAccountListItem);
+        this.initializeAccountList(usernames);
         if (usernames.length > 0) {
             window.usernameSelected = usernames[0];
             setUsernameForImageUpload(window.usernameSelected.username, localStorage.getItem('idTelegram'));
             const firstAccountContainer = accountList.querySelector('.container-username');
             if (firstAccountContainer) {
-                selectAccount(window.usernameSelected, firstAccountContainer);
+                accountManager.selectAccount(window.usernameSelected, firstAccountContainer);
             }
         }
         document.getElementById('spinner').classList.add('hide');
