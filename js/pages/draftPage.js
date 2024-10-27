@@ -2,7 +2,7 @@ import { getUsername } from "../services/userManager.js";
 import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
-import { converiIlTagInNomeComunita } from "../services/utils.js";
+import { converiIlTagInNomeComunita } from "../core/utils.js";
 import { appState } from "../core/AppState.js";
 // ApiService class to handle API interactions
 class ApiService {

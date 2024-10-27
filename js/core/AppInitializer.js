@@ -1,11 +1,11 @@
 import { initializeTelegram } from '../services/telegram.js';
 import { displayResult } from '../components/dialog.js';
-import { enableNavigationButtons } from '../services/utils.js';
+import { enableNavigationButtons } from './utils.js';
 import { ApiClient } from '../api/api-client.js';
 import { showPage } from '../services/pageService.js';
 import { appState } from './AppState.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
-import { getListaComunities } from '../services/utils.js';
+import { getListaComunities } from './utils.js';
 import { AccountManager } from '../pages/accountListPage.js';
 
 // App Initializer Class
