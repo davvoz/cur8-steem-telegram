@@ -27,11 +27,11 @@
     <nav>
         <button id="draftBtn" disabled>
             <i class="material-icons">description</i>
-            <span>Bozze</span>
+            <span>Drafts</span>
         </button>
         <button id="postBtn" disabled>
             <i class="material-icons">edit</i>
-            <span>Pubblica</span>
+            <span>Publish</span>
         </button>
         <button id="accountBtn" disabled>
             <i class="material-icons">account_circle</i>
@@ -39,7 +39,7 @@
         </button>
         <button id="configBtn">
             <i class="material-icons">settings</i>
-            <span>Configurazione</span>
+            <span>Settings</span>
         </button>
     </nav>
     <div class="spinner hide" id="spinner">
@@ -51,11 +51,11 @@
     <div id="loginPage" class="page active">
         <h2>Login</h2>
         <label for="username">Username:</label>
-        <input type="text" id="username" placeholder="Inserisci Username">
+        <input type="text" id="username" placeholder="insert username">
         <label for="postingKey">Posting Key:</label>
-        <input type="text" id="postingKey" placeholder="Inserisci Posting Key">
+        <input type="text" id="postingKey" placeholder="insert posting key">
         <button class="action-btn" id="goLogin">Login</button>
-        <button class="action-btn" id="steemlogin">Login con Steemlogin</button>
+        <button class="action-btn" id="steemlogin">Login with Steemlogin</button>
     </div>
 
     <!-- Pagina Gestione Bozze -->
@@ -70,7 +70,7 @@
     <!-- Pagina Pubblica Post -->
     <div id="postPage" class="page">
         <!-- <label for="postTitle">Titolo Post:</label> -->
-        <input type="text" id="postTitle" placeholder="Insert Title" required>
+        <input type="text" id="postTitle" placeholder="insert title" required>
 
         <!-- <label for="postBody">Corpo Post:</label> -->
 
@@ -90,24 +90,24 @@
                 <button type="button" onclick="applyStyle('code')" title="Code">⟨⟩</button>
                 <button type="button" onclick="showHelp()" title="Help">?</button>
             </div>
-            <textarea id="postBody" rows="5" placeholder="Insert Body" required></textarea>
+            <textarea id="postBody" rows="5" placeholder="insert body" required></textarea>
 
 
             <div id="dropZone">
-                Inserisci Immagine
+                Add Image
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
             </div>
 
             <!-- <label for="postTags">Tag Post:</label> -->
-            <input type="text" id="postTags" placeholder="Insert Tag separati da virgola" required>
+            <input type="text" id="postTags" placeholder="insert tags (use commas/spaces to separate)" required>
             <br>
 
 
             <div class="buttons-container">
 
                 <button class="action-btn buttons-containero" id="openComunities">
-                    <span class="button-text" id="comunityName">Seleziona
-                        Comunità</span>
+                    <span class="button-text" id="comunityName">Select
+                        Community</span>
                 </button>
 
                 <button class="action-btn-mini primary buttons-containero" id="openDatePicker">
@@ -122,8 +122,8 @@
             </div>
         </div>
         <div class="buttons-container-center">
-            <button class="action-btn" id="postToSteem">Pubblica Post</button>
-            <button class="action-btn" id="salvaBozza">Salva Bozza</button>
+            <button class="action-btn" id="postToSteem">Publish Now</button>
+            <button class="action-btn" id="salvaBozza">Save Draft</button>
         </div>
     </div>
     <div id="previewModal" class="modal">
@@ -145,13 +145,13 @@
         <div class="actions-container">
             <button class="action-btn loginIn" id="loginInBtn">
                 <i class="material-icons">add</i>
-                <span>Crea Account</span>
+                <span>Add Account</span>
             </button>
         </div>
     </div>
 
     <div class="hide toast" id="toast">
-        <h2>Risultato</h2>
+        <h2>Result</h2>
         <div class="toast-content">
         </div>
     </div>
@@ -159,7 +159,7 @@
     <!-- Menu di selezione per cambiare tema -->
     <div id="configPage" class="page">
 
-        <h2>Configurazione</h2>
+        <h2>Settings</h2>
         <!-- <button class="collapsible">Selezione Tema</button> -->
 
         <div class="theme-chooser" style="overflow: hidden; padding: 2%">
