@@ -104,16 +104,16 @@ export async function login() {
     idTelegram = localStorage.getItem('idTelegram');
     try {
         const client = new ApiClient();
+        const username = document.getElementById('username').value.toLowerCase();
         await client.login(
             idTelegram,
-            document.getElementById('username').value,
+            username,
             document.getElementById('postingKey').value
         );
         await client.checkLogin(idTelegram).then(async (result) => {
             displayResult(result, 'success', true);
             AppInitializer.initializeEnd(result);
         });
-
     } catch (error) {
         console.error('Error in login:', error);
         displayResult({ error: error.message }, 'error', true);
