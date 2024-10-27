@@ -57,6 +57,13 @@ export function displayResult(result, type = 'success', enabled = false, callbac
                 <button id="closeButton" class="action-btn">Chiudi</button>
                 `;
                 break;
+            case 'custom':
+                dialog.innerHTML = `
+                <h2>${result.title}</h2>
+                <p>${result.message}</p>
+                <button id="closeButton" class="action-btn">Chiudi</button>
+                `;
+                break;
             default:
                 dialog.innerHTML = `
                 <h2>Informazione</h2>
@@ -76,7 +83,7 @@ export function displayResult(result, type = 'success', enabled = false, callbac
         });
 
         dialog.addEventListener('close', () => dialog.remove());
-        if (type !== 'error' && (!callback || !neverClose)) {
+        if (type !== 'error' && (!callback || !result.neverClose)) {
             setTimeout(() => {
                 dialog.remove();
             }, time);

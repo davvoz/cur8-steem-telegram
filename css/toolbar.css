@@ -44,6 +44,7 @@
   .chevron {
     transition: transform 0.3s ease;
     display: inline-block;
+    cursor: pointer;
   }
   .chevron.rotated {
     transform: rotate(180deg);
@@ -59,3 +60,24 @@
   #linkText {}
 
   #linkUrl {} */
+  .toolbarContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--background);
+    border-bottom: 1px solid #eee;
+    flex-wrap: nowrap;
+  }
+
+.textChevron {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: var(--background);
+  color: var(--on-background);
+  flex-wrap: nowrap;
+}
