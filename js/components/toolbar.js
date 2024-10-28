@@ -1,78 +1,126 @@
-import { displayResult } from "../components/dialog.js";
+import { displayResult } from './dialog.js';
+// Definizione centralizzata dei formati supportati
+const MARKDOWN_FORMATS = {
+  bold: {
+    text: 'B',
+    title: 'Bold',
+    format: (text) => `**${text}**`,
+    example: '**Bold** or __Bold__'
+  },
+  italic: {
+    text: 'I',
+    title: 'Italic',
+    format: (text) => `*${text}*`,
+    example: '*Italic* or _Italic_'
+  },
+  heading: {
+    text: 'H',
+    title: 'Heading',
+    format: (text) => `# ${text}`,
+    example: '# Heading 1\n## Heading 2'
+  },
+  underline: {
+    text: 'U',
+    title: 'Underline',
+    format: (text) => `<u>${text}</u>`,
+    example: '<u>Underlined text</u>'
+  },
+  strikethrough: {
+    text: 'S',
+    title: 'Strikethrough',
+    format: (text) => `~~${text}~~`,
+    example: '~~Strikethrough~~'
+  },
+  quote: {
+    text: '"',
+    title: 'Quote',
+    format: (text) => `> ${text}`,
+    example: '> Blockquote'
+  },
+  orderedList: {
+    text: '1.',
+    title: 'Ordered List',
+    format: (text) => `1. ${text}`,
+    example: '1. First item\n2. Second item'
+  },
+  unorderedList: {
+    text: '•',
+    title: 'Unordered List',
+    format: (text) => `- ${text}`,
+    example: '- First item\n- Second item'
+  },
+  image: {
+    text: '🖼️',
+    title: 'Insert Image',
+    format: async (text) => {
+      const imageUrl = await prompt("Enter image URL:");
+      return imageUrl ? `![${text || 'Image description'}](${imageUrl})` : text;
+    },
+    example: '![Image description](image-url)'
+  },
+  link: {
+    text: '🔗',
+    title: 'Insert Link',
+    format: async (text) => {
+      const dialog = document.createElement('dialog');
+      dialog.classList.add('dialog');
+      dialog.innerHTML = `
+        <form method="dialog">
+          <label for="linkText">Link Text:</label>
+          <input type="text" id="linkText" name="linkText" value="${text || ''}">
+          <label for="linkUrl">URL:</label>
+          <input type="url" id="linkUrl" name="linkUrl">
+          <menu>
+        <button value="cancel" class="action-btn">Cancel</button>
+        <button value="submit" class="action-btn">Insert</button>
+          </menu>
+        </form>
+      `;
+      document.body.appendChild(dialog);
+      dialog.showModal();
 
-const toolbar = document.getElementById('toolbar');
-const buttons = [
-  { style: 'bold', text: 'B', title: 'Bold' },
-  { style: 'italic', text: 'I', title: 'Italic' },
-  { style: 'heading', text: 'H', title: 'Heading' },
-  { style: 'underline', text: 'U', title: 'Underline' },
-  { style: 'strikethrough', text: 'S', title: 'Strikethrough' },
-  { style: 'quote', text: '"', title: 'Quote' },
-  { style: 'orderedList', text: '1.', title: 'Ordered List' },
-  { style: 'unorderedList', text: '•', title: 'Unordered List' },
-  { style: 'image', text: '🖼️', title: 'Insert Image' },
-  { style: 'link', text: '🔗', title: 'Insert Link' },
-  { style: 'table', text: '☷', title: 'Insert Table' },
-  { style: 'code', text: '⟨⟩', title: 'Code' },
-  { style: 'help', text: '?', title: 'Help' }
-];
+      return new Promise((resolve) => {
+        dialog.addEventListener('close', () => {
+          const linkText = dialog.querySelector('#linkText').value;
+          const linkUrl = dialog.querySelector('#linkUrl').value;
+          dialog.remove();
 
-document.addEventListener('DOMContentLoaded', initializeButtons);
-
-function initializeButtons() {
-  buttons.forEach(({ style, text, title }) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.onclick = () => textFormatter.applyStyle(style);
-    button.title = title;
-    button.innerHTML = text;
-    toolbar.appendChild(button);
-  });
-
-  const chevron = document.createElement('span');
-  chevron.className = 'chevron';
-  chevron.innerHTML = '❮';
-  chevron.onclick = toggleToolbar;
-
-  const toolbarContainer = document.getElementById('toolbarContainer');
-  toolbarContainer.appendChild(toolbar);
-
-  const chevronContainer = document.getElementById('chevronContainer');
-  const textChevron = document.createElement('span');
-  textChevron.className = 'textChevron';
-  textChevron.innerHTML = 'Markdown Toolbar';
-  chevronContainer.appendChild(textChevron);
-
-  toolbarContainer.appendChild(chevron);
-  toolbar.style.display = 'none';
-
-}
+          if (dialog.returnValue === 'cancel' || !linkText || !linkUrl) {
+        resolve(text);
+          } else {
+        resolve(`[${linkText}](${linkUrl})`);
+          }
+        });
+      });
+    },
+    example: '[Link text](url)'
+  },
+  table: {
+    text: '☷',
+    title: 'Insert Table',
+    format: () => `| Header | Header |\n|--------|--------|\n| Cell   | Cell   |`,
+    example: '| Header | Header |\n|--------|--------|\n| Cell   | Cell   |'
+  },
+  code: {
+    text: '⟨⟩',
+    title: 'Code',
+    format: (text) => text.includes('\n') ? `\`\`\`\n${text}\n\`\`\`` : `\`${text}\``,
+    example: '`Inline code`\n```\nCode block\n```'
+  },
+  help: {
+    text: '?',
+    title: 'Help',
+    format: () => {
+      showMarkdownHelp();
+      return null;
+    },
+    example: 'Shows this help dialog'
+  }
+};
 
 class TextFormatter {
   constructor(postBody) {
     this.postBody = postBody;
-    this.styleMap = {
-      bold: this.formatBold,
-      italic: this.formatItalic,
-      heading: this.formatHeading,
-      underline: this.formatUnderline,
-      strikethrough: this.formatStrikethrough,
-      quote: this.formatQuote,
-      orderedList: this.formatOrderedList,
-      unorderedList: this.formatUnorderedList,
-      image: this.insertImage,
-      link: this.insertLink,
-      table: this.insertTable,
-      code: this.formatCode,
-      help: this.showHelp
-    };
-  }
-
-  applyStyle(style) {
-    const formatFunction = this.styleMap[style];
-    if (formatFunction) {
-      formatFunction.call(this);
-    }
   }
 
   getSelectedText() {
@@ -86,151 +134,210 @@ class TextFormatter {
   }
 
   replaceSelection(replacement) {
+    if (replacement === null) return; // Per gestire azioni come "help" che non modificano il testo
+
     const { start, end } = this.getSelectedText();
     this.postBody.value = this.postBody.value.substring(0, start) + replacement + this.postBody.value.substring(end);
     this.postBody.focus();
   }
 
-  formatBold() {
+  async applyFormat(formatKey) {
+    const format = MARKDOWN_FORMATS[formatKey];
+    if (!format) return;
+
     const { selection } = this.getSelectedText();
-    this.replaceSelection(`**${selection}**`);
-  }
-
-  formatItalic() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`*${selection}*`);
-  }
-
-  formatHeading() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`# ${selection}`);
-  }
-
-  formatUnderline() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`<u>${selection}</u>`);
-  }
-
-  formatStrikethrough() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`~~${selection}~~`);
-  }
-
-  formatQuote() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`> ${selection}`);
-  }
-
-  formatOrderedList() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`1. ${selection}`);
-  }
-
-  formatUnorderedList() {
-    const { selection } = this.getSelectedText();
-    this.replaceSelection(`- ${selection}`);
-  }
-
-  insertImage() {
-    const { selection } = this.getSelectedText();
-    const imageUrl = prompt("Enter image URL:");
-    if (imageUrl) {
-      this.replaceSelection(`![${selection || 'Image description'}](${imageUrl})`);
-    }
-  }
-
-  insertLink() {
-    const { selection } = this.getSelectedText();
-    Swal.fire({
-      title: 'Insert link',
-      html: `
-        <input type="text" id="linkText" class="swal2-input" placeholder="Link Text" value="${selection || ''}">
-        <input type="text" id="linkUrl" class="swal2-input" placeholder="URL">
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Insert',
-      background: 'var(--background)',
-      preConfirm: () => {
-        const linkText = document.getElementById('linkText').value;
-        const linkUrl = document.getElementById('linkUrl').value;
-        if (!linkText || !linkUrl) {
-          Swal.showValidationMessage('Please fill in both fields');
-        }
-        return { linkText, linkUrl };
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const { linkText, linkUrl } = result.value;
-        this.replaceSelection(`[${linkText}](${linkUrl})`);
-      }
-    });
-  }
-
-  showHelp() {
-    const helpTitle = 'Markdown Cheat Sheet';
-    const helpItems = [
-      { testo: '**Bold** or __Bold__', bottone: 'B' },
-      { testo: '*Italic* or _Italic_', bottone: 'I' },
-      { testo: '# Heading 1', bottone: 'H' },
-      { testo: '## Heading 2', bottone: 'H' },
-      { testo: '> Blockquote', bottone: '"' },
-      { testo: '- Unordered list', bottone: '•' },
-      { testo: '1. Ordered list', bottone: '1.' },
-      { testo: '[Link](url)', bottone: '🔗' },
-      { testo: '![Image](image-url)', bottone: '🖼️' },
-      { testo: '`Inline code`', bottone: '⟨⟩' },
-      { testo: '```<br>Code block<br>```', bottone: '⟨⟩' },
-      { testo: '| Table | Header |<br>|-------|--------|<br>| Cell  | Cell   |', bottone: '☷' }
-
-    ];
-    const helpMessage = `
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; ">
-        ${helpItems.map(({ testo, bottone }) => `
-          <div style="flex: 1 1 25%; border: 2px solid var(--primary-color); border-radius: 10px; background: var(--background); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-            <p style="font-size: 1.2em; margin-bottom: 10px; text-align: center;">
-              <span style="display: inline-block; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; background: var(--primary-color); color: white; font-weight: bold; font-size: 1em;">
-                ${bottone}
-              </span>
-            </p>
-            <p style="text-align: center; font-size: 0.8em; color: var(--on-background);">
-              ${testo}
-            </p>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    displayResult({ title: helpTitle, message: helpMessage, neverClose: true }, 'custom', true, () => { });
-  }
-
-  insertTable() {
-    this.replaceSelection(`| Header | Header |\n|--------|--------|\n| Cell   | Cell   |`);
-  }
-
-  formatCode() {
-    const { selection } = this.getSelectedText();
-    const replacement = selection.includes('\n') ? `\`\`\`\n${selection}\n\`\`\`` : `\`${selection}\``;
-    this.replaceSelection(replacement);
+    const formattedText = await format.format(selection);
+    this.replaceSelection(formattedText);
   }
 }
 
+function initializeToolbar() {
+  const toolbar = document.getElementById('toolbar');
+
+  Object.entries(MARKDOWN_FORMATS).forEach(([key, format]) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.onclick = () => textFormatter.applyFormat(key);
+    button.title = format.title;
+    button.innerHTML = format.text;
+    toolbar.appendChild(button);
+  });
+
+  createChevron();
+}
+
+function createChevron() {
+  const chevron = document.createElement('span');
+  chevron.className = 'chevron';
+  chevron.innerHTML = '❮';
+  chevron.onclick = toggleToolbar;
+
+  const toolbarContainer = document.getElementById('toolbarContainer');
+  const toolbar = document.getElementById('toolbar');
+  toolbarContainer.appendChild(toolbar);
+
+  const chevronContainer = document.getElementById('chevronContainer');
+  const textChevron = document.createElement('span');
+  textChevron.className = 'textChevron';
+  textChevron.innerHTML = 'Markdown Toolbar';
+  chevronContainer.appendChild(textChevron);
+
+  toolbarContainer.appendChild(chevron);
+  toolbar.style.display = 'none';
+}
+
+
+const helpStyles = {
+  container: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '1px'
+  },
+  card: {
+    flex: '1 1 25%',
+    border: '2px solid var(--primary-color)',
+    borderRadius: '10px',
+    background: 'var(--background)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    padding: '10px'
+  },
+  buttonContainer: {
+    fontSize: '1.2em',
+    marginBottom: '10px',
+    textAlign: 'center'
+  },
+  button: {
+    display: 'inline-block',
+    width: '40px',
+    height: '40px',
+    lineHeight: '40px',
+    borderRadius: '50%',
+    background: 'var(--primary-color)',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: '1em'
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: '1em',
+    color: 'var(--on-background)',
+    marginBottom: '8px',
+    fontWeight: 'bold'
+  },
+  example: {
+    textAlign: 'center',
+    fontSize: '0.8em',
+    color: 'var(--on-background)',
+    whiteSpace: 'pre-wrap'
+  }
+};
+
+// Template per un singolo elemento dell'help
+function createHelpItemTemplate({ testo, bottone, title }) {
+  return {
+    tag: 'div',
+    styles: helpStyles.card,
+    content: [
+      {
+        tag: 'p',
+        styles: helpStyles.buttonContainer,
+        content: [
+          {
+            tag: 'span',
+            styles: helpStyles.button,
+            content: bottone
+          }
+        ]
+      },
+      {
+        tag: 'p',
+        styles: helpStyles.title,
+        content: title
+      },
+      {
+        tag: 'p',
+        styles: helpStyles.example,
+        content: testo
+      }
+    ]
+  };
+}
+
+// Funzione per convertire un oggetto stili in stringa CSS inline
+function styleObjectToCss(styles) {
+  return Object.entries(styles)
+    .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
+    .join('; ');
+}
+
+// Funzione ricorsiva per generare HTML da un template
+function renderTemplate(template) {
+  if (typeof template === 'string') return template;
+
+  const { tag, styles, content } = template;
+  const styleString = styles ? ` style="${styleObjectToCss(styles)}"` : '';
+
+  const contentHtml = Array.isArray(content)
+    ? content.map(item => renderTemplate(item)).join('')
+    : content || '';
+
+  return `<${tag}${styleString}>${contentHtml}</${tag}>`;
+}
+
+function showMarkdownHelp() {
+  const helpTitle = 'Markdown Cheat Sheet';
+  const helpItems = Object.entries(MARKDOWN_FORMATS)
+    .filter(([key]) => key !== 'help')
+    .map(([key, format]) => ({
+      testo: format.example,
+      bottone: format.text,
+      title: format.title
+    }));
+
+  // Crea il template completo
+  const helpTemplate = {
+    tag: 'div',
+    styles: helpStyles.container,
+    content: helpItems.map(createHelpItemTemplate)
+  };
+
+  // Renderizza il template
+  const helpMessage = renderTemplate(helpTemplate);
+
+  //crea una dialog con l'help
+  const dialog = document.createElement('dialog');
+  dialog.classList.add('dialog');
+  dialog.innerHTML = `
+    <h2>${helpTitle}</h2>
+    ${helpMessage}
+    <button id="closeButton" class="action-btn">Chiudi</button>
+  `;
+  document.body.appendChild(dialog);
+  dialog.classList.add('success');
+
+  dialog.showModal();
+  const closeButton = dialog.querySelector('#closeButton');
+  closeButton.addEventListener('click', () => dialog.remove());
+  dialog.addEventListener('close', () => dialog.remove());
+
+}
+
 const textFormatter = new TextFormatter(document.getElementById('postBody'));
+document.addEventListener('DOMContentLoaded', initializeToolbar);
 
-
-export function toggleToolbar() {
+function toggleToolbar() {
   const chevron = document.querySelector('.chevron');
+  const toolbar = document.getElementById('toolbar');
+
   toolbar.classList.toggle('expanded');
   chevron.classList.toggle('rotated');
   chevron.innerHTML = toolbar.classList.contains('expanded') ? '❯' : '❮';
 
-  //nascondiamo la toolbar se è aperta se no la mostriamo
   if (toolbar.classList.contains('expanded')) {
     toolbar.style.display = 'flex';
-    //il testo scompare 
     document.querySelector('.textChevron').style.display = 'none';
-
   } else {
     toolbar.style.display = 'none';
     document.querySelector('.textChevron').style.display = 'block';
   }
-
 }

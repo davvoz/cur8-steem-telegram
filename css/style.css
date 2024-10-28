@@ -525,13 +525,11 @@ input[type="datetime-local"] {
 }
 
 .dialogo .dialog dialog::backdrop {
-    position: fixed;
     inset: 0px;
     background: rgba(0, 0, 0, 0.9);
 }
 
 .dialog {
-    position: fixed;
     z-index: 1;
     overflow: auto;
     background-color: var(--background);
@@ -551,6 +549,7 @@ input[type="datetime-local"] {
 }
 
 .dialog input[type="text"],
+.dialog input[type="url"],
 .dialog textarea {
     width: 80%;
     padding: var(--spacing-md);
