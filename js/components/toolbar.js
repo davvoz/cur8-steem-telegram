@@ -1,5 +1,3 @@
-import { displayResult } from './dialog.js';
-// Definizione centralizzata dei formati supportati
 const MARKDOWN_FORMATS = {
   bold: {
     text: 'B',
@@ -53,8 +51,33 @@ const MARKDOWN_FORMATS = {
     text: '🖼️',
     title: 'Insert Image',
     format: async (text) => {
-      const imageUrl = await prompt("Enter image URL:");
-      return imageUrl ? `![${text || 'Image description'}](${imageUrl})` : text;
+      const dialog = document.createElement('dialog');
+      dialog.classList.add('dialog');
+      dialog.innerHTML = `
+        <form method="dialog">
+          <label for="imageUrl">Image URL:</label>
+          <input type="url" id="imageUrl" name="imageUrl">
+          <menu>
+        <button value="cancel" class="action-btn">Cancel</button>
+        <button value="submit" class="action-btn">Insert</button>
+          </menu>
+        </form>
+      `;
+      document.body.appendChild(dialog);
+      dialog.showModal();
+
+      return new Promise((resolve) => {
+        dialog.addEventListener('close', () => {
+          const imageUrl = dialog.querySelector('#imageUrl').value;
+          dialog.remove();
+
+          if (dialog.returnValue === 'cancel' || !imageUrl) {
+        resolve(text);
+          } else {
+        resolve(`![${text || 'Image description'}](${imageUrl})`);
+          }
+        });
+      });
     },
     example: '![Image description](image-url)'
   },
@@ -198,8 +221,7 @@ const helpStyles = {
     border: '2px solid var(--primary-color)',
     borderRadius: '10px',
     background: 'var(--background)',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    padding: '10px'
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
   },
   buttonContainer: {
     fontSize: '1.2em',
@@ -304,7 +326,7 @@ function showMarkdownHelp() {
   // Renderizza il template
   const helpMessage = renderTemplate(helpTemplate);
 
-  //crea una dialog con l'help
+  // Crea una dialog con l'help
   const dialog = document.createElement('dialog');
   dialog.classList.add('dialog');
   dialog.innerHTML = `
@@ -312,14 +334,18 @@ function showMarkdownHelp() {
     ${helpMessage}
     <button id="closeButton" class="action-btn">Chiudi</button>
   `;
+
   document.body.appendChild(dialog);
   dialog.classList.add('success');
-
+  
   dialog.showModal();
-  const closeButton = dialog.querySelector('#closeButton');
-  closeButton.addEventListener('click', () => dialog.remove());
-  dialog.addEventListener('close', () => dialog.remove());
 
+  // Imposta lo scroll all'inizio
+  dialog.scrollTop = 0;
+
+  const closeButton = dialog.querySelector('#closeButton');
+  closeButton.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => dialog.remove());
 }
 
 const textFormatter = new TextFormatter(document.getElementById('postBody'));
