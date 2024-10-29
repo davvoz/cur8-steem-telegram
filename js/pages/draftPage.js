@@ -48,7 +48,9 @@ class DraftManager {
 
     cleanDraftPage() {
         const draftList = document.getElementById('draftList');
+        const headerDraft = document.getElementById('headerDraft');
         draftList.innerHTML = '';
+        headerDraft.innerHTML = '';
     }
 
     createHeaderWithTabs() {
