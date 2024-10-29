@@ -11,11 +11,13 @@ export const routes = {
     },
     '/post': () => {
         showPage('postPage');
-        telegramService.setupBackButton();
+        telegramService.hideBackButton();
+        //telegramService.setupBackButton();
     },
     '/draft': () => {
         showPage('draftPage');
-        telegramService.setupBackButton();
+        telegramService.hideBackButton();
+        //telegramService.setupBackButton();
     },
     '/login': () => {
         showPage('loginPage');
@@ -23,6 +25,7 @@ export const routes = {
     },
     '/config': () => {
         showPage('configPage');
-        telegramService.setupBackButton();
+        telegramService.hideBackButton();
+        //telegramService.setupBackButton();
     }
 };
