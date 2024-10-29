@@ -980,7 +980,7 @@ table td {
     font-family: var(--font-family);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
-    color: var(--text-secondary);
+    color: var(--on-background);
     cursor: pointer;
     transition: color var(--transition-duration) var(--transition-timing);
     text-transform: uppercase;
