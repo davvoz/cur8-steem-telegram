@@ -58,7 +58,7 @@ export class Router {
 
     showLoginPage() {
         showPage('loginPage');
-        //TelegramManager.getInstance().setupBackButton();
+        TelegramManager.getInstance().setupBackButton();
     }
 
     showConfigPage() {

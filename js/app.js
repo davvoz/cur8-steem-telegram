@@ -3,7 +3,6 @@ import { handleSteemLogin } from './pages/loginPage.js';
 import { appState } from './core/AppState.js';
 import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
-import { showPage } from './services/pageService.js';
 
 class App {
     constructor() {
