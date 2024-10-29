@@ -125,8 +125,12 @@ export class AccountManager {
     async performLogout(username) {
         try {
             const id = localStorage.getItem('idTelegram');
+            //starta lo spinner
+            document.getElementById('spinner').classList.remove('hide');
             await this.apiClient.logout(id, username);
-            await this.handlePostLogout(id);
+            await this.handlePostLogout(id).then(() => {
+                document.getElementById('spinner').classList.add('hide');
+            });
             displayResult({ message: 'Logout successful' }, 'success');
         } catch (error) {
             console.error('Error in handleLogout:', error);
