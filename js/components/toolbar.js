@@ -332,9 +332,10 @@ function showMarkdownHelp() {
   dialog.innerHTML = `
     <h2>${helpTitle}</h2>
     ${helpMessage}
-    <button id="closeButton" class="action-btn">Chiudi</button>
-  `;
+    <button class="close-button" id="close-button" aria-label="Chiudi">✕</button>
 
+  `;
+  //<button id="closeButton" class="action-btn">Chiudi</button>
   document.body.appendChild(dialog);
   dialog.classList.add('success');
   
@@ -343,7 +344,7 @@ function showMarkdownHelp() {
   // Imposta lo scroll all'inizio
   dialog.scrollTop = 0;
 
-  const closeButton = dialog.querySelector('#closeButton');
+  const closeButton = dialog.querySelector('#close-button');
   closeButton.addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => dialog.remove());
 }

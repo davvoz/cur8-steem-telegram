@@ -105,3 +105,25 @@ export function createDatePickerDialog() {
     `;
     return dialog;
 }
+
+export function communityDialog() {
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('c-dialogo');
+    dialog.innerHTML = `
+        <div class="autocomplete-container">
+            <div class="dialog-header">
+                <h2>Seleziona la comunità</h2>
+                <button class="close-button" id="close-button" aria-label="Chiudi">✕</button>
+            </div>
+            <div class="c-container">
+                <input 
+                    type="text" 
+                    id="myInput" 
+                    placeholder="Inizia a digitare..."
+                >
+                <div id="autocomplete-list" class="autocomplete-items"></div>
+            </div>
+        </div>
+    `;
+    return dialog;
+}

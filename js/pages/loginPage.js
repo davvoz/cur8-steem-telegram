@@ -63,7 +63,7 @@ function displayUserData(userData) {
         <h2>Dati Utente</h2>
         <ul>
             ${Object.entries(userData).map(([key, value]) => `<li>${key}: ${value}</li>`).join('')}
-        </ul>
+        </ul>      
         <button id="closeButton" class="action-btn">Chiudi</button>
     `;
     document.body.appendChild(dialog);

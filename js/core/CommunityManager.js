@@ -1,4 +1,6 @@
 // Dependencies: js/core/CommunityManager.js
+import { communityDialog } from "../components/dialog.js";
+
 export class CommunityManager {
     constructor() {
         this.currentFocus = -1;
@@ -6,7 +8,7 @@ export class CommunityManager {
     }
 
     async initialize() {
-        const dialog = this.createDialog();
+        const dialog = communityDialog();
         document.body.appendChild(dialog);
         dialog.showModal();
 
@@ -15,28 +17,6 @@ export class CommunityManager {
 
         this.setupEventListeners(dialog, input, cancelButton);
         await this.showAllCommunities();
-    }
-
-    createDialog() {
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('c-dialogo');
-        dialog.innerHTML = `
-            <div class="autocomplete-container">
-                <div class="dialog-header">
-                    <h2>Seleziona la comunità</h2>
-                    <button class="close-button" id="close-button" aria-label="Chiudi">✕</button>
-                </div>
-                <div class="c-container">
-                    <input 
-                        type="text" 
-                        id="myInput" 
-                        placeholder="Inizia a digitare..."
-                    >
-                    <div id="autocomplete-list" class="autocomplete-items"></div>
-                </div>
-            </div>
-        `;
-        return dialog;
     }
 
     setupEventListeners(dialog, input, cancelButton) {
