@@ -13,7 +13,27 @@
     right: 10px; /* Regola la distanza da destra */
 }
 
+#closeButton {
+    background: var(--surface);
+    color: var(--on-background);
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: var(--on-background);
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+    transition: all 0.2s;
+    position: absolute; /* Aggiungi questa linea */
+    top: 10px; /* Regola la distanza dall'alto */
+    right: 10px; /* Regola la distanza da destra */
+}
+
 .close-button:hover {
+    color: rgba(240, 5, 5, 0.9);
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+#closeButton:hover {
     color: rgba(240, 5, 5, 0.9);
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
 }

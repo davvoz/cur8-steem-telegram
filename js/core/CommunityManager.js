@@ -23,7 +23,7 @@ export class CommunityManager {
         input.addEventListener("input", (e) => this.handleInput(e));
         input.addEventListener("keydown", (e) => this.handleKeydown(e));
         
-        const closeButton = dialog.querySelector('.close-button');
+        const closeButton = dialog.querySelector('#closeButton');
         closeButton.addEventListener('click', () => dialog.remove());
         
         dialog.addEventListener('close', () => dialog.remove());

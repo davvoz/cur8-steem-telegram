@@ -160,7 +160,7 @@ class PostManager {
             document.getElementById('scheduledTime').value = new Date(window.scheduledTime).toISOString().slice(0, 16);
         }
         const confirmButton = dialog.querySelector('#confirmButtonDP');
-        const chiudiButton = dialog.querySelector('#cancelButtonDP');
+        const chiudiButton = dialog.querySelector('#closeButton');
         const scheduledTimeInput = dialog.querySelector('#scheduledTime');
         const cancella = dialog.querySelector('#annullaButtonDP');
         cancella.addEventListener('click', () => this.handleDatePickerCancel(dialog));
