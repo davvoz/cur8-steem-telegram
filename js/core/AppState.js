@@ -17,7 +17,7 @@ export class AppState {
         this.client = new ApiClient();
         this.navigationHistory = [];
         this.telegramLoginData = null;
-        this._router = null; // Use a private property for lazy initialization
+        this._router = null;
     }
 
     get router() {
