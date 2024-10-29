@@ -47,28 +47,28 @@ export function displayResult(result, type = 'success', enabled = false, callbac
                 dialog.innerHTML = `
                 <h2>Risultato</h2>
                 <p>${result.message}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
+                <button id="closeButton" class="action-btn">X</button>
                 `;
                 break;
             case 'error':
                 dialog.innerHTML = `
                 <h2>Errore</h2>
                 <p>${result.error}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
+                <button id="closeButton" class="action-btn">X</button>
                 `;
                 break;
             case 'custom':
                 dialog.innerHTML = `
                 <h2>${result.title}</h2>
                 <p>${result.message}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
+                <button id="closeButton" class="action-btn">X</button>
                 `;
                 break;
             default:
                 dialog.innerHTML = `
                 <h2>Informazione</h2>
                 <p>${result.info}</p>
-                <button id="closeButton" class="action-btn">Chiudi</button>
+                <button id="closeButton" class="action-btn">X</button>
                 `;
         }
         document.body.appendChild(dialog);
