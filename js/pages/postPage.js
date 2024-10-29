@@ -176,6 +176,8 @@ class PostManager {
         document.getElementById('openDatePicker').classList.add('action-btn-mini');
         document.getElementById('openDatePicker').classList.remove('action-btn');
         this.scheduledTime = null;
+        //inizializzo il datepicker gg/mm/aa hh:mm
+        document.getElementById('scheduledTime').value = null
     }
 
     handleDatePickerConfirm(dialog, scheduledTimeInput) {

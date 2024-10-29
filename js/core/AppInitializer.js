@@ -122,3 +122,7 @@ class AppInitializer {
 
 const appInitializerInstance = new AppInitializer();
 export default appInitializerInstance;
+
+
+//usage in other files:
+// import appInitializerInstance from './AppInitializer.js';

@@ -1,7 +1,7 @@
 
 import { displayResult } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
-import appInitializerInstance from '../core/AppInitializer.js';
+import  appInitializerInstance  from '../core/AppInitializer.js';
 
 const client = new ApiClient();
 
@@ -94,8 +94,8 @@ export async function loginSteemLogin(username, idTelegram) {
                 displayResult({ error: 'Nessun account trovato' }, 'error', true);
                 return;
             }
-            setUsernames(result.usernames);
-            AppInitializer.initializeEnd(result);
+            appInitializerInstance.setUsernames(result.usernames);
+            appInitializerInstance.initializeEnd(result);
         });
     }
 }
