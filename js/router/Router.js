@@ -40,6 +40,7 @@ export class Router {
     }
 
     showAccountPage() {
+        window.Telegram.WebApp.BackButton.hide();
         showPage('accountPage');
         // if (window.Telegram?.WebApp) {
         //     window.Telegram.WebApp.BackButton.hide();
@@ -47,12 +48,14 @@ export class Router {
     }
 
     showPostPage() {
+        window.Telegram.WebApp.BackButton.hide();
         showPage('postPage');
         // TelegramManager.getInstance().setupBackButton();
     }
 
     showDraftPage() {
         showPage('draftPage');
+        window.Telegram.WebApp.BackButton.hide();
         //TelegramManager.getInstance().setupBackButton();
     }
 
@@ -63,6 +66,7 @@ export class Router {
 
     showConfigPage() {
         showPage('configPage');
+        window.Telegram.WebApp.BackButton.hide();
         //TelegramManager.getInstance().setupBackButton();
     }
 

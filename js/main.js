@@ -70,7 +70,6 @@ function router() {
     const route = routes[path];
     if (route) {
         route();
-        window.Telegram.WebApp.BackButton.hide();
         // updateBackButton();
     } else {
         console.log('404 Not Found');
