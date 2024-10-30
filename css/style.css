@@ -851,7 +851,7 @@ input[type="datetime-local"] {
 }
 
 .error {
-    border: 2px solid red;
+    border: 1px solid red;
 }
 
 .buttons-container-center {
