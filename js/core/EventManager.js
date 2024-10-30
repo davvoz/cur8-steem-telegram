@@ -1,5 +1,6 @@
 import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview,cancellaBozza } from '../pages/postPage.js';
 import { goToSteemLogin, login } from '../pages/loginPage.js';
+import { showPage } from '../services/pageService.js';
 
 export class EventManager {
     constructor() {
@@ -13,11 +14,17 @@ export class EventManager {
             { id: 'postBtn', event: 'click', handler: () => window.location.hash = '#/post' },
             { id: 'draftBtn', event: 'click', handler: () => window.location.hash = '#/draft' },
             { id: 'accountBtn', event: 'click', handler: () => window.location.hash = '#/' },
-            { id: 'loginInBtn', event: 'click', handler: () => window.location.hash = '#/login' },
+            { id: 'loginInBtn', event: 'click', handler: () => this.goLogin() },
             { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' },
             { id: 'steemlogin', event: 'click', handler: goToSteemLogin },
             { id: 'cancellaBozza', event: 'click', handler: () => { cancellaBozza() } },
         ];
+    }
+
+    goLogin() {
+        //TODO:smartellata , da sistemare
+        window.location.hash = '#/login';
+        showPage('loginPage');
     }
 
     initializeEventListeners() {

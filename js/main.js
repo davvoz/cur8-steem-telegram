@@ -37,7 +37,7 @@ const eventListeners = [
     { id: 'postBtn', event: 'click', handler: () => window.location.hash = '#/post' },
     { id: 'draftBtn', event: 'click', handler: () => window.location.hash = '#/draft' },
     { id: 'accountBtn', event: 'click', handler: () => window.location.hash = '#/' },
-    { id: 'loginInBtn', event: 'click', handler: () => window.location.hash = '#/login' },
+    //{ id: 'loginInBtn', event: 'click', handler: () => window.location.hash = '#/login' },
     { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' },
     { id: 'steemlogin', event: 'click', handler: goToSteemLogin }
 ];
