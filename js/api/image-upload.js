@@ -81,7 +81,11 @@ function uploadImage(file) {
 function insertImageUrlInTextarea(url) {
     const postBody = document.getElementById('postBody');
     const imageMarkdown = `![Immagine](${url})`;
-    postBody.value += postBody.value ? `\n${imageMarkdown}` : imageMarkdown;
+   //posizionalmola dove si trova il cursore
+    const cursorPosition = postBody.selectionStart;
+    const textBefore = postBody.value.substring(0, cursorPosition);
+    const textAfter = postBody.value.substring(cursorPosition);
+    postBody.value = textBefore + imageMarkdown + textAfter;
 }
 
 function displayResult(result, type = 'success', enabled) {
