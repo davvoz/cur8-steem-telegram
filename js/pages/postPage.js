@@ -29,6 +29,7 @@ class PostManager {
                     document.getElementById('postBody').value,
                     document.getElementById('postTags').value,
                     this.scheduledTime,
+                    document.getElementById('comunityName').textContent 
                 );
                 displayResult(result, 'success', true);
             } catch (error) {
@@ -105,7 +106,8 @@ class PostManager {
                 document.getElementById('postTags').value,
                 document.getElementById('postBody').value,
                 this.scheduledTime,
-                Intl.DateTimeFormat().resolvedOptions().timeZone
+                Intl.DateTimeFormat().resolvedOptions().timeZone,
+                document.getElementById('comunityName').textContent 
             );
             await getUserDrafts();
             this.toggleSpinner(false);
