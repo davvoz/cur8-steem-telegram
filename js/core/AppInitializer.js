@@ -50,28 +50,24 @@ class AppInitializer {
 
     handleNoUsernamesFound() {
         this.hideSpinner();
-        displayResult({ error: 'Nessun account trovato' }, 'error', true);
+        displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account"}, 'custom', true , this.perfotmGoToLoginPage(),5000);
+    }
+
+    perfotmGoToLoginPage() {
+        showPage('loginPage');
     }
 
     async initializeAccountList(usernames) {
         usernames.forEach(username => this.accountManager.createAccountListItem(username));
     }
 
-    handleInitializationError(error) {
-        if (error.message.includes('HTTP error! status: 404')) {
-            displayResult(
-                { info: 'Complimenti! 🎉 Perché non aggiungere un tuo account? 😊' },
-                'info',
-                true,
-                () => showPage('loginPage')
-            );
-        } else {
-            displayResult(
-                { error: error.message || 'Errore durante l\'inizializzazione ricarica la pagina' },
-                'error',
-                true
-            );
-        }
+    handleInitializationError(error) {        
+        console.error('Error in handleInitializationError:', error);
+        displayResult(
+            { error: error.message || 'Errore durante l\'inizializzazione ricarica la pagina' },
+            'error',
+            true
+        );
     }
 
     initializeEnd(result) {
