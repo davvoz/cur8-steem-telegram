@@ -66,6 +66,7 @@ h1 {
 }
 
 input[type="text"],
+input[type="password"],
 textarea {
     width: -webkit-fill-available;
     padding: var(--spacing-md);
