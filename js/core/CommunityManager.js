@@ -59,21 +59,15 @@ export class CommunityManager {
         const item = document.createElement("div");
         item.className = "community-item";
         if (community.isNoCommunity) {
-           // item.style.borderBottom = "2px solid #eee";
             item.style.paddingBottom = "8px";
             item.style.marginBottom = "8px";
         }
         item.innerHTML = community.title;
         item.innerHTML += `<input type='hidden' value='${community.title}'>`;
         
-        // Click handler direttamente nel createCommunityItem
         item.addEventListener("click", () => {
-            // Aggiorna UI
             document.getElementById('comunityName').textContent = 
                 community.isNoCommunity ? 'Seleziona la comunità' : community.title;
-            document.getElementById('postTags').value = community.name;
-            
-            // Chiudi il dialog
             const dialog = document.querySelector('.c-dialogo');
             if (dialog) {
                 dialog.remove();

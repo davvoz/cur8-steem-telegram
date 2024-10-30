@@ -120,7 +120,7 @@ class DraftManager {
     }
 
     appendNoDraftsMessage(list) {
-        const li = this.createElementWithClass('li', '', 'No drafts available');
+        const li = this.createElementWithClass('li', 'default', 'No drafts available');
         list.appendChild(li);
     }
 
@@ -184,17 +184,22 @@ class DraftManager {
     }
 
     createElementWithClass(tag, className, textContent = '') {
-        const element = document.createElement(tag);
-        element.classList.add(className);
-        element.textContent = textContent;
-        return element;
+        try {
+            const element = document.createElement(tag);
+            element.classList.add(className);
+            element.textContent = textContent;
+            return element;
+        } catch (error) {
+            console.error('Error creating element:', error);
+            return null;
+        }
     }
 
     async loadDraft(draft) {
         document.getElementById('postTitle').value = draft.title || '';
         document.getElementById('postTags').value = draft.tags || '';
         document.getElementById('postBody').value = draft.body || '';
-        document.getElementById('comunityName').innerText = await converiIlTagInNomeComunita(draft.tags);
+        document.getElementById('comunityName').innerText = draft.community ? draft.community : 'Select a community';
 
         const scheduledTimeEl = document.getElementById('openDatePicker');
         if (draft.scheduled_time !== '0000-00-00 00:00:00') {

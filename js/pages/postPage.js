@@ -28,7 +28,6 @@ class PostManager {
                     document.getElementById('postTitle').value,
                     document.getElementById('postBody').value,
                     document.getElementById('postTags').value,
-                    this.scheduledTime,
                     document.getElementById('comunityName').textContent 
                 );
                 displayResult(result, 'success', true);

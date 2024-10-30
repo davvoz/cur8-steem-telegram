@@ -22,7 +22,6 @@ export async function getListaComunities() {
 
 export async function converiIlTagInNomeComunita(communityName) {
     if (!communityName) return 'Select a community';
-    const tag = communityName.split(' ')[0];
     try {
         const communities = await window.listaComunities;
         const community = communities.find(community => community.name === communityName);

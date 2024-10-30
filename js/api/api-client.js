@@ -61,6 +61,7 @@ export class ApiClient {
     }
 
     postToSteem(username, title, body, tags, community) {
+        console.log('Posting to Steem:', username, title, body, tags, community);
         return this.sendRequest('/post', 'POST', { username, title, body, tags, community });
     }
 

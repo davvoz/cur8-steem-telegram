@@ -112,7 +112,7 @@ export async function login() {
         );
         await client.checkLogin(idTelegram).then(async (result) => {
             displayResult(result, 'success', true);
-            AppInitializer.initializeEnd(result);
+            appInitializerInstance.initializeEnd(result);
         });
     } catch (error) {
         console.error('Error in login:', error);
