@@ -69,6 +69,10 @@ function uploadImage(file) {
             .catch(error => {
                 console.error('Errore durante il caricamento dell\'immagine:', error);
                 displayResult({ error: error.message }, 'error', true);
+            }).finally(() => {
+                //permetti di caricare un'altra immagine uguale
+                document.getElementById('fileInput').value = '';
+
             });
     };
 
