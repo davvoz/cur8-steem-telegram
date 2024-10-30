@@ -4,6 +4,7 @@ import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
 import  appInitializerInstance  from '../core/AppInitializer.js';
+import { showPage } from '../services/pageService.js';
 
 export class AccountManager {
     constructor(apiClient = new ApiClient()) {
@@ -142,7 +143,7 @@ export class AccountManager {
         try {
             const result = await this.apiClient.checkLogin(id);
             if (!result.usernames) {
-                displayResult({ error: 'Nessun account trovato' }, 'error', true);
+                displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account"}, 'custom', true , showPage('loginPage'),5000);
                 return;
             }
             appInitializerInstance.setUsernames(result.usernames);
@@ -155,6 +156,7 @@ export class AccountManager {
             document.getElementById('spinner').classList.add('hide');
         }
     }
+
 }
 
 // Example usage
