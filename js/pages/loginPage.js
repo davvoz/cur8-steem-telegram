@@ -103,6 +103,8 @@ export async function loginSteemLogin(username, idTelegram) {
 export async function login() {
     idTelegram = localStorage.getItem('idTelegram');
     try {
+        //starta lo spinner
+        document.getElementById('spinner').classList.remove('hide');
         const client = new ApiClient();
         const username = document.getElementById('username').value.toLowerCase();
         await client.login(
@@ -113,6 +115,12 @@ export async function login() {
         await client.checkLogin(idTelegram).then(async (result) => {
             displayResult(result, 'success', true);
             appInitializerInstance.initializeEnd(result);
+        }).then(() => {
+            //termina lo spinner
+            document.getElementById('spinner').classList.add('hide');
+            //svuota i campi
+            document.getElementById('username').value = '';
+            document.getElementById('postingKey').value = '';
         });
     } catch (error) {
         console.error('Error in login:', error);
