@@ -967,7 +967,7 @@ table td {
     /* padding: 0 var(--spacing-md); */
     margin-bottom: var(--spacing-xl);
     width: 100%;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: nowrap;
 }
 
