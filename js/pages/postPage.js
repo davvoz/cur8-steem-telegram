@@ -28,7 +28,7 @@ class PostManager {
                     document.getElementById('postTitle').value,
                     document.getElementById('postBody').value,
                     document.getElementById('postTags').value,
-                    document.getElementById('comunityName').textContent 
+                    document.getElementById('comunityName').textContent
                 );
                 displayResult(result, 'success', true);
             } catch (error) {
@@ -106,7 +106,7 @@ class PostManager {
                 document.getElementById('postBody').value,
                 this.scheduledTime,
                 Intl.DateTimeFormat().resolvedOptions().timeZone,
-                document.getElementById('comunityName').textContent 
+                document.getElementById('comunityName').textContent
             );
             await getUserDrafts();
             this.toggleSpinner(false);
@@ -151,15 +151,11 @@ class PostManager {
     }
 
     openDatePicker() {
-        
+
         const dialog = createDatePickerDialog();
         document.body.appendChild(dialog);
         dialog.showModal();
-        //se window.scheduledTime è diverso da null allora la data è già stata impostata
-        //dobbiamo valorizzare il campo <input type="datetime-local" id="scheduledTime" name="scheduledTime"> con la data impostata
-        if(window.scheduledTime){   
-            document.getElementById('scheduledTime').value = new Date(window.scheduledTime).toISOString().slice(0, 16);
-        }
+ 
         const confirmButton = dialog.querySelector('#confirmButtonDP');
         const chiudiButton = dialog.querySelector('#closeButton');
         const scheduledTimeInput = dialog.querySelector('#scheduledTime');
@@ -172,13 +168,13 @@ class PostManager {
     }
 
     handleDatePickerCancel(dialog) {
+        document.getElementById('scheduledTime').value = null
+
         dialog.remove();
         document.getElementById('openDatePicker').innerHTML = '<i class="material-icons">schedule</i>';
         document.getElementById('openDatePicker').classList.add('action-btn-mini');
         document.getElementById('openDatePicker').classList.remove('action-btn');
         this.scheduledTime = null;
-        //inizializzo il datepicker gg/mm/aa hh:mm
-        document.getElementById('scheduledTime').value = null
     }
 
     handleDatePickerConfirm(dialog, scheduledTimeInput) {
