@@ -81,7 +81,7 @@ export async function loginSteemLogin(username, idTelegram) {
             idTelegram,
             username
         );
-        displayResult(result, 'success', true);
+        //displayResult(result, 'success', true);
     } catch (error) {
         console.error('Error in login:', error);
         displayResult({ error: error.message }, 'error', true);
