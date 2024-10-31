@@ -143,7 +143,7 @@ export class AccountManager {
         try {
             const result = await this.apiClient.checkLogin(id);
             if (!result.usernames) {
-                displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account"}, 'custom', true , showPage('loginPage'),5000);
+                displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account",neverClose:true}, 'custom', true , showPage('loginPage'));
                 return;
             }
             appInitializerInstance.setUsernames(result.usernames);

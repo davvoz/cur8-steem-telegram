@@ -1,5 +1,5 @@
 .close-button, #closeButton {
-    background: var(--background);
+    background: var(--surface);
     color: var(--on-background);
     border: none;
     font-size: 20px;

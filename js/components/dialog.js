@@ -37,7 +37,7 @@ const closeAndResolve = async (dialog, value, resolve) => {
     await resolve(value);
 };
 
-export function displayResult(result, type = 'success', enabled = false, callback, time = 2000) {
+export function displayResult(result, type = 'success', enabled = false, callback, time ) {
     if (enabled) {
         //crea una dialog con il risultato
         const dialog = document.createElement('dialog');
@@ -45,30 +45,38 @@ export function displayResult(result, type = 'success', enabled = false, callbac
         switch (type) {
             case 'success':
                 dialog.innerHTML = `
-                <h2>Risultato</h2>
+                <div class="dialog-header">
+                    <h2>Risultato</h2>
+                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                </div>
                 <p>${result.message}</p>
-                <button id="closeButton" class="action-btn">X</button>
                 `;
                 break;
             case 'error':
                 dialog.innerHTML = `
-                <h2>Errore</h2>
+                <div class="dialog-header">
+                    <h2>Errore</h2>
+                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                </div>
                 <p>${result.error}</p>
-                <button id="closeButton" class="action-btn">X</button>
                 `;
                 break;
             case 'custom':
                 dialog.innerHTML = `
-                <h2>${result.title}</h2>
+                <div class="dialog-header">
+                    <h2>${result.title}</h2>
+                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                </div>
                 <p>${result.message}</p>
-                <button id="closeButton" class="action-btn">X</button>
                 `;
                 break;
             default:
                 dialog.innerHTML = `
-                <h2>Informazione</h2>
+                <div class="dialog-header">
+                    <h2>Informazione</h2>
+                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                </div>
                 <p>${result.info}</p>
-                <button id="closeButton" class="action-btn">X</button>
                 `;
         }
         document.body.appendChild(dialog);
@@ -83,7 +91,7 @@ export function displayResult(result, type = 'success', enabled = false, callbac
         });
 
         dialog.addEventListener('close', () => dialog.remove());
-        if (type !== 'error' && (!callback || !result.neverClose)) {
+        if (typeof time !== 'undefined') {
             setTimeout(() => {
                 dialog.remove();
             }, time);

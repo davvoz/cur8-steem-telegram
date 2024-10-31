@@ -98,9 +98,11 @@ function displayResult(result, type = 'success', enabled) {
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
         dialog.innerHTML = `
-        <h2>Risultato</h2>
+        <div class="dialog-header">
+            <h2>Risultato</h2>
+            <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+        </div>
         <p>${result.message || result.error}</p>
-        <button id="closeButton" class="action-btn">Chiudi</button>
         `;
         document.body.appendChild(dialog);
         dialog.showModal();

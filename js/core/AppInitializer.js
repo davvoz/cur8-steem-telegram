@@ -50,7 +50,7 @@ class AppInitializer {
 
     handleNoUsernamesFound() {
         this.hideSpinner();
-        displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account"}, 'custom', true , this.perfotmGoToLoginPage(),5000);
+        displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account",neverClose:true}, 'custom', true , this.perfotmGoToLoginPage());
     }
 
     perfotmGoToLoginPage() {
