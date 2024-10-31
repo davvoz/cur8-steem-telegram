@@ -80,8 +80,8 @@ class AppInitializer {
             this.selectFirstAccount(this.usernames);
         }
         this.hideSpinner();
-        //showPage('accountPage');
-       //displayResult(result);
+        showPage('accountPage');
+        //displayResult(result);
     }
 
     updateAccountList(usernames) {

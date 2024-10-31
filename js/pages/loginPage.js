@@ -113,7 +113,7 @@ export async function login() {
             document.getElementById('postingKey').value
         );
         await client.checkLogin(idTelegram).then(async (result) => {
-            displayResult(result, 'success', true);
+            //displayResult(result, 'success', true);
             appInitializerInstance.initializeEnd(result);
         }).then(() => {
             //termina lo spinner
