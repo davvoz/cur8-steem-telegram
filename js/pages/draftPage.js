@@ -2,9 +2,8 @@ import { getUsername } from "../services/userManager.js";
 import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
-import { converiIlTagInNomeComunita } from "../core/utils.js";
 import { appState } from "../core/AppState.js";
-// ApiService class to handle API interactions
+
 class ApiService {
     constructor(client) {
         this.client = client;
@@ -27,20 +26,24 @@ class ApiService {
     }
 }
 
-// DraftManager class to handle draft operations
 class DraftManager {
     constructor(apiService) {
         this.apiService = apiService;
+        this.activeTabIndex = 0; // Track the active tab index
     }
 
     async loadUserDrafts() {
+        console.log('Loading drafts...');
         const username = getUsername();
         if (!username) return;
 
+        const previousActiveIndex = this.activeTabIndex; // Store the current active tab
         this.cleanDraftPage();
         try {
             const drafts = await this.apiService.getUserDrafts(username);
             this.createDraftList(drafts);
+            // Restore the previously active tab
+            this.switchTab(previousActiveIndex);
         } catch (error) {
             displayResult({ error: error.message }, 'error', true);
         }
@@ -55,10 +58,9 @@ class DraftManager {
 
     createHeaderWithTabs() {
         const tabsContainer = this.createElementWithClass('div', 'tabs-container');
-        const scheduledTab = this.createTabButton('Scheduled', true);
-        const unscheduledTab = this.createTabButton('Drafts', false);
+        const scheduledTab = this.createTabButton('Scheduled', this.activeTabIndex === 0);
+        const unscheduledTab = this.createTabButton('Drafts', this.activeTabIndex === 1);
         
-        // Aggiungiamo i click listener direttamente qui
         scheduledTab.addEventListener('click', () => {
             this.switchTab(0);
         });
@@ -73,7 +75,7 @@ class DraftManager {
         header.appendChild(tabsContainer);
         return header;
     }
-
+    
     switchTab(index) {
         const tabs = document.querySelectorAll('.tab-button');
         const lists = document.querySelectorAll('.draft-list');
@@ -83,12 +85,12 @@ class DraftManager {
 
         tabs[index].classList.add('active');
         lists[index].classList.add('active');
+        this.activeTabIndex = index; // Update the active tab index
     }
 
     createDraftLists() {
-        // Creiamo la lista "scheduled" già con la classe active
         const scheduledList = this.createElementWithClass('ul', 'draft-list');
-        scheduledList.classList.add('active'); // Aggiungiamo active alla prima lista
+        scheduledList.classList.add('active');
         const unscheduledList = this.createElementWithClass('ul', 'draft-list');
         return { scheduledList, unscheduledList };
     }
