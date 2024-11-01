@@ -39,15 +39,15 @@ const closeAndResolve = async (dialog, value, resolve) => {
 
 export function displayResult(result, type = 'success', enabled = false, callback, time ) {
     if (enabled) {
-        //crea una dialog con il risultato
+        // Create a dialog with the result
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
         switch (type) {
             case 'success':
                 dialog.innerHTML = `
                 <div class="dialog-header">
-                    <h2>Risultato</h2>
-                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                    <h2>Result</h2>
+                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
                 </div>
                 <p>${result.message}</p>
                 `;
@@ -55,8 +55,8 @@ export function displayResult(result, type = 'success', enabled = false, callbac
             case 'error':
                 dialog.innerHTML = `
                 <div class="dialog-header">
-                    <h2>Errore</h2>
-                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                    <h2>Error</h2>
+                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
                 </div>
                 <p>${result.error}</p>
                 `;
@@ -65,7 +65,7 @@ export function displayResult(result, type = 'success', enabled = false, callbac
                 dialog.innerHTML = `
                 <div class="dialog-header">
                     <h2>${result.title}</h2>
-                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
                 </div>
                 <p>${result.message}</p>
                 `;
@@ -73,8 +73,8 @@ export function displayResult(result, type = 'success', enabled = false, callbac
             default:
                 dialog.innerHTML = `
                 <div class="dialog-header">
-                    <h2>Informazione</h2>
-                    <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                    <h2>Information</h2>
+                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
                 </div>
                 <p>${result.info}</p>
                 `;
@@ -104,12 +104,12 @@ export function createDatePickerDialog() {
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
     <div class="dialog-header">
-        <h2>Seleziona la data e l'ora di pubblicazione</h2>
-        <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+        <h2>Select the publication date and time</h2>
+        <button class="close-button" id="closeButton" aria-label="Close">✕</button>
     </div>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
-        <button id="confirmButtonDP" class="action-btn">Conferma</button>
-        <button id="annullaButtonDP" class="action-btn">Cancella</button>
+        <button id="confirmButtonDP" class="action-btn">Confirm</button>
+        <button id="annullaButtonDP" class="action-btn">Cancel</button>
     `;
     return dialog;
 }
@@ -120,14 +120,14 @@ export function communityDialog() {
     dialog.innerHTML = `
         <div class="autocomplete-container">
             <div class="dialog-header">
-                <h2>Seleziona la comunità</h2>
-                <button class="close-button" id="closeButton" aria-label="Chiudi">✕</button>
+                <h2>Select the community</h2>
+                <button class="close-button" id="closeButton" aria-label="Close">✕</button>
             </div>
             <div class="c-container">
                 <input 
                     type="text" 
                     id="myInput" 
-                    placeholder="Inizia a digitare..."
+                    placeholder="Start typing..."
                 >
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>

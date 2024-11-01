@@ -235,8 +235,8 @@ class PostManager {
         dialog.innerHTML = `
             <h2>${title}</h2>
             <p>${message}</p>
-            <button id="${confirmButtonId}" class="action-btn">Conferma</button>
-            <button id="${cancelButtonId}" class="action-btn">Annulla</button>
+            <button id="${confirmButtonId}" class="action-btn">Confirm</button>
+            <button id="${cancelButtonId}" class="action-btn">Cancel</button>
         `;
         return dialog;
     }
