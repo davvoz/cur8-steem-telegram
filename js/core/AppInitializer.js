@@ -26,7 +26,7 @@ class AppInitializer {
             localStorage.setItem('idTelegram', idTelegram);
 
             if (!idTelegram) {
-                throw new Error('Impossibile ottenere l\'ID Telegram');
+                throw new Error('Unable to obtain Telegram ID');
             }
 
             appState.client = new ApiClient();
@@ -64,7 +64,7 @@ class AppInitializer {
     handleInitializationError(error) {        
         console.error('Error in handleInitializationError:', error);
         displayResult(
-            { error: error.message || 'Errore durante l\'inizializzazione ricarica la pagina' },
+            { error: error.message || 'Error during initialization, please reload the page' },
             'error',
             true
         );

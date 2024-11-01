@@ -235,10 +235,10 @@ class DraftManager {
             const dialog = document.createElement('dialog');
             dialog.classList.add('dialogo');
             dialog.innerHTML = `
-                <h2>Conferma Eliminazione</h2>
-                <p>Sei sicuro di voler eliminare questa bozza?</p>
-                <button id="confirmButtonDelete" class="action-btn">Conferma</button>
-                <button id="cancelButtonDelete" class="action-btn">Annulla</button>
+                <h2>Confirm Deletion</h2>
+                <p>Are you sure you want to delete this draft?</p>
+                <button id="confirmButtonDelete" class="action-btn">Confirm</button>
+                <button id="cancelButtonDelete" class="action-btn">Cancel</button>
             `;
             document.body.appendChild(dialog);
             dialog.showModal();

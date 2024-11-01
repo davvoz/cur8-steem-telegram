@@ -18,20 +18,19 @@ function handleCallback() {
     if (state) {
         const savedState = sessionStorage.getItem('steemLoginState');
         if (state === savedState) {
-            updateStatus('Login effettuato con successo');
+            updateStatus('Login successful');
             console.log("HANDLE CALLBACK", getSteemloginUsername(accessToken));
             window.history.replaceState({}, document.title, window.location.pathname);
         } else {
-            updateStatus('Errore: Stato non corrispondente');
+            updateStatus('Error: State does not match');
         }
         sessionStorage.removeItem('steemLoginState');
     }
-
 }
 
 async function getSteemloginUsername(accessToken) {
     if (!accessToken) {
-        updateStatus('Utente non loggato. Impossibile ottenere i dati.');
+        updateStatus('User not logged in. Unable to retrieve data.');
         return;
     }
     try {
@@ -41,15 +40,15 @@ async function getSteemloginUsername(accessToken) {
             }
         });
         if (!response.ok) {
-            throw new Error('Errore nella richiesta API');
+            throw new Error('API request error');
         }
         const userData = await response.json();
-        console.log('Dati utente:', userData);
+        console.log('User data:', userData);
         await loginSteemLogin(userData.username);
         displayUserData(userData);
     } catch (error) {
-        console.error('Errore durante il recupero dei dati utente:', error);
-        updateStatus('Errore durante il recupero dei dati utente: ' + error.message);
+        console.error('Error retrieving user data:', error);
+        updateStatus('Error retrieving user data: ' + error.message);
     }
 }
 
@@ -57,11 +56,11 @@ function displayUserData(userData) {
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
-        <h2>Dati Utente</h2>
+        <h2>User Data</h2>
         <ul>
             ${Object.entries(userData).map(([key, value]) => `<li>${key}: ${value}</li>`).join('')}
         </ul>      
-        <button id="closeButton" class="action-btn">Chiudi</button>
+        <button id="closeButton" class="action-btn">Close</button>
     `;
     document.body.appendChild(dialog);
     dialog.showModal();
@@ -134,8 +133,8 @@ export function goToSteemLogin() {
         console.log('Login URL:', steemClient);
         window.location.href = loginUrl;
     } catch (error) {
-        console.error('Errore durante il processo di login:', error);
-        updateStatus('Errore durante il processo di login: ' + error.message);
+        console.error('Error during the login process:', error);
+        updateStatus('Error during the login process: ' + error.message);
     }
 }
 

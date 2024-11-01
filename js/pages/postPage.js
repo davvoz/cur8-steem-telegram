@@ -16,7 +16,7 @@ class PostManager {
             return;
         }
 
-        const dialog = this.createDialog('Conferma Pubblicazione', 'Sei sicuro di voler pubblicare questo post su Steem?', 'confirmButtonPost', 'cancelButtonPost');
+        const dialog = this.createDialog('Confirm Post', 'Are you sure you want to post this content on Steem?', 'confirmButtonPost', 'cancelButtonPost');
         document.body.appendChild(dialog);
         dialog.showModal();
 
@@ -55,15 +55,15 @@ class PostManager {
 
         if (title === '') {
             isValid = false;
-            errorMessage += 'Il titolo del post è obbligatorio.\n';
+            errorMessage += 'The post title is required.\n';
         }
         if (body === '') {
             isValid = false;
-            errorMessage += 'Il corpo del post è obbligatorio.\n';
+            errorMessage += 'The post body is required.\n';
         }
         if (tags === '') {
             isValid = false;
-            errorMessage += 'Almeno un tag è obbligatorio.\n';
+            errorMessage += 'At least one tag is required.\n';
         }
         if (!isValid) {
             displayResult({ error: errorMessage }, 'error', true, false, 5000);
@@ -82,7 +82,7 @@ class PostManager {
             document.getElementById(id).classList.remove('error');
         });
 
-        document.getElementById('comunityName').innerText = 'Seleziona la comunità';
+        document.getElementById('comunityName').innerText = 'Select the community';
         this.scheduledTime = null;
     }
 
@@ -126,7 +126,7 @@ class PostManager {
             const [hours, minutes, seconds] = timePart.split(':').map(Number);
             const scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
             if (scheduledDate < Date.now()) {
-                displayResult({ error: 'La data di pubblicazione non può essere nel passato' }, 'error', true);
+                displayResult({ error: 'The scheduled date cannot be in the past' }, 'error', true);
                 this.resetDatePicker();
                 return false;
             }
@@ -215,7 +215,7 @@ class PostManager {
     }
 
     cancellaBozza() {
-        const dialog = this.createDialog('Conferma', 'Pulisci i campi', 'confirmButtonDelete', 'cancelButtonDelete');
+        const dialog = this.createDialog('Confirm', 'Clear the fields', 'confirmButtonDelete', 'cancelButtonDelete');
         document.body.appendChild(dialog);
         dialog.showModal();
 

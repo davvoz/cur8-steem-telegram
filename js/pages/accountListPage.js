@@ -113,12 +113,12 @@ export class AccountManager {
 
     createLogoutDialog() {
         const dialog = document.createElement('dialog');
-        dialog.classList.add('dialogo');
+        dialog.classList.add('dialog');
         dialog.innerHTML = `
-            <h2>Conferma Logout</h2>
-            <p>Sei sicuro di voler effettuare il logout?</p>
-            <button id="confirmButtonLogout" class="action-btn">Conferma</button>
-            <button id="cancelButtonLogout" class="action-btn">Annulla</button>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to logout?</p>
+            <button id="confirmButtonLogout" class="action-btn">Confirm</button>
+            <button id="cancelButtonLogout" class="action-btn">Cancel</button>
         `;
         return dialog;
     }
@@ -163,10 +163,4 @@ export class AccountManager {
     }
 
 }
-
-// Example usage
-// const accountManager = new AccountManager();
-// export function initializeAccountList(usernames) {
-//     usernames.forEach(username => accountManager.createAccountListItem(username));
-// }
 
