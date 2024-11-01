@@ -29,7 +29,7 @@ class ApiService {
 class DraftManager {
     constructor(apiService) {
         this.apiService = apiService;
-        this.activeTabIndex = 0; // Track the active tab index
+        this.activeTabIndex = 1; // Track the active tab index
     }
 
     async loadUserDrafts() {
