@@ -143,6 +143,10 @@ export class AccountManager {
         try {
             const result = await this.apiClient.checkLogin(id);
             if (!result.usernames) {
+                document.getElementById('draftBtn').disabled = true;
+                document.getElementById('postBtn').disabled = true;
+                document.getElementById('accountBtn').disabled = true;
+                document.getElementById('configBtn').disabled = true;
                 displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account",neverClose:true}, 'custom', true , showPage('loginPage'));
                 return;
             }
@@ -153,6 +157,7 @@ export class AccountManager {
             displayResult({ error: error.message }, 'error');
             appInitializerInstance.initializeApp();
         } finally {
+            window.location.hash = '/';
             document.getElementById('spinner').classList.add('hide');
         }
     }
