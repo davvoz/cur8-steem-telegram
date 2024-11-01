@@ -15,13 +15,10 @@ function handleCallback() {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('access_token');
     const state = urlParams.get('state');
-    console.log('Url params:', urlParams);
     if (state) {
         const savedState = sessionStorage.getItem('steemLoginState');
         if (state === savedState) {
-            //scrivilo nel local storage
             updateStatus('Login effettuato con successo');
-            // Rimuovi i parametri dall'URL
             console.log("HANDLE CALLBACK", getSteemloginUsername(accessToken));
             window.history.replaceState({}, document.title, window.location.pathname);
         } else {
@@ -81,15 +78,13 @@ export async function loginSteemLogin(username, idTelegram) {
             idTelegram,
             username
         );
-        //displayResult(result, 'success', true);
     } catch (error) {
         console.error('Error in login:', error);
-        displayResult({ error: error.message }, 'error', true);
+        displayResult({ error: errorMessage }, 'error', true);
     } finally {
         document.getElementById('spinner').classList.remove('hide');
         await client.checkLogin(idTelegram).then(async (result) => {
             if (typeof result.usernames === 'undefined') {
-                //termina lo spinner
                 document.getElementById('spinner').classList.add('hide');
                 displayResult({ error: 'Nessun account trovato' }, 'error', true);
                 return;
@@ -103,7 +98,6 @@ export async function loginSteemLogin(username, idTelegram) {
 export async function login() {
     idTelegram = localStorage.getItem('idTelegram');
     try {
-        //starta lo spinner
         document.getElementById('spinner').classList.remove('hide');
         const client = new ApiClient();
         const username = document.getElementById('username').value.toLowerCase();
@@ -113,21 +107,19 @@ export async function login() {
             document.getElementById('postingKey').value
         );
         await client.checkLogin(idTelegram).then(async (result) => {
-            //displayResult(result, 'success', true);
             appInitializerInstance.initializeEnd(result);
         }).then(() => {
-            //termina lo spinner
             document.getElementById('spinner').classList.add('hide');
-            //svuota i campi
             document.getElementById('username').value = '';
             document.getElementById('postingKey').value = '';
         });
     } catch (error) {
         console.error('Error in login:', error);
-        displayResult({ error: error.message }, 'error', true);
+        const   errorMessage = `${error.message}\n Wrong username or password`;
+        displayResult({ error: errorMessage }, 'error', true,appInitializerInstance.initializeApp() );        
     }
 }
-
+ 
 export function goToSteemLogin() {
     handleCallback();
     const steemClient = new window.steemlogin.Client({
