@@ -1076,3 +1076,15 @@ table td {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-variant);
 }
+
+.noDraftsMessage {
+    color: gray;
+    font-size: 1.5rem;
+    margin: auto;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

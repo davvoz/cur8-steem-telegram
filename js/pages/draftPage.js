@@ -60,11 +60,11 @@ class DraftManager {
         const tabsContainer = this.createElementWithClass('div', 'tabs-container');
         const scheduledTab = this.createTabButton('Scheduled', this.activeTabIndex === 0);
         const unscheduledTab = this.createTabButton('Drafts', this.activeTabIndex === 1);
-        
+
         scheduledTab.addEventListener('click', () => {
             this.switchTab(0);
         });
-        
+
         unscheduledTab.addEventListener('click', () => {
             this.switchTab(1);
         });
@@ -75,7 +75,7 @@ class DraftManager {
         header.appendChild(tabsContainer);
         return header;
     }
-    
+
     switchTab(index) {
         const tabs = document.querySelectorAll('.tab-button');
         const lists = document.querySelectorAll('.draft-list');
@@ -108,8 +108,11 @@ class DraftManager {
 
         if (!Array.isArray(drafts) || drafts.length === 0) {
             this.appendNoDraftsMessage(scheduledList);
+            this.appendNoDraftsMessage(unscheduledList);
             return;
         }
+
+
 
         const { scheduledDrafts, unscheduledDrafts } = this.sortAndSeparateDrafts(drafts);
         this.populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList);
@@ -122,7 +125,7 @@ class DraftManager {
     }
 
     appendNoDraftsMessage(list) {
-        const li = this.createElementWithClass('li', 'default', 'No drafts available');
+        const li = this.createElementWithClass('li', 'noDraftsMessage', 'No drafts available');
         list.appendChild(li);
     }
 
@@ -168,7 +171,7 @@ class DraftManager {
         li.appendChild(titleScheduleContainer);
 
         const buttonsContainer = this.createElementWithClass('div', 'buttons-container-draft');
-    
+
         appState.setCurrentDraft(draft);
         const editButton = createIconButton('edit', () => {
             this.loadDraft(draft);
