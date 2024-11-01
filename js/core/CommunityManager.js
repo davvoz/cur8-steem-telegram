@@ -1,5 +1,5 @@
 // Dependencies: js/core/CommunityManager.js
-import { communityDialog } from "../components/dialog.js";
+import { communityDialog, displayResult } from "../components/dialog.js";
 
 export class CommunityManager {
     constructor() {
@@ -51,7 +51,7 @@ export class CommunityManager {
             });
         } catch (error) {
             console.error("Errore nel caricamento delle community:", error);
-            this.showError("Impossibile caricare le community");
+            displayResult({ error: error.message }, 'error', true);
         }
     }
 
@@ -67,7 +67,7 @@ export class CommunityManager {
         
         item.addEventListener("click", () => {
             document.getElementById('comunityName').textContent = 
-                community.isNoCommunity ? 'Seleziona la comunità' : community.title;
+                community.isNoCommunity ? 'Select community' : community.title;
             const dialog = document.querySelector('.c-dialogo');
             if (dialog) {
                 dialog.remove();
@@ -162,14 +162,4 @@ export class CommunityManager {
         }
     }
 
-    showError(message) {
-        const listElement = document.getElementById("autocomplete-list");
-        if (listElement) {
-            listElement.innerHTML = `
-                <div class="error-message">
-                    ${message}
-                </div>
-            `;
-        }
-    }
 }

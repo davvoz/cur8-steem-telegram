@@ -82,7 +82,7 @@ class PostManager {
             document.getElementById(id).classList.remove('error');
         });
 
-        document.getElementById('comunityName').innerText = 'Select the community';
+        document.getElementById('comunityName').innerText = 'Select community';
         this.scheduledTime = null;
     }
 

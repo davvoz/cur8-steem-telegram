@@ -104,7 +104,7 @@ export function createDatePickerDialog() {
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
     <div class="dialog-header">
-        <h2>Select the publication date and time</h2>
+        <h2>Post scheduling</h2>
         <button class="close-button" id="closeButton" aria-label="Close">✕</button>
     </div>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
@@ -120,7 +120,7 @@ export function communityDialog() {
     dialog.innerHTML = `
         <div class="autocomplete-container">
             <div class="dialog-header">
-                <h2>Select the community</h2>
+                <h2>Select community</h2>
                 <button class="close-button" id="closeButton" aria-label="Close">✕</button>
             </div>
             <div class="c-container">
