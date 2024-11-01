@@ -86,7 +86,6 @@ export async function loginSteemLogin(username, idTelegram) {
         await client.checkLogin(idTelegram).then(async (result) => {
             if (typeof result.usernames === 'undefined') {
                 document.getElementById('spinner').classList.add('hide');
-                displayResult({ error: 'Nessun account trovato' }, 'error', true);
                 return;
             }
             appInitializerInstance.setUsernames(result.usernames);

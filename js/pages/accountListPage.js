@@ -147,7 +147,7 @@ export class AccountManager {
                 document.getElementById('postBtn').disabled = true;
                 document.getElementById('accountBtn').disabled = true;
                 document.getElementById('configBtn').disabled = true;
-                displayResult({ title: 'Nessun account trovato' ,message:"Aggiungi un account",neverClose:true}, 'custom', true , showPage('loginPage'));
+                showPage('loginPage');
                 return;
             }
             appInitializerInstance.setUsernames(result.usernames);
