@@ -13,7 +13,9 @@ class AppInitializer {
         if (AppInitializer.instance) {
             return AppInitializer.instance;
         }
-
+//scrivi in console ,'url di dove ti stai trovando'
+        const url = window.location.href;
+        console.log('url:', url,window);
         this.usernames = [];
         this.accountManager = new AccountManager();
         AppInitializer.instance = this;
