@@ -13,17 +13,10 @@ class AppInitializer {
         if (AppInitializer.instance) {
             return AppInitializer.instance;
         }
-        //scrivi in console ,'url di dove ti stai trovando'
-        // Ottieni la stringa di query dall'URL corrente
-        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(window.location.search);
+        const startParam = urlParams.get('tgWebAppStartParam');
+        console.log('Start Parameter:', startParam);
 
-        // Crea un'istanza di URLSearchParams con la stringa di query
-        const urlParams = new URLSearchParams(queryString);
-
-        // Ottieni il valore di un parametro specifico
-        const parametro = urlParams.get('platform');
-
-        console.log(parametro); // Stampa il valore del parametro
 
         this.usernames = [];
         this.accountManager = new AccountManager();
