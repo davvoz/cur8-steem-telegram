@@ -7,13 +7,19 @@ import { appState } from './AppState.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getListaComunities } from './utils.js';
 import { AccountManager } from '../pages/accountListPage.js';
+import { retrieveLaunchParams } from '@telegram-apps/sdk';
+//come imporo la telegram sdk nell'html?
+//
 
 class AppInitializer {
     constructor() {
         if (AppInitializer.instance) {
             return AppInitializer.instance;
         }
-
+        document.addEventListener("DOMContentLoaded", function() {
+            const { initDataRaw, initData } = retrieveLaunchParams();
+            console.log("Dati di inizializzazione:", initData);
+        });
         // Ottieni l'URL corrente
         const url = new URL(window.location.href);
 
