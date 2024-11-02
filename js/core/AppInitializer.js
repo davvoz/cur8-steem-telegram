@@ -13,9 +13,21 @@ class AppInitializer {
         if (AppInitializer.instance) {
             return AppInitializer.instance;
         }
-        const urlParams = new URLSearchParams(window.location.search);
-        const startParam = urlParams.get('tgWebAppStartParam');
-        console.log('Start Parameter:', startParam);
+
+        // Ottieni l'URL corrente
+        const url = new URL(window.location.href);
+
+        // Crea un oggetto URLSearchParams per leggere i parametri della query string
+        const params = new URLSearchParams(url.search);
+
+        // Accedi al valore del parametro start (o startattach)
+        const startParam = params.get('start') || params.get('startattach');
+
+        if (startParam) {
+            console.log("Start parameter:", startParam);
+        } else {
+            console.log("Start parameter non presente.");
+        }
 
 
         this.usernames = [];
