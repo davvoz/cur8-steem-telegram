@@ -13,9 +13,18 @@ class AppInitializer {
         if (AppInitializer.instance) {
             return AppInitializer.instance;
         }
-//scrivi in console ,'url di dove ti stai trovando'
-        const url = window.location.href;
-        console.log('url:', url,window);
+        //scrivi in console ,'url di dove ti stai trovando'
+        // Ottieni la stringa di query dall'URL corrente
+        const queryString = window.location.search;
+
+        // Crea un'istanza di URLSearchParams con la stringa di query
+        const urlParams = new URLSearchParams(queryString);
+
+        // Ottieni il valore di un parametro specifico
+        const parametro = urlParams.get('platform');
+
+        console.log(parametro); // Stampa il valore del parametro
+
         this.usernames = [];
         this.accountManager = new AccountManager();
         AppInitializer.instance = this;
@@ -63,7 +72,7 @@ class AppInitializer {
         usernames.forEach(username => this.accountManager.createAccountListItem(username));
     }
 
-    handleInitializationError(error) {        
+    handleInitializationError(error) {
         console.error('Error in handleInitializationError:', error);
         displayResult(
             { error: error.message || 'Error during initialization, please reload the page' },
