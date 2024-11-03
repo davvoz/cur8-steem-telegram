@@ -1,3 +1,5 @@
+import { appState } from "../core/AppState";
+
 export class ApiClient {
     constructor() {
         this.apiKey = 'your_secret_api_key';
@@ -29,6 +31,12 @@ export class ApiClient {
                 true
             );
         }
+        appState.setBaseUrl(this.baseUrl);
+        if (startParam === 'HIVE') {
+            const steemLoginButton = document.getElementById('steemLoginButton');
+            steemLoginButton.remove();
+        }
+
     }
 
     async sendRequest(endpoint, method, data = null) {

@@ -18,6 +18,7 @@ export class AppState {
         this.navigationHistory = [];
         this.telegramLoginData = null;
         this._router = null;
+        this.baseUrl = null;
     }
 
     get router() {
@@ -32,6 +33,14 @@ export class AppState {
             AppState.instance = new AppState();
         }
         return AppState.instance;
+    }
+
+    setBaseUrl(baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    getBaseUrl() {
+        return this.baseUrl;
     }
 
     setCurrentDraft(draft) {
