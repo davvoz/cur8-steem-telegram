@@ -1,8 +1,34 @@
-
 export class ApiClient {
-    constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com/api/steem') {
+    constructor() {
         this.apiKey = 'your_secret_api_key';
-        this.baseUrl = baseUrl;
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        const startParam = params.get('start') || params.get('startattach') || params.get('platform');
+        
+        console.log("Start parameter:", startParam || "Start parameter non presente.");
+
+        const baseUrlMap = {
+            'STEEM': 'https://imridd.eu.pythonanywhere.com/api/steem',
+            'HIVE': 'https://imridd.eu.pythonanywhere.com/api/hive'
+        };
+
+        this.baseUrl = baseUrlMap[startParam] || (() => {
+            console.error('Invalid start parameter:', startParam);
+            displayResult(
+                { error: 'Invalid start parameter, please reload the page' },
+                'error',
+                true
+            );
+            return null;
+        })();
+
+        if (!this.baseUrl) {
+            displayResult(
+                { error: 'Error during initialization, please reload the page' },
+                'error',
+                true
+            );
+        }
     }
 
     async sendRequest(endpoint, method, data = null) {
@@ -14,7 +40,6 @@ export class ApiClient {
             'hash': window.Telegram?.WebApp?.initDataUnsafe?.hash || 'default_hash'
         };
 
-        console.log(JSON.stringify(telegramData));
         const idTelegram = localStorage.getItem('idTelegram');
         const url = `${this.baseUrl}${endpoint}`;
         const options = {
