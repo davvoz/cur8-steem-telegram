@@ -1,7 +1,6 @@
-import { displayResult } from '../components/dialog.js';
+import { displayResult, createDatePickerDialog } from '../components/dialog.js';
 import { getUsername } from '../services/userManager.js';
 import { getUserDrafts } from './draftPage.js';
-import { createDatePickerDialog } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
 import { CommunityManager } from '../core/CommunityManager.js';
 
@@ -128,7 +127,7 @@ class PostManager {
             if (scheduledDate < Date.now()) {
                 displayResult({ error: 'The scheduled date cannot be in the past' }, 'error', true);
                 this.resetDatePicker();
-                return false;
+                return null;
             }
             return scheduledDate;
         }
@@ -155,7 +154,7 @@ class PostManager {
         const dialog = createDatePickerDialog();
         document.body.appendChild(dialog);
         dialog.showModal();
- 
+
         const confirmButton = dialog.querySelector('#confirmButtonDP');
         const chiudiButton = dialog.querySelector('#closeButton');
         const scheduledTimeInput = dialog.querySelector('#scheduledTime');

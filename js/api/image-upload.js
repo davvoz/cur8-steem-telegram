@@ -18,15 +18,15 @@ export function initializeImageUpload() {
 function handleDrop(e,dropZone) {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
+    const file = e.dataTransfer?.files[0];
+    if (file?.type.startsWith('image/')) {
         uploadImage(file);
     }
 }
 
 function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    const file = e.target?.files[0];
+    if (file?.type.startsWith('image/')) {
         uploadImage(file);
     }
 }
@@ -68,7 +68,7 @@ function uploadImage(file) {
             })
             .catch(error => {
                 console.error('Errore durante il caricamento dell\'immagine:', error);
-                displayResult({ error: error.message }, 'error', true);
+                displayResult({ error: error.message },  true);
             }).finally(() => {
                 //permetti di caricare un'altra immagine uguale
                 document.getElementById('fileInput').value = '';
@@ -92,7 +92,7 @@ function insertImageUrlInTextarea(url) {
     postBody.value = textBefore + imageMarkdown + textAfter;
 }
 
-function displayResult(result, type = 'success', enabled) {
+function displayResult(result, enabled) {
     if (enabled) {
         //crea una dialog con il risultato
         const dialog = document.createElement('dialog');

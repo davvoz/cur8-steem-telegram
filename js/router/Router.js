@@ -3,10 +3,6 @@ import { appState } from '../core/AppState.js';
 import { showPage } from '../services/pageService.js';
 export class Router {
     constructor() {
-        if (Router.instance) {
-            return Router.instance;
-        }
-
         this.routes = {
             '/': this.showAccountPage,
             '/post': this.showPostPage,
@@ -17,9 +13,6 @@ export class Router {
 
         };
         this.navigationHistory = appState.navigationHistory;
-
-        Router.instance = this;
-       
     }
 
     parseRoute(path) {

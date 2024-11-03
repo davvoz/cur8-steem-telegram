@@ -22,7 +22,6 @@ export class EventManager {
     }
 
     goLogin() {
-        //TODO:smartellata , da sistemare
         window.location.hash = '#/login';
         showPage('loginPage');
     }

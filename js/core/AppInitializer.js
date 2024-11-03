@@ -1,23 +1,23 @@
 import { initializeTelegram } from '../services/telegram.js';
 import { displayResult } from '../components/dialog.js';
-import { enableNavigationButtons } from './utils.js';
-import { ApiClient } from '../api/api-client.js';
+import { enableNavigationButtons, getListaComunities } from './utils.js';
 import { showPage } from '../services/pageService.js';
 import { appState } from './AppState.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
-import { getListaComunities } from './utils.js';
 import { AccountManager } from '../pages/accountListPage.js';
 
 
 class AppInitializer {
     constructor() {
-        if (AppInitializer.instance) {
-            return AppInitializer.instance;
-        }
-
         this.usernames = [];
         this.accountManager = new AccountManager();
-        AppInitializer.instance = this;
+    }
+
+    static getInstance() {
+        if (!AppInitializer.instance) {
+            AppInitializer.instance = new AppInitializer();
+        }
+        return AppInitializer.instance;
     }
 
     async initializeApp() {
@@ -30,7 +30,6 @@ class AppInitializer {
                 throw new Error('Unable to obtain Telegram ID');
             }
 
-            appState.client = new ApiClient();
             this.showSpinner();
 
             const result = await appState.client.checkLogin(idTelegram);
@@ -117,9 +116,6 @@ class AppInitializer {
     }
 }
 
-const appInitializerInstance = new AppInitializer();
+const appInitializerInstance = AppInitializer.getInstance();
 export default appInitializerInstance;
 
-
-//usage in other files:
-// import appInitializerInstance from './AppInitializer.js';

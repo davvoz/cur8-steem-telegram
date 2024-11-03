@@ -37,7 +37,7 @@ const closeAndResolve = async (dialog, value, resolve) => {
     await resolve(value);
 };
 
-export function displayResult(result, type = 'success', enabled = false, callback, time ) {
+export function displayResult(result, type, enabled, callback, time) {
     if (enabled) {
         // Create a dialog with the result
         const dialog = document.createElement('dialog');

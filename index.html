@@ -47,33 +47,24 @@
             <div class="spinner-border"></div>
         </div>
     </div>
-    <!-- Pagina Login -->
     <div id="loginPage" class="page active">
         <h2>Login</h2>
         <label for="username">Username:</label>
-        <input type="text" id="username" placeholder="insert username" >
+        <input type="text" id="username" placeholder="insert username">
         <label for="postingKey">Posting Key:</label>
-        <input type="password" id="postingKey" placeholder="insert posting key" >
+        <input type="password" id="postingKey" placeholder="insert posting key">
         <button class="action-btn" id="goLogin">Login</button>
         <button class="action-btn" id="steemlogin">Login with Steemlogin</button>
     </div>
 
-    <!-- Pagina Gestione Bozze -->
     <div id="draftPage" class="page">
         <div class="header" id="headerDraft">
-            <!--contenitore dei tab -->
         </div>
-        <!--lista delle bozze dell'username selezionato-->
         <ul id="draftList"></ul>
     </div>
 
-    <!-- Pagina Pubblica Post -->
     <div id="postPage" class="page">
-        <!-- <label for="postTitle">Titolo Post:</label> -->
         <input type="text" id="postTitle" placeholder="insert title" required>
-
-        <!-- <label for="postBody">Corpo Post:</label> -->
-
         <div class="textarea-container">
             <div class="toolbarContainer" id="toolbarContainer">
                 <div class="toolbar" id="toolbar">
@@ -88,19 +79,13 @@
                 Add Image
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
             </div>
-
-            <!-- <label for="postTags">Tag Post:</label> -->
             <input type="text" id="postTags" placeholder="insert tags (use commas/spaces to separate)" required>
             <br>
-
-
             <div class="buttons-container">
-
                 <button class="action-btn buttons-containero" id="openComunities">
                     <span class="button-text" id="comunityName">Select
                         Community</span>
                 </button>
-
                 <button class="action-btn-mini primary buttons-containero" id="openDatePicker">
                     <i class="material-icons">schedule</i>
                 </button>
@@ -124,11 +109,9 @@
         </div>
     </div>
 
-    <!-- Pagina Gestione Account CRUD -->
     <div id="accountPage" class="page">
         <div class="header">
             <h2>Account Manager</h2>
-            <!--logo di cur8-->
             <img src="assets/logo_tra.png" alt="cur8 logo"
                 style="width: 81px;height: 81px;display: flex;/* background: black; */">
         </div>
@@ -147,16 +130,13 @@
         </div>
     </div>
 
-    <!-- Menu di selezione per cambiare tema -->
     <div id="configPage" class="page">
 
         <h2>Settings</h2>
-        <!-- <button class="collapsible">Selezione Tema</button> -->
 
         <div class="theme-chooser" style="overflow: hidden; padding: 2%">
         </div>
         <script>
-            // Load default post settings from localStorage
             function loadDefaultPostSettings() {
                 const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
                 if (defaultPostSettings) {
@@ -166,7 +146,6 @@
                 }
             }
 
-            // Apply default post settings to the post form
             function applyDefaultPostSettings() {
                 const defaultPostSettings = JSON.parse(localStorage.getItem('defaultPostSettings'));
                 if (defaultPostSettings) {
@@ -176,15 +155,11 @@
                 }
             }
             loadDefaultPostSettings();
-
         </script>
         <script type="module" src="./js/components/theme.js"></script>
         <script type="module" src="./js/components/toolbar.js"></script>
         <script type="module" src="./js/app.js"></script>
-
-        <!-- <script type="module" src="main.js"></script> -->
     </div>
 </body>
-
 
 </html>

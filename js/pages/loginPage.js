@@ -73,7 +73,7 @@ function displayUserData(userData) {
 
 export async function loginSteemLogin(username, idTelegram) {
     try {
-        const result = await client.login(
+        await client.login(
             idTelegram,
             username
         );
@@ -94,7 +94,7 @@ export async function loginSteemLogin(username, idTelegram) {
 }
 
 export async function login() {
-    idTelegram = localStorage.getItem('idTelegram');
+    const idTelegram = localStorage.getItem('idTelegram');
     try {
         document.getElementById('spinner').classList.remove('hide');
         const client = new ApiClient();
