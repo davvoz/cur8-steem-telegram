@@ -5,8 +5,6 @@ export class ApiClient {
         const params = new URLSearchParams(url.search);
         const startParam = params.get('start') || params.get('startattach') || params.get('platform');
         
-        console.log("Start parameter:", startParam || "Start parameter non presente.");
-
         const baseUrlMap = {
             'STEEM': 'https://imridd.eu.pythonanywhere.com/api/steem',
             'HIVE': 'https://imridd.eu.pythonanywhere.com/api/hive'
@@ -29,11 +27,6 @@ export class ApiClient {
                 true
             );
         }
-        if (startParam === 'HIVE') {
-            const steemLoginButton = document.getElementById('steemLoginButton');
-            steemLoginButton.remove();
-        }
-
     }
 
     async sendRequest(endpoint, method, data = null) {

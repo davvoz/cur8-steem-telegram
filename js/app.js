@@ -10,6 +10,10 @@ class App {
     }
 
     async initialize() {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        const startParam = params.get('start') || params.get('startattach') || params.get('platform');
+        localStorage.setItem('platform', startParam);
         // Initialize base components
         window.location.hash = '/';
         appState.router.handleRoute();
@@ -32,6 +36,10 @@ class App {
 
 // Initialize the application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
+
+
     const app = new App();
-    await app.initialize();
+    await app.initialize().then(() => {
+        console.log('App initialized');
+    });
 });

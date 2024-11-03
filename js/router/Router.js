@@ -28,28 +28,22 @@ export class Router {
             }
         }
         
-        // Direct route match
         return { handler: this.routes[path], params: [] };
     }
 
     showAccountPage() {
         window.Telegram.WebApp.BackButton.hide();
         showPage('accountPage');
-        // if (window.Telegram?.WebApp) {
-        //     window.Telegram.WebApp.BackButton.hide();
-        // }
     }
 
     showPostPage() {
         window.Telegram.WebApp.BackButton.hide();
         showPage('postPage');
-        // TelegramManager.getInstance().setupBackButton();
     }
 
     showDraftPage() {
         showPage('draftPage');
         window.Telegram.WebApp.BackButton.hide();
-        //TelegramManager.getInstance().setupBackButton();
     }
 
     showLoginPage() {
@@ -60,7 +54,6 @@ export class Router {
     showConfigPage() {
         showPage('configPage');
         window.Telegram.WebApp.BackButton.hide();
-        //TelegramManager.getInstance().setupBackButton();
     }
 
     updateBackButton() {
@@ -85,7 +78,6 @@ export class Router {
         const { handler, params } = this.parseRoute(path);
         if (handler) {
             handler(...params);
-            //this.updateBackButton();
         } else {
             console.log('404 Not Found');
         }
@@ -98,6 +90,3 @@ export class Router {
         return Router.instance;
     }
 }
-
-// Usage
-//const router = Router.getInstance();

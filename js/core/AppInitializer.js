@@ -23,7 +23,6 @@ class AppInitializer {
     async initializeApp() {
         try {
             const idTelegram = await initializeTelegram();
-            console.log('initializeTelegram resolved with idTelegram:', idTelegram);
             localStorage.setItem('idTelegram', idTelegram);
 
             if (!idTelegram) {
@@ -64,7 +63,7 @@ class AppInitializer {
     handleInitializationError(error) {
         console.error('Error in handleInitializationError:', error);
         displayResult(
-            { error: error.message || 'Error during initialization, please reload the page' },
+            { error: error.message },
             'error',
             true
         );
@@ -81,7 +80,6 @@ class AppInitializer {
         }
         this.hideSpinner();
         showPage('accountPage');
-        //displayResult(result);
     }
 
     updateAccountList(usernames) {
