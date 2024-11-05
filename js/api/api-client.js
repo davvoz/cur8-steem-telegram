@@ -6,8 +6,8 @@ export class ApiClient {
         const startParam = params.get('start') || params.get('startattach') || params.get('platform');
         
         const baseUrlMap = {
-            'STEEM': 'https://imridd.eu.pythonanywhere.com/api/steem',
-            'HIVE': 'https://imridd.eu.pythonanywhere.com/api/hive'
+            'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem',
+            'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive'
         };
 
         this.baseUrl = baseUrlMap[startParam] || (() => {
