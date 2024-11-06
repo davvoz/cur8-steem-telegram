@@ -5,7 +5,6 @@ export const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
         return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
-    // Wait for Telegram to initialize
     return getDialogTelegramId();
 };
 

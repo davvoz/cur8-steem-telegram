@@ -16,13 +16,22 @@ class App {
         const params = new URLSearchParams(url.search);
         const startParam = params.get('start') || params.get('startattach') || params.get('platform');
         localStorage.setItem('platform', startParam);
+        // window.location.reload();
         // Initialize base components
+        if (!localStorage.getItem('pageReloaded')) {
+            localStorage.setItem('pageReloaded', 'true'); 
+            window.location.reload(); 
+            return; // Stop further execution until the page reloads 
+            } // Clear the reload flag 
+            
+        localStorage.removeItem('pageReloaded');
+
         window.location.hash = '/';
+
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
 
-        // Handle authentication and initialization
         await handleSteemLogin();
         if (!window.location.search.includes('access_token')) {
             await appInitializerInstance.initializeApp();
@@ -43,6 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const app = new App();
     await app.initialize().then(() => {
+        
         console.log('App initialized');
     });
 });

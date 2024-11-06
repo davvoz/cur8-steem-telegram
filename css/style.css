@@ -99,6 +99,15 @@ textarea {
     min-height: 167px;
 }
 
+#steemlogin {
+    display: none;
+}
+
+.login-container {
+    display: flex; 
+    gap: var(--spacing-sm);
+}
+
 button.action-btn {
     background-color: var(--primary-variant);
     color: var(--on-primary);
