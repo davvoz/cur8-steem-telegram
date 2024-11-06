@@ -200,5 +200,7 @@ export const ru = {
     close: "Закрыть",
 
     // Ошибки сообщества
-    error_loading_community: "Произошла ошибка при поиске сообщества"
+    error_loading_community: "Произошла ошибка при поиске сообщества",
+    confirm_post://Your post is ready to be published
+    "Ваш пост готов к публикации"
 };

@@ -183,6 +183,7 @@ export const it = {
     publish_success: "Post pubblicato con successo",
     publish_error: "Errore nella pubblicazione del post",
     save_draft_success: "Bozza salvata con successo",
+    confirm_post: "Il tuo post è pronto per essere pubblicato ",
 
     // Preview
     preview_title: "Anteprima",

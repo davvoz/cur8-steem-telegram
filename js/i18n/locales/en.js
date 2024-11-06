@@ -200,5 +200,7 @@ export const en = {
     close: "Close",
 
     // Community errors
-    error_loading_community: "Error occurred while searching for community"
+    error_loading_community: "Error occurred while searching for community",
+    confirm_post: //"Il tuo post è pronto per essere pubblicato 
+    "Your post is ready to be published",
 }

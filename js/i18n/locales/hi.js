@@ -194,6 +194,8 @@ export const hi = {
     close: "बंद करें",
 
     // Community errors
-    error_loading_community: "समुदाय खोजने में त्रुटि हुई"
+    error_loading_community: "समुदाय खोजने में त्रुटि हुई",
+    confirm_post://Your post is ready to be published
+    "क्या आप वाकई इस पोस्ट को प्रकाशित करना चाहते हैं?"
 
 };

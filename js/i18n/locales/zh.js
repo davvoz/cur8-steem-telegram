@@ -195,5 +195,7 @@ export const zh = {
     close: "关闭",
 
     // Community errors
-    error_loading_community: "加载社区时出错"
+    error_loading_community: "加载社区时出错",
+    confirm_post://Your post is ready to be published
+    "您的帖子已准备好发布"
 };

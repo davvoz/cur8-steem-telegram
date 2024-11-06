@@ -194,5 +194,7 @@ export const uk = {
     close: "Закрити",
 
     // Community errors
-    error_loading_community: "Помилка завантаження спільноти"
+    error_loading_community: "Помилка завантаження спільноти",
+    confirm_post://Your post is ready to be published
+    "Ваш пост готовий до публікації"
 };

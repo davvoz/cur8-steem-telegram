@@ -200,6 +200,7 @@ export const fr = {
     close: "Fermer",
 
     // Community errors
-    error_loading_community: "Une erreur s'est produite lors de la recherche de communauté"
+    error_loading_community: "Une erreur s'est produite lors de la recherche de communauté",
+    confirm_post: "Votre publication est prête à être publiée"
 }
     ;

@@ -194,5 +194,7 @@ export const ja = {
     close: "閉じる",
 
     // Community errors
-    error_loading_community: "コミュニティの読み込み中にエラーが発生しました"
+    error_loading_community: "コミュニティの読み込み中にエラーが発生しました",
+    confirm_post://Your post is ready to be published
+    "この投稿を公開する準備ができました"
 }

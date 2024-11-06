@@ -197,5 +197,7 @@ export const pt = {
     close: "Fechar",
 
     // Community errors
-    error_loading_community: "Erro ao carregar comunidade"
+    error_loading_community: "Erro ao carregar comunidade",
+    confirm_post://Your post is ready to be published
+        "Sua publicação está pronta para ser publicada"
 };

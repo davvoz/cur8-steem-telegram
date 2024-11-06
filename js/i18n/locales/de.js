@@ -199,5 +199,7 @@ export const de = {
     close: "Schließen",
 
     // Community errors
-    error_loading_community: "Fehler beim Laden der Community"
+    error_loading_community: "Fehler beim Laden der Community",
+    confirm_post: //"Il tuo post è pronto per essere pubblicato 
+    "Ihr Beitrag ist bereit zur Veröffentlichung"
 };

@@ -195,7 +195,8 @@ export const es = {
     close: "Cerrar",
 
     // Community errors
-    error_loading_community: "Error al cargar la comunidad"
+    error_loading_community: "Error al cargar la comunidad",
+    confirm_post: "Tu publicación está lista para ser publicada"
 }
 
 

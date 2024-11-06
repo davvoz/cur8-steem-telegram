@@ -22,7 +22,7 @@ class PostManager {
             return;
         }
 
-        const dialog = this.createDialog(t('dialog_confirm'), t('confirm_delete_post'), 'confirmButtonPost', 'cancelButtonPost');
+        const dialog = this.createDialog(t('dialog_confirm'), t('confirm_post'), 'confirmButtonPost', 'cancelButtonPost');
         document.body.appendChild(dialog);
         dialog.showModal();
 
