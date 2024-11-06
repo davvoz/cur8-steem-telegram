@@ -1,3 +1,5 @@
+import { t } from '../i18n/translationService.js';
+
 export const getDialogTelegramId = () => {
     return new Promise((resolve) => {
         const dialog = createDialogo();
@@ -24,9 +26,9 @@ const createDialogo = () => {
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
-        <h2>Telegram ID</h2>
-        <input type="text" id="telegramId" placeholder="Inserisci il tuo ID Telegram">
-        <button id="confirmButtonTelegramId" class="action-btn">Conferma</button>
+        <h2>${t('telegram_id')}</h2>
+        <input type="text" id="telegramId" placeholder="${t('enter_telegram_id')}">
+        <button id="confirmButtonTelegramId" class="action-btn">${t('confirm')}</button>
     `;
     return dialog;
 };
@@ -104,12 +106,12 @@ export function createDatePickerDialog() {
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
     <div class="dialog-header">
-        <h2>Post scheduling</h2>
-        <button class="close-button" id="closeButton" aria-label="Close">✕</button>
+        <h2>${t('post_scheduling')}</h2>
+        <button class="close-button" id="closeButton" aria-label="${t('dialog_close')}">✕</button>
     </div>
         <input type="datetime-local" id="scheduledTime" name="scheduledTime">
-        <button id="confirmButtonDP" class="action-btn">Confirm</button>
-        <button id="annullaButtonDP" class="action-btn">Cancel</button>
+        <button id="confirmButtonDP" class="action-btn">${t('dialog_confirm')}</button>
+        <button id="annullaButtonDP" class="action-btn">${t('dialog_cancel')}</button>
     `;
     return dialog;
 }
@@ -120,14 +122,14 @@ export function communityDialog() {
     dialog.innerHTML = `
         <div class="autocomplete-container">
             <div class="dialog-header">
-                <h2>Select community</h2>
-                <button class="close-button" id="closeButton" aria-label="Close">✕</button>
+                <h2>${t('select_community')}</h2>
+                <button class="close-button" id="closeButton" aria-label="${t('dialog_close')}">✕</button>
             </div>
             <div class="c-container">
                 <input 
                     type="text" 
                     id="myInput" 
-                    placeholder="Start typing..."
+                    placeholder="${t('start_typing')}"
                 >
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>

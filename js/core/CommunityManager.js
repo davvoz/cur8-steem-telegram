@@ -1,3 +1,4 @@
+import { t } from '../i18n/translationService.js';
 // Dependencies: js/core/CommunityManager.js
 import { communityDialog, displayResult } from "../components/dialog.js";
 
@@ -61,6 +62,7 @@ export class CommunityManager {
         if (community.isNoCommunity) {
             item.style.paddingBottom = "8px";
             item.style.marginBottom = "8px";
+            document.getElementById('comunityName').textContent = t('select_community');
         }
         item.innerHTML = community.title;
         item.innerHTML += `<input type='hidden' value='${community.title}'>`;

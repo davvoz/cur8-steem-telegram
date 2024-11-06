@@ -3,6 +3,7 @@ import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
 import { appState } from "../core/AppState.js";
+import { t } from "../i18n/translationService.js";
 
 class ApiService {
     constructor(client) {
@@ -204,7 +205,7 @@ class DraftManager {
         document.getElementById('postTitle').value = draft.title || '';
         document.getElementById('postTags').value = draft.tags || '';
         document.getElementById('postBody').value = draft.body || '';
-        document.getElementById('comunityName').innerText = draft.community ? draft.community : 'Select a community';
+        document.getElementById('comunityName').innerText = draft.community ? draft.community : `${t('select_community')}`;
 
         const scheduledTimeEl = document.getElementById('openDatePicker');
         if (draft.scheduled_time !== '0000-00-00 00:00:00') {
@@ -235,10 +236,10 @@ class DraftManager {
             const dialog = document.createElement('dialog');
             dialog.classList.add('dialogo');
             dialog.innerHTML = `
-                <h2>Confirm Deletion</h2>
-                <p>Are you sure you want to delete this draft?</p>
-                <button id="confirmButtonDelete" class="action-btn">Confirm</button>
-                <button id="cancelButtonDelete" class="action-btn">Cancel</button>
+                <h2>${t('draft_confirm_delete_title')}</h2>
+                <p>${t('draft_confirm_delete_message')}</p>
+                <button id="confirmButtonDelete" class="action-btn">${t('confirm')}</button>
+                <button id="cancelButtonDelete" class="action-btn">${t('cancel')}</button>
             `;
             document.body.appendChild(dialog);
             dialog.showModal();

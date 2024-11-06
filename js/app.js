@@ -3,6 +3,8 @@ import { handleSteemLogin } from './pages/loginPage.js';
 import { appState } from './core/AppState.js';
 import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
+import { languageManager } from './i18n/languageManager.js';
+import { LanguageSelector } from './components/languageSelector.js';
 
 class App {
     constructor() {
@@ -36,10 +38,39 @@ class App {
 
 // Initialize the application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
-
+    addTranslationAttributes();
+    initializeLanguage();
 
     const app = new App();
     await app.initialize().then(() => {
         console.log('App initialized');
     });
 });
+
+function initializeLanguage() {
+    const languageSelect = document.getElementById('languageSelect');
+    if (languageSelect) {
+        new LanguageSelector(languageSelect);
+    }
+    
+    // Initial page translation
+    languageManager.updatePageText();
+}
+
+// Add data-i18n attributes to elements
+function addTranslationAttributes() {
+    // Navigation
+    document.querySelector('#draftBtn span').setAttribute('data-i18n', 'nav_drafts');
+    document.querySelector('#postBtn span').setAttribute('data-i18n', 'nav_publish');
+    document.querySelector('#accountBtn span').setAttribute('data-i18n', 'nav_account');
+    document.querySelector('#configBtn span').setAttribute('data-i18n', 'nav_settings');
+
+    // Input placeholders
+    document.getElementById('postTitle').setAttribute('data-i18n', 'post_title_placeholder');
+    document.getElementById('postBody').setAttribute('data-i18n', 'post_body_placeholder');
+    document.getElementById('postTags').setAttribute('data-i18n', 'post_tags_placeholder');
+    
+    // Buttons
+    document.getElementById('postToSteem').setAttribute('data-i18n', 'post_publish_now');
+    document.getElementById('salvaBozza').setAttribute('data-i18n', 'post_save_draft');
+}

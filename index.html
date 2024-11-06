@@ -132,9 +132,18 @@
 
     <div id="configPage" class="page">
 
-        <h2>Settings</h2>
+        <h2 data-i18n="settings_title">Settings</h2>
 
-        <div class="theme-chooser" style="overflow: hidden; padding: 2%">
+        <div class="settings-section">
+            <h3 data-i18n="settings_language">Language</h3>
+            <select id="languageSelect" class="settings-select">
+                <!--dinamic content-->
+            </select>
+        </div>
+
+        <div class="theme-chooser settings-section">
+            <h3 data-i18n="settings_theme">Theme</h3>
+            <!-- existing theme chooser content -->
         </div>
         <script>
             function loadDefaultPostSettings() {

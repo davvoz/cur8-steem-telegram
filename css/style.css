@@ -1075,3 +1075,65 @@ table td {
     justify-content: center;
     align-items: center;
 }
+
+.settings-section {
+    margin: 20px;
+    padding: 15px;
+    background: var(--background-secondary);
+    border-radius: 8px;
+}
+
+.settings-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.settings-select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--background-primary);
+    color: var(--text-primary);
+}
+
+.settings-select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--background-primary);
+    color: var(--text-primary);
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+.settings-select option {
+    padding: 8px;
+    background: var(--background-primary);
+    color: var(--text-primary);
+}
+
+.settings-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color-transparent);
+}
+
+[dir="rtl"] .settings-select {
+    text-align: right;
+}
+
+/* Add support for dark mode */
+@media (prefers-color-scheme: dark) {
+    .settings-select {
+        background: var(--background-secondary);
+        border-color: var(--border-color-dark);
+    }
+    
+    .settings-select option {
+        background: var(--background-secondary);
+    }
+}
+
+/* Add more styles as needed */

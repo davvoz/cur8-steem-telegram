@@ -5,6 +5,7 @@ import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
 import  appInitializerInstance  from '../core/AppInitializer.js';
 import { showPage } from '../services/pageService.js';
+import { t } from '../i18n/translationService.js';
 
 export class AccountManager {
     constructor(apiClient = new ApiClient()) {
@@ -86,7 +87,7 @@ export class AccountManager {
         document.querySelectorAll('.container-username').forEach(el => el.classList.remove('selected'));
         containerElement.classList.add('selected');
 
-        displayResult({ message: `Account ${username.username} selected` }, 'success');
+        displayResult({ message: `${t('account_selected')} ${username.username}` }, 'success');
         getUserDrafts();
         applySavedTheme();
         setUsernameForImageUpload(username.username, localStorage.getItem('idTelegram'));
@@ -115,10 +116,10 @@ export class AccountManager {
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
         dialog.innerHTML = `
-            <h2>Confirm Logout</h2>
-            <p>Are you sure you want to logout?</p>
-            <button id="confirmButtonLogout" class="action-btn">Confirm</button>
-            <button id="cancelButtonLogout" class="action-btn">Cancel</button>
+            <h2>${t('confirm_logout')}</h2>
+            <p>${t('logout_question')}</p>
+            <button id="confirmButtonLogout" class="action-btn">${t('dialog_confirm')}</button>
+            <button id="cancelButtonLogout" class="action-btn">${t('dialog_cancel')}</button>
         `;
         return dialog;
     }
@@ -132,7 +133,7 @@ export class AccountManager {
             await this.handlePostLogout(id).then(() => {
                 document.getElementById('spinner').classList.add('hide');
             });
-            displayResult({ message: 'Logout successful' }, 'success');
+            displayResult({ message: `${t('logout_successful')}` }, 'success');
         } catch (error) {
             console.error('Error in handleLogout:', error);
             displayResult({ error: error.message }, 'error');
