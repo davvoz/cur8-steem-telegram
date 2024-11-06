@@ -1,4 +1,5 @@
 import { languageManager } from '../i18n/languageManager.js';
+import { getUserDrafts } from '../pages/draftPage.js';
 
 const languageNames = {
     en: 'English',
@@ -13,6 +14,21 @@ const languageNames = {
     hi: 'हिन्दी',
     ar: 'العربية',
     pt: 'Português'
+};
+
+const flags = {
+    en: '🇬🇧',
+    es: '🇪🇸',
+    it: '🇮🇹',
+    fr: '🇫🇷',
+    de: '🇩🇪',
+    ru: '🇷🇺',
+    uk: '🇺🇦',
+    ja: '🇯🇵',
+    zh: '🇨🇳',
+    hi: '🇮🇳',
+    ar: '🇸🇦',
+    pt: '🇵🇹'
 };
 
 export class LanguageSelector {
@@ -32,7 +48,7 @@ export class LanguageSelector {
         languages.forEach(langCode => {
             const option = document.createElement('option');
             option.value = langCode;
-            option.textContent = `${languageNames[langCode]} (${langCode})`;
+            option.textContent = `${flags[langCode]} ${languageNames[langCode]}`;
             this.selectElement.appendChild(option);
         });
 
@@ -42,6 +58,8 @@ export class LanguageSelector {
         // Add change event listener
         this.selectElement.addEventListener('change', (e) => {
             languageManager.setLanguage(e.target.value);
+            // Reinitialize draft tabs after language change
+            getUserDrafts();
         });
     }
 }

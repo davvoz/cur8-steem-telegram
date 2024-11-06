@@ -1,6 +1,10 @@
-import { t } from '../i18n/translationService.js';
-// Dependencies: js/core/CommunityManager.js
 import { communityDialog, displayResult } from "../components/dialog.js";
+import { translations } from "../i18n/translations.js";
+
+function t(key) {
+    const lang = localStorage.getItem('language') || 'en';
+    return translations[lang][key] || key;
+}
 
 export class CommunityManager {
     constructor() {
@@ -36,9 +40,9 @@ export class CommunityManager {
 
         listElement.innerHTML = '';
         
-        // Aggiungi l'opzione "No Community" come primo elemento
+        // Add "No Community" option as first element
         const noCommunityItem = this.createCommunityItem({
-            title: "No Community",
+            title: t('no_community'),
             name: "",
             isNoCommunity: true
         });
@@ -51,7 +55,7 @@ export class CommunityManager {
                 listElement.appendChild(item);
             });
         } catch (error) {
-            console.error("Errore nel caricamento delle community:", error);
+            console.error(t('error_loading_community'), error);
             displayResult({ error: error.message }, 'error', true);
         }
     }
@@ -69,7 +73,7 @@ export class CommunityManager {
         
         item.addEventListener("click", () => {
             document.getElementById('comunityName').textContent = 
-                community.isNoCommunity ? 'Select community' : community.title;
+                community.isNoCommunity ? t('select_community') : community.title;
             const dialog = document.querySelector('.c-dialogo');
             if (dialog) {
                 dialog.remove();
@@ -92,7 +96,7 @@ export class CommunityManager {
         
         // Mantieni sempre visibile l'opzione "No Community"
         const noCommunityItem = this.createCommunityItem({
-            title: "No Community",
+            title: t('no_community'),
             name: "",
             isNoCommunity: true
         });
