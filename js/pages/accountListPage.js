@@ -12,6 +12,21 @@ export class AccountManager {
         this.apiClient = apiClient;
     }
 
+    platform_logo() {
+        const platform = localStorage.getItem('platform');
+        const logo = document.getElementById('platformLogo');
+    
+        if (platform === 'STEEM') {
+            //logo.classList.add('blue-filter');
+            logo.src = 'assets/logo_steem.jpg'; // Percorso del logo per STEEM
+        } 
+        else if (platform === 'HIVE') {
+            logo.src = 'assets/logo_hive.jpg'; // Percorso del logo per HIVE
+        } else {
+            logo.src = 'assets/logo_tra.png'; // Percorso del logo di default
+        }
+    }
+
     createAccountListItem(username) {
         const li = document.createElement('li');
         li.appendChild(this.createContainer(username));

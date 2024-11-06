@@ -57,6 +57,7 @@ class AppInitializer {
     }
 
     async initializeAccountList(usernames) {
+        this.accountManager.platform_logo();
         usernames.forEach(username => this.accountManager.createAccountListItem(username));
     }
 

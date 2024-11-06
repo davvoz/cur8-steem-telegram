@@ -16,8 +16,7 @@ class App {
         const params = new URLSearchParams(url.search);
         const startParam = params.get('start') || params.get('startattach') || params.get('platform');
         localStorage.setItem('platform', startParam);
-        // window.location.reload();
-        // Initialize base components
+        
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
             window.location.reload(); 
@@ -45,7 +44,6 @@ class App {
     }
 }
 
-// Initialize the application when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
     addTranslationAttributes();
     initializeLanguage();
