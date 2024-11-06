@@ -3,6 +3,13 @@ import { getUsername } from '../services/userManager.js';
 import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
 import { CommunityManager } from '../core/CommunityManager.js';
+import { translations } from '../i18n/translations.js';
+
+// Add translation helper
+function t(key) {
+    const lang = localStorage.getItem('language') || 'en';
+    return translations[lang][key] || key;
+}
 
 class PostManager {
     constructor() {
@@ -15,7 +22,7 @@ class PostManager {
             return;
         }
 
-        const dialog = this.createDialog('Confirm Post', 'Are you sure you want to post this content on Steem?', 'confirmButtonPost', 'cancelButtonPost');
+        const dialog = this.createDialog(t('dialog_confirm'), t('confirm_delete_post'), 'confirmButtonPost', 'cancelButtonPost');
         document.body.appendChild(dialog);
         dialog.showModal();
 
@@ -54,15 +61,15 @@ class PostManager {
 
         if (title === '') {
             isValid = false;
-            errorMessage += 'The post title is required.\n';
+            errorMessage += t('post_title_required') + '\n';
         }
         if (body === '') {
             isValid = false;
-            errorMessage += 'The post body is required.\n';
+            errorMessage += t('post_body_required') + '\n';
         }
         if (tags === '') {
             isValid = false;
-            errorMessage += 'At least one tag is required.\n';
+            errorMessage += t('post_tags_required') + '\n';
         }
         if (!isValid) {
             displayResult({ error: errorMessage }, 'error', true, false, 5000);
@@ -81,7 +88,7 @@ class PostManager {
             document.getElementById(id).classList.remove('error');
         });
 
-        document.getElementById('comunityName').innerText = 'Select community';
+        document.getElementById('comunityName').innerText = t('select_community');
         this.scheduledTime = null;
     }
 
@@ -125,7 +132,7 @@ class PostManager {
             const [hours, minutes, seconds] = timePart.split(':').map(Number);
             const scheduledDate = new Date(year, month - 1, day, hours, minutes, seconds).getTime();
             if (scheduledDate < Date.now()) {
-                displayResult({ error: 'The scheduled date cannot be in the past' }, 'error', true);
+                displayResult({ error: t('schedule_past_date_error') }, 'error', true);
                 this.resetDatePicker();
                 return null;
             }
@@ -214,7 +221,7 @@ class PostManager {
     }
 
     cancellaBozza() {
-        const dialog = this.createDialog('Confirm', 'Clear the fields', 'confirmButtonDelete', 'cancelButtonDelete');
+        const dialog = this.createDialog(t('dialog_confirm'), t('confirm_delete'), 'confirmButtonDelete', 'cancelButtonDelete');
         document.body.appendChild(dialog);
         dialog.showModal();
 
@@ -234,8 +241,8 @@ class PostManager {
         dialog.innerHTML = `
             <h2>${title}</h2>
             <p>${message}</p>
-            <button id="${confirmButtonId}" class="action-btn">Confirm</button>
-            <button id="${cancelButtonId}" class="action-btn">Cancel</button>
+            <button id="${confirmButtonId}" class="action-btn">${t('dialog_confirm')}</button>
+            <button id="${cancelButtonId}" class="action-btn">${t('dialog_cancel')}</button>
         `;
         return dialog;
     }

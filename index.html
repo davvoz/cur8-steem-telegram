@@ -27,19 +27,19 @@
     <nav>
         <button id="draftBtn" disabled>
             <i class="material-icons">description</i>
-            <span>Drafts</span>
+            <span data-i18n="nav_drafts">Drafts</span>
         </button>
         <button id="postBtn" disabled>
             <i class="material-icons">edit</i>
-            <span>Publish</span>
+            <span data-i18n="nav_publish">Publish</span>
         </button>
         <button id="accountBtn" disabled>
             <i class="material-icons">account_circle</i>
-            <span>Account</span>
+            <span data-i18n="nav_account">Account</span>
         </button>
         <button id="configBtn" disabled>
             <i class="material-icons">settings</i>
-            <span>Settings</span>
+            <span data-i18n="nav_settings">Settings</span>
         </button>
     </nav>
     <div class="spinner hide" id="spinner">
@@ -48,13 +48,13 @@
         </div>
     </div>
     <div id="loginPage" class="page active">
-        <h2>Login</h2>
-        <label for="username">Username:</label>
-        <input type="text" id="username" placeholder="insert username">
-        <label for="postingKey">Posting Key:</label>
-        <input type="password" id="postingKey" placeholder="insert posting key">
-        <button class="action-btn" id="goLogin">Login</button>
-        <button class="action-btn" id="steemlogin">Login with Steemlogin</button>
+        <h2 data-i18n="login_title">Login</h2>
+        <label for="username" data-i18n="login_username">Username:</label>
+        <input type="text" id="username" placeholder="insert username" data-i18n-placeholder="login_username">
+        <label for="postingKey" data-i18n="login_posting_key">Posting Key:</label>
+        <input type="password" id="postingKey" placeholder="insert posting key" data-i18n-placeholder="login_posting_key">
+        <button class="action-btn" id="goLogin" data-i18n="login_button">Login</button>
+        <button class="action-btn" id="steemlogin" data-i18n="login_with_steemlogin">Login with Steemlogin</button>
     </div>
 
     <div id="draftPage" class="page">
@@ -64,7 +64,7 @@
     </div>
 
     <div id="postPage" class="page">
-        <input type="text" id="postTitle" placeholder="insert title" required>
+        <input type="text" id="postTitle" placeholder="insert title" data-i18n-placeholder="post_title_placeholder" required>
         <div class="textarea-container">
             <div class="toolbarContainer" id="toolbarContainer">
                 <div class="toolbar" id="toolbar">
@@ -72,18 +72,18 @@
                 <div class="chevronContainer" id="chevronContainer">
                 </div>
             </div>
-            <textarea id="postBody" rows="5" placeholder="insert body" required></textarea>
+            <textarea id="postBody" rows="5" placeholder="insert body" data-i18n-placeholder="post_body_placeholder" required></textarea>
 
 
             <div id="dropZone">
-                Add Image
+                <span id="dropZoneText" data-i18n="dropzone_text">Add image here</span>
                 <input type="file" id="fileInput" style="display: none;" accept="image/*">
             </div>
-            <input type="text" id="postTags" placeholder="insert tags (use commas/spaces to separate)" required>
+            <input type="text" id="postTags" placeholder="insert tags (use commas/spaces to separate)" data-i18n-placeholder="post_tags_placeholder" required>
             <br>
             <div class="buttons-container">
                 <button class="action-btn buttons-containero" id="openComunities">
-                    <span class="button-text" id="comunityName">Select
+                    <span class="button-text" id="comunityName" data-i18n="post_select_community">Select
                         Community</span>
                 </button>
                 <button class="action-btn-mini primary buttons-containero" id="openDatePicker">
@@ -98,20 +98,20 @@
             </div>
         </div>
         <div class="buttons-container-center">
-            <button class="action-btn" id="postToSteem">Publish Now</button>
-            <button class="action-btn" id="salvaBozza">Save Draft</button>
+            <button class="action-btn" id="postToSteem" data-i18n="post_publish_now">Publish Now</button>
+            <button class="action-btn" id="salvaBozza" data-i18n="post_save_draft">Save Draft</button>
         </div>
     </div>
     <div id="previewModal" class="modal">
         <div class="modal-content">
-            <span class="close-button" id="close-button">&times;</span>
+            <span class="close-button" id="close-button">✕</span>
             <div id="previewContent" class="preview-content"></div>
         </div>
     </div>
 
     <div id="accountPage" class="page">
         <div class="header">
-            <h2>Account Manager</h2>
+            <h2 data-i18n="account_manager">Account Manager</h2>
             <img src="assets/logo_tra.png" alt="cur8 logo"
                 style="width: 81px;height: 81px;display: flex;/* background: black; */">
         </div>
@@ -119,13 +119,13 @@
         <div class="actions-container">
             <button class="action-btn loginIn" id="loginInBtn">
                 <i class="material-icons">add</i>
-                <span>Add Account</span>
+                <span data-i18n="add_account">Add Account</span>
             </button>
         </div>
     </div>
 
     <div class="hide toast" id="toast">
-        <h2>Result</h2>
+        <h2 data-i18n="result">Result</h2>
         <div class="toast-content">
         </div>
     </div>
@@ -141,9 +141,11 @@
             </select>
         </div>
 
-        <div class="theme-chooser settings-section">
+        <div class="settings-section">
             <h3 data-i18n="settings_theme">Theme</h3>
-            <!-- existing theme chooser content -->
+            <div id="themeChooser" class="theme-chooser">
+                <!--dinamic content-->
+            </div>
         </div>
         <script>
             function loadDefaultPostSettings() {

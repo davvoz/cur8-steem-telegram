@@ -3,7 +3,12 @@ import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
 import { appState } from "../core/AppState.js";
-import { t } from "../i18n/translationService.js";
+import { translations } from "../i18n/translations.js";
+
+function t(key) {
+    const lang = localStorage.getItem('language') || 'en';
+    return translations[lang][key] || key;
+}
 
 class ApiService {
     constructor(client) {
@@ -112,8 +117,6 @@ class DraftManager {
             this.appendNoDraftsMessage(unscheduledList);
             return;
         }
-
-
 
         const { scheduledDrafts, unscheduledDrafts } = this.sortAndSeparateDrafts(drafts);
         this.populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList);
