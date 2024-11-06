@@ -9,6 +9,7 @@ import { de } from './locales/de.js';
 import { uk } from './locales/uk.js';
 import { ar } from './locales/ar.js';
 import { zh } from './locales/zh.js';
+import { pt } from './locales/pt.js';
 
 export const translations = {
     en,
@@ -21,7 +22,8 @@ export const translations = {
     de,
     uk,
     ar,
-    zh
+    zh,
+    pt
 };
 
 
