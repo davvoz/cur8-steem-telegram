@@ -1,5 +1,5 @@
 const MAX_FILE_SIZE_MB = 15;
-const UPLOAD_TIMEOUT_MS = 30000; // 30 secondi di timeout
+const UPLOAD_TIMEOUT_MS = 60000; // 60 secondi di timeout
 
 export function initializeImageUpload() {
     const dropZone = document.getElementById('dropZone');
