@@ -15,8 +15,11 @@ class App {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
         const startParam = params.get('start') || params.get('startattach') || params.get('platform');
-        localStorage.setItem('platform', startParam);
-        
+        if(startParam === null) {
+            localStorage.setItem('platform', localStorage.getItem('justPlatform'));
+        } else {
+            localStorage.setItem('platform', startParam);
+        }        
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
             window.location.reload(); 

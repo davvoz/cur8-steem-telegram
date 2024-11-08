@@ -1,10 +1,8 @@
+import { displayResult } from '../components/dialog.js';
 export class ApiClient {
     constructor() {
         this.apiKey = 'your_secret_api_key';
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
-        const startParam = params.get('start') || params.get('startattach') || params.get('platform');
-        
+        const startParam = localStorage.getItem('platform');
         const baseUrlMap = {
             'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem',
             'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive'
@@ -111,6 +109,5 @@ export class ApiClient {
     listaComunities() {
         return this.sendRequest('/communities', 'GET');
     }
-
 
 }

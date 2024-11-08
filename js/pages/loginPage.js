@@ -149,6 +149,7 @@ export async function handleSteemLogin() {
         const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
         console.log('Username:', username);
 
+        localStorage.setItem('justPlatform', 'STEEM');
         const idTgr = localStorage.getItem('idTelegram');
         await loginSteemLogin(username, idTgr);
         window.history.replaceState({}, document.title, window.location.pathname);
