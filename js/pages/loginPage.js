@@ -1,7 +1,7 @@
 
 import { displayResult } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
-import  appInitializerInstance  from '../core/AppInitializer.js';
+import appInitializerInstance from '../core/AppInitializer.js';
 
 const client = new ApiClient();
 
@@ -113,16 +113,19 @@ export async function login() {
         });
     } catch (error) {
         console.error('Error in login:', error);
-        const   errorMessage = `${error.message}\n Wrong username or password`;
-        displayResult({ error: errorMessage }, 'error', true,appInitializerInstance.initializeApp() );        
+        const errorMessage = `${error.message}\n Wrong username or password`;
+        displayResult({ error: errorMessage }, 'error', true, appInitializerInstance.initializeApp());
     }
 }
- 
+
 export function goToSteemLogin() {
     handleCallback();
+    debugger
+    console.log(window.location.origin + window.location.pathname +// il parametro platform 
+        window.location.search);
     const steemClient = new window.steemlogin.Client({
         app: 'cur8',
-        callbackURL: window.location.origin + window.location.pathname,
+        callbackURL: window.location.origin + window.location.pathname + window.location.search,
         scope: ['login', 'vote', 'comment', 'custom_json'],
     });
 

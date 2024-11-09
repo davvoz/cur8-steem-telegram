@@ -7,9 +7,10 @@ export class ApiClient {
             'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem',
             'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive'
         };
-
-        this.baseUrl = baseUrlMap[startParam] || (() => {
-            console.error('Invalid start parameter:', startParam);
+        const secureStartParam = // eliminiamo tutto quello che c'è dopo il primo ?
+            startParam.split('?')[0];
+        this.baseUrl = baseUrlMap[secureStartParam] || (() => {
+            console.error('Invalid start parameter:',secureStartParam );
             displayResult(
                 { error: 'Invalid start parameter, please reload the page' },
                 'error',
