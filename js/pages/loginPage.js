@@ -118,6 +118,33 @@ export async function login() {
     }
 }
 
+export function goToHiveLogin() {
+    handleCallback();
+    const app = 'cur8';
+    const callbackURL = window.location.origin + window.location.search;
+    const scope = ['login', 'vote', 'comment', 'custom_json'];
+
+      const authURL = `https://hivesigner.com/oauth2/authorize?client_id=${app}&redirect_uri=${encodeURIComponent(callbackURL)}&scope=${scope.join(',')}`;
+      window.location.href = authURL;
+
+    // Check for authentication response
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const accessToken = urlParams.get('access_token');
+    // const error = urlParams.get('error');
+    // const statusElement = document.getElementById('status');
+
+    // if (accessToken) {
+    //   statusElement.textContent = 'Successfully authenticated with Hive!';
+    //   statusElement.classList.add('success');
+    //   // Store the access token for future use
+    //   localStorage.setItem('hive_access_token', accessToken);
+    //   window.location.href = urlParams;
+    // } else if (error) {
+    //   statusElement.textContent = `Authentication failed: ${error}`;
+    //   statusElement.classList.add('error');
+    // }
+}
+
 export function goToSteemLogin() {
     handleCallback();
     debugger
@@ -143,6 +170,7 @@ export function goToSteemLogin() {
 
 export async function handleSteemLogin() {
     const accessTokenPresente = window.location.search.includes('access_token');
+    const platform = localStorage.getItem('Platform');
     console.log('accessTokenPresente:', accessTokenPresente);
 
     if (accessTokenPresente) {
@@ -152,7 +180,7 @@ export async function handleSteemLogin() {
         const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
         console.log('Username:', username);
 
-        localStorage.setItem('justPlatform', 'STEEM');
+        localStorage.setItem('justPlatform', 'HIVE');
         const idTgr = localStorage.getItem('idTelegram');
         await loginSteemLogin(username, idTgr);
         window.history.replaceState({}, document.title, window.location.pathname);

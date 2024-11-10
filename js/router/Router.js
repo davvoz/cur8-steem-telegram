@@ -3,15 +3,17 @@ import { appState } from '../core/AppState.js';
 import { showPage } from '../services/pageService.js';
 export class Router {
     constructor() {
+        const platform = localStorage.getItem('platform') || 'defaultPlatform'; // Imposta un valore di default se non è presente
+    
         this.routes = {
-            '/': this.showAccountPage,
-            '/post': this.showPostPage,
-            '/draft': this.showDraftPage,
-            '/login': this.showLoginPage,
-            '/config': this.showConfigPage,
-            '/draft/edit/:id': this.showPostPage.bind(this), // Add new route for draft editing
-
+            [`/?platform=${platform}/`]: this.showAccountPage,
+            [`/?platform=${platform}/post`]: this.showPostPage,
+            [`/?platform=${platform}/draft`]: this.showDraftPage,
+            [`/?platform=${platform}/login`]: this.showLoginPage,
+            [`/?platform=${platform}/config`]: this.showConfigPage,
+            [`/?platform=${platform}/draft/edit/:id`]: this.showPostPage.bind(this), // Aggiungi nuova rotta per la modifica del draft
         };
+    
         this.navigationHistory = appState.navigationHistory;
     }
 
@@ -72,7 +74,8 @@ export class Router {
     }
 
     handleRoute() {
-        const path = window.location.hash.slice(1) || '/';
+        const platform = localStorage.getItem('platform')
+        const path = window.location.hash.slice(1) || `/?platform=${platform}`;
         this.navigationHistory.push(path);
         
         const { handler, params } = this.parseRoute(path);

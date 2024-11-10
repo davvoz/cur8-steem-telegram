@@ -3,29 +3,30 @@ import TelegramService from '../services/telegram.js';
 
 
 const telegramService = new TelegramService();
+const platform = localStorage.getItem('platform')
 
-export const routes = {
-    '/': () => {
+export const routes = () => ({
+    [`/?platform=${platform}/`]: () => {
         showPage('accountPage');
         telegramService.hideBackButton();
     },
-    '/post': () => {
+    [`/?platform=${platform}/post`]: () => {
         showPage('postPage');
         telegramService.hideBackButton();
         //telegramService.setupBackButton();
     },
-    '/draft': () => {
+    [`/?platform=${platform}/draft`]: () => {
         showPage('draftPage');
         telegramService.hideBackButton();
         //telegramService.setupBackButton();
     },
-    '/login': () => {
+    [`/?platform=${platform}/login`]: () => {
         showPage('loginPage');
         telegramService.setupBackButton();
     },
-    '/config': () => {
+    [`/?platform=${platform}/config`]: () => {
         showPage('configPage');
         telegramService.hideBackButton();
         //telegramService.setupBackButton();
     }
-};
+});

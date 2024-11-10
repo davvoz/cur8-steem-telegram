@@ -14,21 +14,22 @@ class App {
     async initialize() {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
-        const startParam = params.get('start') || params.get('startattach') || params.get('platform');
-        if(startParam === null) {
-            localStorage.setItem('platform', localStorage.getItem('justPlatform'));
-        } else {
-            localStorage.setItem('platform', startParam);
-        }        
-        if (!localStorage.getItem('pageReloaded')) {
-            localStorage.setItem('pageReloaded', 'true'); 
-            window.location.reload(); 
-            return; // Stop further execution until the page reloads 
-            } // Clear the reload flag 
+        const platform = params.get('platform');
+        localStorage.setItem('platform', platform);
+        // if(startParam === null) {
+        //     localStorage.setItem('platform', localStorage.getItem('justPlatform'));
+        // } else {
+        //     localStorage.setItem('platform', startParam);
+        // }        
+        // if (!localStorage.getItem('pageReloaded')) {
+        //     localStorage.setItem('pageReloaded', 'true'); 
+        //     window.location.reload(); 
+        //     return; // Stop further execution until the page reloads 
+        //     } // Clear the reload flag 
             
-        localStorage.removeItem('pageReloaded');
+        // localStorage.removeItem('pageReloaded');
 
-        window.location.hash = '/';
+        window.location.hash = `/?platform=${platform}`;
 
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
@@ -38,7 +39,6 @@ class App {
         if (!window.location.search.includes('access_token')) {
             await appInitializerInstance.initializeApp();
         }
-
         // Initialize input validation
         this.eventManager.initializeInputValidation();
 

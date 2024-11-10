@@ -1,9 +1,10 @@
 import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview,cancellaBozza } from '../pages/postPage.js';
-import { goToSteemLogin, login } from '../pages/loginPage.js';
+import { goToSteemLogin, goToHiveLogin, login } from '../pages/loginPage.js';
 import { showPage } from '../services/pageService.js';
 
 export class EventManager {
     constructor() {
+        this.platform = localStorage.getItem('platform')
         this.eventListeners = [
             { id: 'goLogin', event: 'click', handler: login },
             { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },
@@ -17,6 +18,7 @@ export class EventManager {
             { id: 'loginInBtn', event: 'click', handler: () => this.goLogin() },
             { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' },
             { id: 'steemlogin', event: 'click', handler: goToSteemLogin },
+            { id: 'hivelogin', event: 'click', handler: goToHiveLogin },
             { id: 'cancellaBozza', event: 'click', handler: () => { cancellaBozza() } },
         ];
     }
