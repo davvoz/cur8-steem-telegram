@@ -6,12 +6,12 @@ export class Router {
         const platform = localStorage.getItem('platform') || 'defaultPlatform'; // Imposta un valore di default se non è presente
     
         this.routes = {
-            [`/?platform=${platform}/`]: this.showAccountPage,
-            [`/?platform=${platform}/post`]: this.showPostPage,
-            [`/?platform=${platform}/draft`]: this.showDraftPage,
-            [`/?platform=${platform}/login`]: this.showLoginPage,
-            [`/?platform=${platform}/config`]: this.showConfigPage,
-            [`/?platform=${platform}/draft/edit/:id`]: this.showPostPage.bind(this), // Aggiungi nuova rotta per la modifica del draft
+            [`/`]: this.showAccountPage,
+            [`/post`]: this.showPostPage,
+            [`/draft`]: this.showDraftPage,
+            [`/login`]: this.showLoginPage,
+            [`/config`]: this.showConfigPage,
+            [`/draft/edit/:id`]: this.showPostPage.bind(this), // Aggiungi nuova rotta per la modifica del draft
         };
     
         this.navigationHistory = appState.navigationHistory;

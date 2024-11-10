@@ -4,7 +4,6 @@ import { showPage } from '../services/pageService.js';
 
 export class EventManager {
     constructor() {
-        this.platform = localStorage.getItem('platform')
         this.eventListeners = [
             { id: 'goLogin', event: 'click', handler: login },
             { id: 'openComunities', event: 'click', handler: openComunitiesAutocomplete },

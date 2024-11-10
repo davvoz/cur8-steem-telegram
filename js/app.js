@@ -21,15 +21,15 @@ class App {
         // } else {
         //     localStorage.setItem('platform', startParam);
         // }        
-        // if (!localStorage.getItem('pageReloaded')) {
-        //     localStorage.setItem('pageReloaded', 'true'); 
-        //     window.location.reload(); 
-        //     return; // Stop further execution until the page reloads 
-        //     } // Clear the reload flag 
+        if (!localStorage.getItem('pageReloaded')) {
+            localStorage.setItem('pageReloaded', 'true'); 
+            window.location.reload(); 
+            return; // Stop further execution until the page reloads 
+            } // Clear the reload flag 
             
-        // localStorage.removeItem('pageReloaded');
+        localStorage.removeItem('pageReloaded');
 
-        window.location.hash = `/?platform=${platform}`;
+        //window.location.hash = `/?platform=${platform}`;
 
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
