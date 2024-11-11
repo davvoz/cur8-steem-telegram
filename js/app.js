@@ -31,27 +31,33 @@ class App {
         // }        
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
-            window.location.search = `platform=${platform}&access_token=${accessToken}`;
+            if (accessToken){
+                window.location.reload(); 
+                //window.location.search = `platform=${platform}`
+            }
+            else{
+                window.location.search = `platform=${platform}`;
+            }
             //window.location.reload(); 
             return; // Stop further execution until the page reloads 
             } // Clear the reload flag 
             
         localStorage.removeItem('pageReloaded');
 
-        
-
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
 
         await handleSteemLogin(accessToken, username);
-        if (!window.location.search.includes('access_token')) {
-            await appInitializerInstance.initializeApp();
+        if (!accessToken || accessToken === 'null') {
+             await appInitializerInstance.initializeApp(); 
         }
-        // Initialize input validation
+        else { 
+            console.error('Token non presente o nullo'); 
+        }
+
         this.eventManager.initializeInputValidation();
 
-        // Set up event listeners
         window.addEventListener('hashchange', () => appState.router.handleRoute());
     }
 }

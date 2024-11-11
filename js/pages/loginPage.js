@@ -5,7 +5,6 @@ import appInitializerInstance from '../core/AppInitializer.js';
 
 const client = new ApiClient();
 
-
 function updateStatus(message) {
     displayResult({ info: message }, 'info', true);
 }
@@ -156,16 +155,13 @@ export async function handleSteemLogin(token, username) {
     const platform = localStorage.getItem('Platform');
     //console.log('accessTokenPresente:', accessTokenPresente);
 
-    if (token != 'null') {
-        // const token = window.location.search.split('access_token=')[1];
-        console.log('Token:', token);
-
-        // const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
-        // console.log('Username:', username);
-
-        // localStorage.setItem('justPlatform', 'HIVE');
-        const idTgr = localStorage.getItem('idTelegram');
-        await loginSteemLogin(username, idTgr);
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    if (token && token !== 'null') {
+         console.log('Token:', token);
+         const idTgr = localStorage.getItem('idTelegram');
+         await loginSteemLogin(username, idTgr); 
+         window.history.replaceState({}, document.title, window.location.pathname); 
+        } 
+         else { 
+            console.error('Token non presente o nullo'); 
+        }
 }
