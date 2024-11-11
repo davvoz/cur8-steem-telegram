@@ -120,7 +120,7 @@ export async function login() {
 export function goToHiveLogin() {
     handleCallback();
     const app = 'cur8';
-    const callbackURL = window.location.origin + `${window.location.search}&`;
+    const callbackURL = window.location.origin + `${window.location.search}`;
     const scope = ['login', 'vote', 'comment', 'custom_json'];
 
       const authURL = `https://hivesigner.com/oauth2/authorize?client_id=${app}&redirect_uri=${encodeURIComponent(callbackURL)}&scope=${scope.join(',')}`;
@@ -134,7 +134,7 @@ export function goToSteemLogin() {
         window.location.search);
     const steemClient = new window.steemlogin.Client({
         app: 'cur8',
-        callbackURL: window.location.origin + window.location.pathname + window.location.search,
+        callbackURL: window.location.origin + `${window.location.search}`,
         scope: ['login', 'vote', 'comment', 'custom_json'],
     });
 
