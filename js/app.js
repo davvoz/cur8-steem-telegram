@@ -12,9 +12,17 @@ class App {
     }
 
     async initialize() {
-        const url = new URL(window.location.href);
+        let url_string = window.location.href
+        let questionMarkCount = 0;
+        let modified_url = url_string.replace(/\?/g, function(match) {
+            questionMarkCount++;
+            return questionMarkCount === 2 ? '&' : match;
+        });
+        const url = new URL(modified_url);
         const params = new URLSearchParams(url.search);
-        const platform = params.get('platform');
+        const platform = params.get('platform'); // Estrai il valore di 'access_token' 
+        const accessToken = params.get('access_token');
+        const username = params.get('username');
         localStorage.setItem('platform', platform);
         // if(startParam === null) {
         //     localStorage.setItem('platform', localStorage.getItem('justPlatform'));
@@ -23,19 +31,20 @@ class App {
         // }        
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
-            window.location.reload(); 
+            window.location.search = `platform=${platform}&access_token=${accessToken}`;
+            //window.location.reload(); 
             return; // Stop further execution until the page reloads 
             } // Clear the reload flag 
             
         localStorage.removeItem('pageReloaded');
 
-        //window.location.hash = `/?platform=${platform}`;
+        
 
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
 
-        await handleSteemLogin();
+        await handleSteemLogin(accessToken, username);
         if (!window.location.search.includes('access_token')) {
             await appInitializerInstance.initializeApp();
         }

@@ -15,7 +15,6 @@ export class AccountManager {
     platform_logo() {
         const platform = localStorage.getItem('platform');
         const logo = document.getElementById('platformLogo');
-    
         if (platform === 'STEEM') {
             //logo.classList.add('blue-filter');
             logo.src = 'assets/logo_steem.jpg'; // Percorso del logo per STEEM
