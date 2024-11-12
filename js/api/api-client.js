@@ -2,15 +2,13 @@ import { displayResult } from '../components/dialog.js';
 export class ApiClient {
     constructor() {
         this.apiKey = 'your_secret_api_key';
-        const startParam = localStorage.getItem('platform');
+        const platform = localStorage.getItem('platform');
         const baseUrlMap = {
             'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem',
             'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive'
         };
-        const secureStartParam = // eliminiamo tutto quello che c'è dopo il primo ?
-            startParam.split('?')[0];
-        this.baseUrl = baseUrlMap[secureStartParam] || (() => {
-            console.error('Invalid start parameter:',secureStartParam );
+        this.baseUrl = baseUrlMap[platform] || (() => {
+            console.error('Invalid start parameter:',platform);
             displayResult(
                 { error: 'Invalid start parameter, please reload the page' },
                 'error',
