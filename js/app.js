@@ -32,7 +32,10 @@ class App {
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
             if (accessToken){
-                window.location.reload(); 
+                console.log(`${url}: pre`)
+                window.location.reload()
+                //window.location.reload().then(()=>{console.log('CIAO DIO PORCO')})
+                console.log(`${url}: dopo`)
                 //window.location.search = `platform=${platform}`
             }
             else{
