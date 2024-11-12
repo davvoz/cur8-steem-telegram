@@ -24,7 +24,8 @@ body {
     caret-color: transparent;
 }
 
-input , textarea {
+input,
+textarea {
     caret-color: var(--primary-color);
 }
 
@@ -109,7 +110,7 @@ textarea {
 }
 
 .login-container {
-    display: flex; 
+    display: flex;
     gap: var(--spacing-sm);
 }
 
@@ -121,7 +122,6 @@ textarea {
 
 .blue-filter {
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%); 
-    background-color: rgba(255, 255, 255, 0.5);
 }
 
 
@@ -1155,7 +1155,7 @@ table td {
         background: var(--background-secondary);
         border-color: var(--border-color-dark);
     }
-    
+
     .settings-select option {
         background: var(--background-secondary);
     }
@@ -1170,4 +1170,10 @@ table td {
     color: var(--on-background);
     font-size: 16px;
     margin-top: 8px;
+}
+
+.loginButtons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
 }
