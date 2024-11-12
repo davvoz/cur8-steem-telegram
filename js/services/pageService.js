@@ -7,6 +7,9 @@ export function showPage(pageId) {
     document.getElementById(pageId).classList.add('active');
     if (platform === 'STEEM') {
         document.getElementById('steemlogin').style.display = 'block'; 
-       }
+    }
+    if (platform === 'HIVE') {
+        document.getElementById('hivelogin').style.display = 'block';
+    }
 }
 

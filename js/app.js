@@ -65,6 +65,7 @@ function initializeLanguage() {
     languageManager.updatePageText();
 }
 
+
 // Add data-i18n attributes to elements
 function addTranslationAttributes() {
     // Navigation

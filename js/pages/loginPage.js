@@ -93,6 +93,15 @@ export async function loginSteemLogin(username, idTelegram) {
     }
 }
 
+export async function loginHiveLogin(username="menny.trx") {
+    try {
+        const result = await hive.api.getAccounts([username]);
+    } catch (error) {
+        console.error('Error in login:', error);
+        displayResult({ error: errorMessage }, 'error', true);
+    }
+}
+
 export async function login() {
     const idTelegram = localStorage.getItem('idTelegram');
     try {
@@ -135,6 +144,46 @@ export function goToSteemLogin() {
     } catch (error) {
         console.error('Error during the login process:', error);
         updateStatus('Error during the login process: ' + error.message);
+    }
+}
+
+// export function hive_keychain(username="menny.trx") {
+//     const message = 'Login to my app'; // Messaggio di login
+//     const signatureRequest = {
+//         username: username,
+//         message: message,
+//         // Puoi includere ulteriori informazioni se necessario
+//     };
+
+//     // Crea l'URL per il deep link
+//     const deepLinkUrl = `hive://sign?username=${username}&message=${encodeURIComponent(message)}`;
+
+//     // Invia la richiesta di firma
+//     window.location.href = deepLinkUrl;
+
+//     // A questo punto, l'utente sarà reindirizzato all'app Hive Chain Mobile per firmare la richiesta
+// }
+
+export async function hive_keychain() {
+    if (typeof window.hive_keychain === 'undefined') {
+        alert('Hive Keychain non è installato. Si prega di installarlo per continuare.');
+        return;
+    }
+
+    try {
+        const username = 'menny.trx'; // Sostituisci con il tuo username Hive
+
+        // Richiesta di login
+        const response = await window.hive_keychain.requestSignBuffer(username, 'Login to my app', 'Active');
+
+        if (response) {
+            console.log('Login avvenuto con successo!', response);
+            // Qui puoi gestire la logica di login, ad esempio salvare il token o l'utente
+        } else {
+            console.log('Login fallito.');
+        }
+    } catch (error) {
+        console.error('Errore durante il login:', error);
     }
 }
 
