@@ -31,6 +31,7 @@ class App {
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
             window.location.reload(); 
+            // window.location.search = `platform=${platform}`;
             return; // Stop further execution until the page reloads 
             } // Clear the reload flag 
             
@@ -41,7 +42,6 @@ class App {
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
-
         
         if (!token || token === 'null') {
             await appInitializerInstance.initializeApp();
