@@ -1,5 +1,5 @@
 import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview,cancellaBozza } from '../pages/postPage.js';
-import { goToSteemLogin, login, hive_keychain } from '../pages/loginPage.js';
+import { goToSteemLogin, login, goToHiveLogin } from '../pages/loginPage.js';
 import { showPage } from '../services/pageService.js';
 
 export class EventManager {
@@ -18,7 +18,7 @@ export class EventManager {
             { id: 'configBtn', event: 'click', handler: () => window.location.hash = '#/config' },
             { id: 'steemlogin', event: 'click', handler: goToSteemLogin },
             { id: 'cancellaBozza', event: 'click', handler: () => { cancellaBozza() } },
-            { id: 'hivelogin', event: 'click', handler: () =>  hive_keychain()},
+            { id: 'hivelogin', event: 'click', handler: () =>  goToHiveLogin()},
             
         ];
     }

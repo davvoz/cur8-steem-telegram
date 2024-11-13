@@ -1,5 +1,5 @@
 import { initializeImageUpload } from './api/image-upload.js';
-import { handleSteemLogin } from './pages/loginPage.js';
+import { handleSignersLogin } from './pages/loginPage.js';
 import { appState } from './core/AppState.js';
 import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
@@ -12,13 +12,21 @@ class App {
     }
 
     async initialize() {
-        const url = new URL(window.location.href);
+        let url_string = window.location.href
+        let questionMarkCount = 0;
+        let modified_url = url_string.replace(/\?/g, function(match) {
+            questionMarkCount++;
+            return questionMarkCount === 2 ? '&' : match;
+        });
+        const url = new URL(modified_url);
         const params = new URLSearchParams(url.search);
-        const startParam = params.get('start') || params.get('startattach') || params.get('platform');
-        if(startParam === null) {
+        const platform = params.get('platform');
+        const token = params.get('access_token');
+        const username = params.get('username');
+        if(platform === null) {
             localStorage.setItem('platform', localStorage.getItem('justPlatform'));
         } else {
-            localStorage.setItem('platform', startParam);
+            localStorage.setItem('platform', platform);
         }        
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
@@ -34,15 +42,16 @@ class App {
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
 
-        await handleSteemLogin();
-        if (!window.location.search.includes('access_token')) {
+        
+        if (!token || token === 'null') {
             await appInitializerInstance.initializeApp();
         }
+        else{
+            await handleSignersLogin(platform, token, username);
+        }
 
-        // Initialize input validation
         this.eventManager.initializeInputValidation();
 
-        // Set up event listeners
         window.addEventListener('hashchange', () => appState.router.handleRoute());
     }
 }
@@ -64,10 +73,8 @@ function initializeLanguage() {
         new LanguageSelector(languageSelect);
     }
     
-    // Initial page translation
     languageManager.updatePageText();
 }
-
 
 // Add data-i18n attributes to elements
 function addTranslationAttributes() {

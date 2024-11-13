@@ -71,7 +71,7 @@ function displayUserData(userData) {
     dialog.addEventListener('close', () => dialog.remove());
 }
 
-export async function loginSteemLogin(username, idTelegram) {
+export async function SignersLogin(username, idTelegram) {
     try {
         await client.login(
             idTelegram,
@@ -134,7 +134,7 @@ export function goToSteemLogin() {
         window.location.search);
     const steemClient = new window.steemlogin.Client({
         app: 'cur8',
-        callbackURL: window.location.origin + window.location.pathname + window.location.search,
+        callbackURL: window.location.origin + window.location.search,
         scope: ['login', 'vote', 'comment', 'custom_json'],
     });
 
@@ -150,22 +150,15 @@ export function goToSteemLogin() {
     }
 }
 
-// export function hive_keychain(username="menny.trx") {
-//     const message = 'Login to my app'; // Messaggio di login
-//     const signatureRequest = {
-//         username: username,
-//         message: message,
-//         // Puoi includere ulteriori informazioni se necessario
-//     };
+export function goToHiveLogin() {
+    handleCallback();
+    const app = 'cur8';
+    const callbackURL = window.location.origin + window.location.search;
+    const scope = ['login', 'vote', 'comment', 'custom_json'];
 
-//     // Crea l'URL per il deep link
-//     const deepLinkUrl = `hive://sign?username=${username}&message=${encodeURIComponent(message)}`;
-
-//     // Invia la richiesta di firma
-//     window.location.href = deepLinkUrl;
-
-//     // A questo punto, l'utente sarà reindirizzato all'app Hive Chain Mobile per firmare la richiesta
-// }
+      const authURL = `https://hivesigner.com/oauth2/authorize?client_id=${app}&redirect_uri=${encodeURIComponent(callbackURL)}&scope=${scope.join(',')}`;
+      window.location.href = authURL;
+}
 
 export async function hive_keychain() {
     if (typeof window.hive_keychain === 'undefined') {
@@ -190,20 +183,13 @@ export async function hive_keychain() {
     }
 }
 
-export async function handleSteemLogin() {
-    const accessTokenPresente = window.location.search.includes('access_token');
-    console.log('accessTokenPresente:', accessTokenPresente);
-
-    if (accessTokenPresente) {
-        const token = window.location.search.split('access_token=')[1];
-        console.log('Token:', token);
-
-        const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
-        console.log('Username:', username);
-
-        localStorage.setItem('justPlatform', 'STEEM');
-        const idTgr = localStorage.getItem('idTelegram');
-        await loginSteemLogin(username, idTgr);
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+export async function handleSignersLogin(platform, token, username) {
+    console.log('accessTokenPresente:', token);
+    console.log('Token:', token);
+    console.log('Username:', username);
+    localStorage.setItem('justPlatform', platform);
+    console.log(`justPlatform setted: ${platform}`)
+    const idTgr = localStorage.getItem('idTelegram');
+    await SignersLogin(username, idTgr);
+    window.history.replaceState({}, document.title, window.location.pathname);
 }
