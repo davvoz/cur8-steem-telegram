@@ -124,7 +124,7 @@ export class AccountManager {
 
         confirmButton.addEventListener('click', handleConfirmLogout);
         cancelButton.addEventListener('click', closeDialog);
-        dialog.addEventListener('close', closeDialog);
+        dialog.addEventListener('close', closeDialog);        
     }
 
     createLogoutDialog() {
@@ -163,7 +163,8 @@ export class AccountManager {
                 document.getElementById('postBtn').disabled = true;
                 document.getElementById('accountBtn').disabled = true;
                 document.getElementById('configBtn').disabled = true;
-                showPage('loginPage');
+                const platform = localStorage.getItem('justPlatform');
+                window.location.search = `platform=${platform}`;
                 return;
             }
             appInitializerInstance.setUsernames(result.usernames);
