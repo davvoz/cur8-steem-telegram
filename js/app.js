@@ -39,7 +39,7 @@ class App {
             
         localStorage.removeItem('pageReloaded');
 
-        window.location.hash = '/';
+        //window.location.hash = '/';
 
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();

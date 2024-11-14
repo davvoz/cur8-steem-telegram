@@ -1,22 +1,7 @@
 const MAX_FILE_SIZE_MB = 15;
 const UPLOAD_TIMEOUT_MS = 60000; // 60 secondi di timeout
 
-let baseUrl = ''
-
 export function initializeImageUpload() {
-    const platform = localStorage.getItem('platform');
-    const baseUrlMap = {
-        'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem/upload_base64_image',
-        'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive/upload_base64_image'
-    };
-    let baseUrl = baseUrlMap[platform] || (() => {
-        console.error('Invalid start parameter:', platform);
-    })();
-
-    if (!baseUrl) {
-        console.error('Error during initialization, please reload the page')
-    }
-
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
 
@@ -96,6 +81,17 @@ function uploadImage(file) {
                 )
             ]);
         };
+
+        const platform = localStorage.getItem('platform');
+
+        const baseUrlMap = {
+            'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/hive/upload_base64_image',
+            'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive/upload_base64_image'
+        };
+
+        const baseUrl = baseUrlMap[platform] || (() => {
+            console.error('Invalid start parameter:', platform);
+        })();
 
         // Esegui la richiesta con timeout
         fetchWithTimeout(baseUrl, {
