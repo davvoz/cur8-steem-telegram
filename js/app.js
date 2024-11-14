@@ -20,20 +20,22 @@ class App {
         });
         const url = new URL(modified_url);
         const params = new URLSearchParams(url.search);
-        const platform = params.get('platform');
+        let platform = params.get('platform');
         const token = params.get('access_token');
         const username = params.get('username');
         if(platform === null) {
-            localStorage.setItem('platform', localStorage.getItem('justPlatform'));
+            platform = localStorage.getItem('justPlatform')
+            localStorage.setItem('platform', platform);
+            window.location.search = `platform=${platform}`;
         } else {
             localStorage.setItem('platform', platform);
         }        
         if (!localStorage.getItem('pageReloaded')) {
             localStorage.setItem('pageReloaded', 'true'); 
             window.location.reload(); 
-            // window.location.search = `platform=${platform}`;
-            return; // Stop further execution until the page reloads 
-            } // Clear the reload flag 
+            //window.location.search = `platform=${platform}`;
+            return; 
+            }
             
         localStorage.removeItem('pageReloaded');
 
