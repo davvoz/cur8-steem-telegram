@@ -85,7 +85,7 @@ function uploadImage(file) {
         const platform = localStorage.getItem('platform');
 
         const baseUrlMap = {
-            'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/hive/upload_base64_image',
+            'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem/upload_base64_image',
             'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive/upload_base64_image'
         };
 
