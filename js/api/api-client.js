@@ -2,7 +2,16 @@ import { displayResult } from '../components/dialog.js';
 export class ApiClient {
     constructor() {
         this.apiKey = 'your_secret_api_key';
-        const platform = localStorage.getItem('platform');
+        // const platform = localStorage.getItem('platform');
+        let url_string = window.location.href
+        let questionMarkCount = 0;
+        let modified_url = url_string.replace(/\?/g, function(match) {
+            questionMarkCount++;
+            return questionMarkCount === 2 ? '&' : match;
+        });
+        const url = new URL(modified_url);
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform');
         const baseUrlMap = {
             'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem',
             'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive'
