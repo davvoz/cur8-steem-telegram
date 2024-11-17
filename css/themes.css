@@ -209,18 +209,18 @@
 }
 
 .theme-selector-dark-theme {
-    --primary-color: #212121;
-    --primary-variant: #484848;
-    --secondary-color: #757575;
-    --background: #2b1717;
-    --surface: #333333;
-    --error: #ff5252;
-    --success: #69f0ae;
-    --warning: #ffd740;
-    --on-primary: #ffffff;
-    --on-background: #f1f2f6;
-    --on-surface: #dfe4ea;
-    --on-secondary: #ffffff;
+    --primary-color: #212121; /* Grigio scuro */
+    --primary-variant: #484848; /* Grigio più chiaro */
+    --secondary-color: #9e9e9e; /* Grigio più chiaro e distintivo */
+    --background: #2b1717; /* Sfondo scuro */
+    --surface: #444444; /* Grigio scuro */
+    --error: #d32f2f; /* Rosso scuro */
+    --success: #69f0ae; /* Verde chiaro */
+    --warning: #ffd740; /* Giallo */
+    --on-primary: #ffffff; /* Testo bianco su primario */
+    --on-background: #ffffff; /* Testo bianco su sfondo */
+    --on-surface: #ffffff; /* Testo bianco su superficie */
+    --on-secondary: #000000; /* Testo nero su secondario */
 }
 
 .theme-selector-horror-theme {
@@ -329,18 +329,18 @@
 }
 
 .theme-selector-reverse-horror-theme {
-    --primary-color: #000000;
-    --primary-variant: #212121;
-    --secondary-color: #757575;
-    --background: #ff3d00;
-    --surface: #ff6e40;
-    --error: #ff3d00;
-    --success: #00e676;
-    --warning: #ffab00;
-    --on-primary: #000000;
-    --on-background: #f1f2f6;
-    --on-surface: #dfe4ea;
-    --on-secondary: #220101;
+    --primary-color: #000000; /* Nero */
+    --primary-variant: #212121; /* Grigio scuro */
+    --secondary-color: #ff9100; /* Arancio brillante */
+    --background: #ff3d00; /* Sfondo arancione */
+    --surface: #ff8f00; /* Arancio più scuro */
+    --error: #d32f2f; /* Rosso scuro */
+    --success: #00e676; /* Verde brillante */
+    --warning: #ffab00; /* Giallo */
+    --on-primary: #ffffff; /* Testo bianco su primario */
+    --on-background: #f1f2f6; /* Testo chiaro su sfondo */
+    --on-surface: #ffffff; /* Testo bianco su superficie */
+    --on-secondary: #000000; /* Testo nero su secondario */
 }
 
 .theme-selector-mio-theme {
