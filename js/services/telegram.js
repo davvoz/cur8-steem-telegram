@@ -5,7 +5,7 @@ export const initializeTelegram = async () => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
         return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
-    return getDialogTelegramId();
+    return 1026795763 //getDialogTelegramId();
 };
 
 export default class TelegramService {

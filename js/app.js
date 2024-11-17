@@ -23,23 +23,20 @@ class App {
         let platform = params.get('platform');
         const token = params.get('access_token');
         const username = params.get('username');
-        if(platform === null) {
-            platform = localStorage.getItem('justPlatform')
-            localStorage.setItem('platform', platform);
-            window.location.search = `platform=${platform}`;
+        const justplatform = localStorage.getItem('justPlatform')
+
+        if(platform === null) {          
+            localStorage.setItem('platform', justplatform);
+            window.location.search = `platform=${justplatform}`;
+        } else if (platform !== justplatform){
+            localStorage.setItem('justPlatform', platform)
+            window.location.reload(); 
+            // window.location.search = `platform=${platform}`;
         } else {
             localStorage.setItem('platform', platform);
-        }        
-        if (!localStorage.getItem('pageReloaded')) {
-            localStorage.setItem('pageReloaded', 'true'); 
-            window.location.reload(); 
-            //window.location.search = `platform=${platform}`;
-            return; 
-            }
-            
-        localStorage.removeItem('pageReloaded');
+        } 
 
-        //window.location.hash = '/';
+        window.location.hash = '/';
 
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
