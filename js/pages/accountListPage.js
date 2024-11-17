@@ -31,6 +31,8 @@ export class AccountManager {
         const li = document.createElement('li');
         li.appendChild(this.createContainer(username));
         document.getElementById('accountList').appendChild(li);
+        const platform = localStorage.getItem('platform');
+        window.location.search = `platform=${platform}`
     }
 
     createContainer(username) {
