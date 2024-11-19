@@ -144,7 +144,8 @@ export class AccountManager {
             const id = localStorage.getItem('idTelegram');
             //starta lo spinner
             document.getElementById('spinner').classList.remove('hide');
-            await this.apiClient.logout(id, username);
+            const apiClient = new ApiClient();
+            await apiClient.logout(id, username);
             await this.handlePostLogout(id).then(() => {
                 document.getElementById('spinner').classList.add('hide');
             });
@@ -157,7 +158,9 @@ export class AccountManager {
 
     async handlePostLogout(id) {
         try {
-            const result = await this.apiClient.checkLogin(id);
+            const apiClient = new ApiClient();
+
+            const result = await apiClient.checkLogin(id);
             if (!result.usernames) {
                 document.getElementById('draftBtn').disabled = true;
                 document.getElementById('postBtn').disabled = true;

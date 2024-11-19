@@ -2,14 +2,42 @@ import { displayResult } from '../components/dialog.js';
 export class ApiClient {
     constructor() {
         this.apiKey = 'your_secret_api_key';
-        const startParam = localStorage.getItem('platform');
+        //const startParam = localStorage.getItem('platform');
+        //il nostro url è questo https://192.168.1.46:8093/?platform=STEEM#/
+        //oppure questo https://192.168.1.46:8093/?platform=STEEM?access_token=eyJzaWduZWRfbWVzc2FnZSI6eyJ0eXBlIjoicG9zdGluZyIsImFwcCI6ImN1cjgifSwiYXV0aG9ycyI6WyJob2wueWVzIl0sInRpbWVzdGFtcCI6MTczMjA1Njc1Mywic2lnbmF0dXJlcyI6WyIxZjQ4YjI2MTE3MDgzNmE2YzVkNWUwNDA5M2Y2YzM3ZTRiODYxNWI1NTdiZDUzMTNlOWE2YjUxZTYxMDU0N2IzZmEwOGU1NGEyNDFlYWM1Y2E4ZTQ4MDNiOWVkZmNhMDQ0ZjAzMTg2ZjNhMjBlODU2ZWQwYmMxODc5YzRmMTRmMzAyIl19&username=hol.yes&expires_in=604800&state=zez8k#/
+        console.log(window.location.href);
+        let startParam;
+        try {
+            startParam = window.location.href.split('?')[1].split('#')[0].split('=')[1];
+        } catch (error) {
+            startParam = null;
+        }
+        //cerchiamo nel localStorage platform
+        //console.log(platform);
+        const platform = localStorage.getItem('platform');
+        
+        console.log(startParam);
+        if  (!startParam) {
+            //cerchiamo nel sessionStorage steemlogin
+            const isPresent = sessionStorage.getItem('steemLoginState') ;
+            if (isPresent) {
+                startParam = 'STEEM';
+                //svuotiamo il sessionStorage
+                sessionStorage.removeItem('steemLoginState');
+                //riempiamo il localStorage
+                localStorage.setItem('platform', startParam);
+            } else {
+                startParam = null;
+            }
+        }
+
         const baseUrlMap = {
             'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem',
             'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive'
         };
         const secureStartParam = // eliminiamo tutto quello che c'è dopo il primo ?
             startParam.split('?')[0];
-        this.baseUrl = baseUrlMap[secureStartParam] || (() => {
+        this.baseUrl = baseUrlMap[startParam] || (() => {
             console.error('Invalid start parameter:',secureStartParam );
             displayResult(
                 { error: 'Invalid start parameter, please reload the page' },

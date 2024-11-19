@@ -5,7 +5,7 @@ import { showPage } from '../services/pageService.js';
 import { appState } from './AppState.js';
 import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { AccountManager } from '../pages/accountListPage.js';
-
+import { ApiClient } from '../api/api-client.js';
 
 class AppInitializer {
     constructor() {
@@ -30,8 +30,8 @@ class AppInitializer {
             }
 
             this.showSpinner();
-
-            const result = await appState.client.checkLogin(idTelegram);
+const client = new ApiClient();
+            const result = await client.checkLogin(idTelegram);
             if (!result.usernames) {
                 this.handleNoUsernamesFound();
                 return;

@@ -14,7 +14,7 @@ export class AppState {
         this.scheduledTime = null;
         this.idTelegram = '';
         this.usernameSelected = '';
-        this.client = new ApiClient();
+        //this.client = new ApiClient();
         this.navigationHistory = [];
         this.telegramLoginData = null;
         this._router = null;

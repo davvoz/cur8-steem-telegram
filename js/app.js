@@ -15,17 +15,17 @@ class App {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
         const startParam = params.get('start') || params.get('startattach') || params.get('platform');
-        if(startParam === null) {
+        if (startParam === null) {
             localStorage.setItem('platform', localStorage.getItem('justPlatform'));
         } else {
             localStorage.setItem('platform', startParam);
-        }        
+        }
         if (!localStorage.getItem('pageReloaded')) {
-            localStorage.setItem('pageReloaded', 'true'); 
-            window.location.reload(); 
+            localStorage.setItem('pageReloaded', 'true');
+            window.location.reload();
             return; // Stop further execution until the page reloads 
-            } // Clear the reload flag 
-            
+        } // Clear the reload flag 
+
         localStorage.removeItem('pageReloaded');
 
         window.location.hash = '/';
@@ -33,8 +33,9 @@ class App {
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
-
-        await handleSteemLogin();
+        if (!window.location.search.includes('platform=STEEM')) {
+            await handleSteemLogin();
+        }
         if (!window.location.search.includes('access_token')) {
             await appInitializerInstance.initializeApp();
         }
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const app = new App();
     await app.initialize().then(() => {
-        
+
         console.log('App initialized');
     });
 });
@@ -63,7 +64,7 @@ function initializeLanguage() {
     if (languageSelect) {
         new LanguageSelector(languageSelect);
     }
-    
+
     // Initial page translation
     languageManager.updatePageText();
 }
@@ -80,7 +81,7 @@ function addTranslationAttributes() {
     document.getElementById('postTitle').setAttribute('data-i18n', 'post_title_placeholder');
     document.getElementById('postBody').setAttribute('data-i18n', 'post_body_placeholder');
     document.getElementById('postTags').setAttribute('data-i18n', 'post_tags_placeholder');
-    
+
     // Buttons
     document.getElementById('postToSteem').setAttribute('data-i18n', 'post_publish_now');
     document.getElementById('salvaBozza').setAttribute('data-i18n', 'post_save_draft');

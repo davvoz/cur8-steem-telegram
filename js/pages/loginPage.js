@@ -120,7 +120,6 @@ export async function login() {
 
 export function goToSteemLogin() {
     handleCallback();
-    debugger
     console.log(window.location.origin + window.location.pathname +// il parametro platform 
         window.location.search);
     const steemClient = new window.steemlogin.Client({

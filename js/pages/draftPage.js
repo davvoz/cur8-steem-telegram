@@ -265,11 +265,15 @@ class DraftManager {
 }
 
 // Instantiating classes and initiating operations
-const client = new ApiClient();
-const apiService = new ApiService(client);
-const draftManager = new DraftManager(apiService);
-
+// const client = new ApiClient();
+// const apiService = new ApiService(client);
+// const draftManager = new DraftManager(apiService);
+let apiService = null;
 // Exporting a single function for initiating the draft loading
 export async function getUserDrafts() {
+    const client = new ApiClient();
+     apiService = new ApiService(client);
+    const draftManager = new DraftManager(apiService);
+
     draftManager.loadUserDrafts();
 }
