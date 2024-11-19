@@ -25,17 +25,6 @@ class App {
         const username = params.get('username');
         const justplatform = localStorage.getItem('justPlatform')
 
-        if(platform === null) {          
-            localStorage.setItem('platform', justplatform);
-            window.location.search = `platform=${justplatform}`;
-        } else if (platform !== justplatform){
-            localStorage.setItem('justPlatform', platform)
-            window.location.reload(); 
-            // window.location.search = `platform=${platform}`;
-        } else {
-            localStorage.setItem('platform', platform);
-        } 
-
         window.location.hash = '/';
 
         appState.router.handleRoute();
@@ -47,9 +36,22 @@ class App {
         }
         else{
             await handleSignersLogin(platform, token, username);
+            localStorage.setItem('platform', justplatform);
+            window.location.search = `platform=${justplatform}`;
         }
 
         this.eventManager.initializeInputValidation();
+        
+        // if(platform === null) {          
+        //     localStorage.setItem('platform', justplatform);
+        //     window.location.search = `platform=${justplatform}`;
+        // } else if (platform !== justplatform){
+        //     localStorage.setItem('justPlatform', platform)
+        //     window.location.reload(); 
+        //     // window.location.search = `platform=${platform}`;
+        // } else {
+        //     localStorage.setItem('platform', platform);
+        // } 
 
         window.addEventListener('hashchange', () => appState.router.handleRoute());
     }

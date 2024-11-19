@@ -6,6 +6,7 @@ import { ApiClient } from '../api/api-client.js';
 import  appInitializerInstance  from '../core/AppInitializer.js';
 import { showPage } from '../services/pageService.js';
 import { t } from '../i18n/translationService.js';
+import { Url_parameters } from '../services/parameters.js';
 
 export class AccountManager {
     constructor(apiClient = new ApiClient()) {
@@ -13,7 +14,10 @@ export class AccountManager {
     }
 
     platform_logo() {
-        const platform = localStorage.getItem('platform');
+        const url = Url_parameters()
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform');
+        // const platform = localStorage.getItem('platform');
         const logo = document.getElementById('platformLogo');
     
         if (platform === 'STEEM') {
@@ -31,8 +35,14 @@ export class AccountManager {
         const li = document.createElement('li');
         li.appendChild(this.createContainer(username));
         document.getElementById('accountList').appendChild(li);
-        const platform = localStorage.getItem('platform');
-        window.location.search = `platform=${platform}`
+
+        const url = Url_parameters()
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform')
+        if (!platform) {
+            platform = localStorage.getItem('platform');
+            window.location.search = `platform=${platform}`
+        }
     }
 
     createContainer(username) {
@@ -158,13 +168,7 @@ export class AccountManager {
     }
 
     async handlePostLogout(id) {
-        let url_string = window.location.href
-        let questionMarkCount = 0;
-        let modified_url = url_string.replace(/\?/g, function(match) {
-            questionMarkCount++;
-            return questionMarkCount === 2 ? '&' : match;
-        });
-        const url = new URL(modified_url);
+        const url = Url_parameters()
         const params = new URLSearchParams(url.search);
         const platform = params.get('platform');
         try {
