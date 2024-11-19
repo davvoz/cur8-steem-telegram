@@ -158,6 +158,15 @@ export class AccountManager {
     }
 
     async handlePostLogout(id) {
+        let url_string = window.location.href
+        let questionMarkCount = 0;
+        let modified_url = url_string.replace(/\?/g, function(match) {
+            questionMarkCount++;
+            return questionMarkCount === 2 ? '&' : match;
+        });
+        const url = new URL(modified_url);
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform');
         try {
             const result = await this.apiClient.checkLogin(id);
             if (!result.usernames) {
@@ -175,7 +184,7 @@ export class AccountManager {
             displayResult({ error: error.message }, 'error');
             appInitializerInstance.initializeApp();
         } finally {
-            window.location.search = 'platform=HIVE';
+            window.location.search = `platform=${platform}`;
             document.getElementById('spinner').classList.add('hide');
         }
     }
