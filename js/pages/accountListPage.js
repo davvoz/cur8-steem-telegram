@@ -188,7 +188,6 @@ export class AccountManager {
             displayResult({ error: error.message }, 'error');
             appInitializerInstance.initializeApp();
         } finally {
-            window.location.search = `platform=${platform}`;
             document.getElementById('spinner').classList.add('hide');
         }
     }
