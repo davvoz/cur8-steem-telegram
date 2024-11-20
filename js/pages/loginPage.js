@@ -2,9 +2,9 @@
 import { displayResult } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
 import appInitializerInstance from '../core/AppInitializer.js';
+import { Url_parameters } from '../services/parameters.js';
 
 const client = new ApiClient();
-
 
 function updateStatus(message) {
     displayResult({ info: message }, 'info', true);
@@ -73,10 +73,7 @@ function displayUserData(userData) {
 
 export async function SignersLogin(username, idTelegram) {
     try {
-        await client.login(
-            idTelegram,
-            username
-        );
+        await client.Signerlogin(idTelegram, username);
     } catch (error) {
         console.error('Error in login:', error);
         displayResult({ error: errorMessage }, 'error', true);
@@ -90,15 +87,6 @@ export async function SignersLogin(username, idTelegram) {
             appInitializerInstance.setUsernames(result.usernames);
             appInitializerInstance.initializeEnd(result);
         });
-    }
-}
-
-export async function loginHiveLogin(username="menny.trx") {
-    try {
-        const result = await hive.api.getAccounts([username]);
-    } catch (error) {
-        console.error('Error in login:', error);
-        displayResult({ error: errorMessage }, 'error', true);
     }
 }
 
@@ -129,7 +117,6 @@ export async function login() {
 
 export function goToSteemLogin() {
     handleCallback();
-    debugger
     console.log(window.location.origin + window.location.pathname +// il parametro platform 
         window.location.search);
     const steemClient = new window.steemlogin.Client({
