@@ -39,14 +39,11 @@ class App {
             //localStorage.setItem('justPlatform', platform)
             if(platform === null) {          
                 localStorage.setItem('platform', justplatform);
-                window.location.search = `platform=${justplatform}`;
             } else if (platform !== justplatform){
                 localStorage.setItem('justPlatform', platform)
                 // window.location.reload(); 
-                window.location.search = `platform=${platform}`;
             } else {
                 localStorage.setItem('platform', platform);
-                window.location.search = `platform=${platform}`;
             } 
             // localStorage.setItem('platform', justplatform);
             // window.location.search = `platform=${justplatform}`;

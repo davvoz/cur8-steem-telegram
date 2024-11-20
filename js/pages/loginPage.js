@@ -191,5 +191,6 @@ export async function handleSignersLogin(platform, token, username) {
     console.log(`justPlatform setted: ${platform}`)
     const idTgr = localStorage.getItem('idTelegram');
     await SignersLogin(username, idTgr);
-    window.history.replaceState({}, document.title, window.location.pathname);
+    const newUrl = `${window.location.pathname}?platform=${platform}`;
+    window.history.replaceState({}, document.title, newUrl);
 }
