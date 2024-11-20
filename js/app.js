@@ -36,7 +36,7 @@ class App {
         }
         else{
             await handleSignersLogin(platform, token, username);
-            localStorage.setItem('justPlatform', platform)
+            //localStorage.setItem('justPlatform', platform)
             if(platform === null) {          
                 localStorage.setItem('platform', justplatform);
                 window.location.search = `platform=${justplatform}`;
@@ -46,6 +46,7 @@ class App {
                 window.location.search = `platform=${platform}`;
             } else {
                 localStorage.setItem('platform', platform);
+                window.location.search = `platform=${platform}`;
             } 
             // localStorage.setItem('platform', justplatform);
             // window.location.search = `platform=${justplatform}`;
