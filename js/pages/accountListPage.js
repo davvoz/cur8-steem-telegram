@@ -22,10 +22,10 @@ export class AccountManager {
     
         if (platform === 'STEEM') {
             //logo.classList.add('blue-filter');
-            logo.src = 'assets/logo_steem.jpg'; // Percorso del logo per STEEM
+            logo.src = 'assets/logo_steem.png'; // Percorso del logo per STEEM
         } 
         else if (platform === 'HIVE') {
-            logo.src = 'assets/logo_hive.jpg'; // Percorso del logo per HIVE
+            logo.src = 'assets/logo_hive.png'; // Percorso del logo per HIVE
         } else {
             logo.src = 'assets/logo_tra.png'; // Percorso del logo di default
         }
