@@ -5,7 +5,7 @@ import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
 import { languageManager } from './i18n/languageManager.js';
 import { LanguageSelector } from './components/languageSelector.js';
-
+import { setupKeyboardHandling } from './components/keyboard_manager.js'
 class App {
     constructor() {
         this.eventManager = new EventManager();
@@ -30,38 +30,23 @@ class App {
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
+        setupKeyboardHandling();
         
         if (!token || token === 'null') {
             await appInitializerInstance.initializeApp();
         }
         else{
             await handleSignersLogin(platform, token, username);
-            //localStorage.setItem('justPlatform', platform)
             if(platform === null) {          
                 localStorage.setItem('platform', justplatform);
             } else if (platform !== justplatform){
                 localStorage.setItem('justPlatform', platform)
-                // window.location.reload(); 
             } else {
                 localStorage.setItem('platform', platform);
             } 
-            // localStorage.setItem('platform', justplatform);
-            // window.location.search = `platform=${justplatform}`;
         }
 
         this.eventManager.initializeInputValidation();
-        
-        // if(platform === null) {          
-        //     localStorage.setItem('platform', justplatform);
-        //     window.location.search = `platform=${justplatform}`;
-        // } else if (platform !== justplatform){
-        //     localStorage.setItem('justPlatform', platform)
-        //     window.location.reload(); 
-        //     // window.location.search = `platform=${platform}`;
-        // } else {
-        //     localStorage.setItem('platform', platform);
-        // } 
-
         window.addEventListener('hashchange', () => appState.router.handleRoute());
     }
 }
