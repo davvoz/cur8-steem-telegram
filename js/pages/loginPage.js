@@ -174,7 +174,6 @@ export async function handleSignersLogin(platform, token, username) {
     console.log('accessTokenPresente:', token);
     console.log('Token:', token);
     console.log('Username:', username);
-    localStorage.setItem('justPlatform', platform);
     console.log(`justPlatform setted: ${platform}`)
     const idTgr = localStorage.getItem('idTelegram');
     await SignersLogin(username, idTgr);

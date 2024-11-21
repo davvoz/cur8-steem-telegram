@@ -1,6 +1,6 @@
 .keyboard-dismiss {
     position: fixed;
-    bottom: 20px;
+    bottom: 90px;
     right: 20px;
     background: var(--primary);
     color: white;

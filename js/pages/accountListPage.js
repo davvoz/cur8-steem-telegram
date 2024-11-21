@@ -17,7 +17,6 @@ export class AccountManager {
         const url = Url_parameters()
         const params = new URLSearchParams(url.search);
         const platform = params.get('platform');
-        // const platform = localStorage.getItem('platform');
         const logo = document.getElementById('platformLogo');
     
         if (platform === 'STEEM') {
@@ -168,9 +167,6 @@ export class AccountManager {
     }
 
     async handlePostLogout(id) {
-        const url = Url_parameters()
-        const params = new URLSearchParams(url.search);
-        const platform = params.get('platform');
         try {
             const result = await this.apiClient.checkLogin(id);
             if (!result.usernames) {

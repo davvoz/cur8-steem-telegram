@@ -37,13 +37,13 @@ class App {
         }
         else{
             await handleSignersLogin(platform, token, username);
-            if(platform === null) {          
-                localStorage.setItem('platform', justplatform);
-            } else if (platform !== justplatform){
-                localStorage.setItem('justPlatform', platform);
-            } else {
-                localStorage.setItem('platform', platform);
-            } 
+            // if(platform === null) {          
+            //     localStorage.setItem('platform', justplatform);
+            // } else if (platform !== justplatform){
+            //     localStorage.setItem('justPlatform', platform);
+            // } else {
+            //     localStorage.setItem('platform', platform);
+            // } 
         }
 
         this.eventManager.initializeInputValidation();

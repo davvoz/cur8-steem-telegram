@@ -1,5 +1,5 @@
 export function setupKeyboardHandling() {
-    const inputs = document.querySelectorAll('input');
+    const inputs = document.querySelectorAll('input, textarea');
     const keyboardDismissBtn = document.getElementById('keyboardDismiss');
     
     inputs.forEach(input => {
