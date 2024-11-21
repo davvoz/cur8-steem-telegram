@@ -5,7 +5,8 @@ import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
 import { languageManager } from './i18n/languageManager.js';
 import { LanguageSelector } from './components/languageSelector.js';
-import { setupKeyboardHandling } from './components/keyboard_manager.js'
+import { setupKeyboardHandling } from './components/keyboard_manager.js';
+
 class App {
     constructor() {
         this.eventManager = new EventManager();
@@ -30,7 +31,6 @@ class App {
         appState.router.handleRoute();
         this.eventManager.initializeEventListeners();
         initializeImageUpload();
-        setupKeyboardHandling();
         
         if (!token || token === 'null') {
             await appInitializerInstance.initializeApp();
@@ -40,7 +40,7 @@ class App {
             if(platform === null) {          
                 localStorage.setItem('platform', justplatform);
             } else if (platform !== justplatform){
-                localStorage.setItem('justPlatform', platform)
+                localStorage.setItem('justPlatform', platform);
             } else {
                 localStorage.setItem('platform', platform);
             } 
@@ -54,6 +54,7 @@ class App {
 document.addEventListener('DOMContentLoaded', async () => {
     addTranslationAttributes();
     initializeLanguage();
+    setupKeyboardHandling();
 
     const app = new App();
     await app.initialize().then(() => {

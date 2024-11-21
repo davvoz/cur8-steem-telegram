@@ -1,9 +1,7 @@
 #platformLogo {
     width: 81px;
     height: 81px;
-    /* margin: 0 auto 1rem; */
     display: flex;
-    /* display: block; */
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     filter: drop-shadow(0 0 2px var(--primary));
     animation: floatAnimation 3s ease-in-out infinite;
