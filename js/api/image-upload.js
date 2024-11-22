@@ -1,3 +1,5 @@
+import { Url_parameters } from '../services/parameters.js'
+
 const MAX_FILE_SIZE_MB = 15;
 const UPLOAD_TIMEOUT_MS = 60000; // 60 secondi di timeout
 
@@ -82,7 +84,9 @@ function uploadImage(file) {
             ]);
         };
 
-        const platform = localStorage.getItem('platform');
+        const url = Url_parameters()
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform')
 
         const baseUrlMap = {
             'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem/upload_base64_image',
