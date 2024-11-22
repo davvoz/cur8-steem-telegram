@@ -27,6 +27,7 @@ export const en = {
     post_body_required: "The post body is required",
     post_tags_required: "At least one tag is required",
     schedule_past_date_error: "The scheduled date cannot be in the past",
+    schedule_date_required: "The publication date is required",
 
     // Clear form dialog
     clear_fields: "Clear the fields",

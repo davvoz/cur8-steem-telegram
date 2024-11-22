@@ -125,20 +125,24 @@ export function createDatePickerDialog() {
     input.id = 'scheduledTime';
     input.name = 'scheduledTime';
 
-    const confirmButton = document.createElement('button');
-    confirmButton.id = 'confirmButtonDP';
-    confirmButton.classList.add('action-btn');
-    confirmButton.textContent = t('confirm');
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('buttons-container');
 
     const cancelButton = document.createElement('button');
     cancelButton.id = 'annullaButtonDP';
     cancelButton.classList.add('action-btn');
     cancelButton.textContent = t('cancel');
 
+    const saveDraftButton = document.createElement('button');
+    saveDraftButton.id = 'saveDraftButtonDP';
+    saveDraftButton.classList.add('action-btn');
+    saveDraftButton.textContent = t('post_save_draft');
+
     dialog.appendChild(header);
     dialog.appendChild(input);
-    dialog.appendChild(confirmButton);
-    dialog.appendChild(cancelButton);
+    buttonsContainer.appendChild(saveDraftButton);
+    buttonsContainer.appendChild(cancelButton);
+    dialog.appendChild(buttonsContainer);
     return dialog;
 }
 

@@ -27,6 +27,7 @@ export const de = {
     post_body_required: "Der Inhalt ist erforderlich",
     post_tags_required: "Mindestens ein Tag ist erforderlich",
     schedule_past_date_error: "Das geplante Datum kann nicht in der Vergangenheit liegen",
+    schedule_date_required: "Das Veröffentlichungsdatum ist erforderlich",
 
     // Clear form dialog
     clear_fields: "Felder löschen",

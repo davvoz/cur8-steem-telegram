@@ -1,4 +1,4 @@
-import { postToSteem, salvaBozza, openComunitiesAutocomplete, openDatePicker, togglePreview,cancellaBozza } from '../pages/postPage.js';
+import { postToSteem,  openComunitiesAutocomplete, openDatePicker, togglePreview,cancellaBozza } from '../pages/postPage.js';
 import { goToSteemLogin, login, goToHiveLogin } from '../pages/loginPage.js';
 import { showPage } from '../services/pageService.js';
 
@@ -10,7 +10,7 @@ export class EventManager {
             { id: 'previewBtn', event: 'click', handler: togglePreview },
             { id: 'openDatePicker', event: 'click', handler: openDatePicker },
             { id: 'postToSteem', event: 'click', handler: postToSteem },
-            { id: 'salvaBozza', event: 'click', handler: salvaBozza },
+          //  { id: 'salvaBozza', event: 'click', handler: salvaBozza },
             { id: 'postBtn', event: 'click', handler: () => window.location.hash = '#/post' },
             { id: 'draftBtn', event: 'click', handler: () => window.location.hash = '#/draft' },
             { id: 'accountBtn', event: 'click', handler: () => window.location.hash = '#/' },

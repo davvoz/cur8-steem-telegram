@@ -27,6 +27,7 @@ export const ja = {
     post_body_required: "本文は必須です",
     post_tags_required: "少なくとも1つのタグが必要です",
     schedule_past_date_error: "選択した日付は未来の日付でなければなりません",
+    schedule_date_required: "投稿日は必須です",
 
     // Clear form dialog
     clear_fields: "フィールドをクリア",

@@ -27,6 +27,7 @@ export const uk = {
     post_body_required: "Зміст публікації обов'язковий",
     post_tags_required: "Потрібен хоча б один тег",
     schedule_past_date_error: "Запланована дата не може бути в минулому",
+    schedule_date_required: "Дата публікації обов'язкова",
 
     // Clear form dialog
     clear_fields: "Очистити поля",
