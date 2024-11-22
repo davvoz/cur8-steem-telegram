@@ -27,7 +27,6 @@ export const hi = {
     post_body_required: "पोस्ट की सामग्री आवश्यक है",
     post_tags_required: "कम से कम एक टैग आवश्यक है",
     schedule_past_date_error: "निर्धारित तिथि अतीत में नहीं हो सकती",
-    schedule_date_required: "प्रकाशन की तिथि आवश्यक है",
 
     // Clear form dialog
     clear_fields: "फ़ील्ड्स साफ़ करें",
@@ -113,7 +112,7 @@ export const hi = {
     select_image: "छवि चुनें",
     uploading_image: "छवि अपलोड हो रही है...",
     upload_error: "अपलोड में त्रुटि",
-    dropzone_text: "छवि जोड़े���",
+    dropzone_text: "छवि जोड़ें",
 
     // Popups and dialogs
     confirm_action: "क्रिया की पुष्टि करें",

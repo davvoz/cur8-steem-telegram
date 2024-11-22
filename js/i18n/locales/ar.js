@@ -28,7 +28,6 @@ export const ar = {        // Navigation
     post_body_required: "المحتوى مطلوب",
     post_tags_required: "يجب إضافة علامة واحدة على الأقل",
     schedule_past_date_error: "التاريخ المحدد يجب أن يكون في المستقبل",
-    schedule_date_required: "تاريخ النشر مطلوب",
 
     // Clear form dialog
     clear_fields: "مسح الحقول",
@@ -110,7 +109,7 @@ export const ar = {        // Navigation
     schedule_draft: "جدولة المسودة",
 
     // Image upload
-    drop_image: "أسقط الصور�� هنا",
+    drop_image: "أسقط الصورة هنا",
     select_image: "اختر صورة",
     uploading_image: "جاري رفع الصورة...",
     upload_error: "خطأ في الرفع",

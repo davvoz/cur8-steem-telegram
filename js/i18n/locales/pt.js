@@ -27,7 +27,6 @@ export const pt = {
     post_body_required: "O conteúdo é obrigatório",
     post_tags_required: "Pelo menos uma tag é necessária",
     schedule_past_date_error: "A data agendada não pode estar no passado",
-    schedule_date_required: "A data de publicação é obrigatória",
 
     // Clear form dialog
     clear_fields: "Limpar campos",
