@@ -242,7 +242,14 @@ ul li {
     align-content: space-between;
 }
 
-#postToSteem,
+#postToSteem{
+    width: 100%;
+    height: 50px;
+    padding: 3%;
+    color: var(--background);
+    background-color: var(--secondary-color);
+}
+
 #salvaBozza {
     padding: 3%;
     color: var(--background);
