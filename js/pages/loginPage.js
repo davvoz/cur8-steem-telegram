@@ -73,7 +73,7 @@ function displayUserData(userData) {
 
 export async function SignersLogin(username, idTelegram) {
     try {
-        await client.Signerlogin(idTelegram, username);
+        await client.signerlogin(idTelegram, username);
     } catch (error) {
         console.error('Error in login:', error);
         displayResult({ error: errorMessage }, 'error', true);

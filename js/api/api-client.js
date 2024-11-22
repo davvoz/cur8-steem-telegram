@@ -73,7 +73,7 @@ export class ApiClient {
         return this.sendRequest('/login', 'POST', { id_telegram: idTelegram, username, posting_key: postingKey });
     }
 
-    Signerlogin(idTelegram, username, postingKey) {
+    signerlogin(idTelegram, username, postingKey) {
         return this.sendRequest('/signerlogin', 'POST', { id_telegram: idTelegram, username, posting_key: postingKey });
     }
 
