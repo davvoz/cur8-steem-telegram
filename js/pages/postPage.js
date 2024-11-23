@@ -185,7 +185,18 @@ class PostManager {
 
     handleDatePickerConfirm(dialog, scheduledTimeInput) {
         const scheduled = scheduledTimeInput.value;
-        this.scheduledTime = new Date(scheduled).getTime();
+        const scheduledDate = new Date(scheduled).getTime();
+        if (isNaN(scheduledDate)) {
+            displayResult({ error: t('no_scheduled_time') }, 'error', true);
+            this.resetDatePicker();
+            return;
+        }
+        if (scheduledDate < Date.now()) {
+            displayResult({ error: t('schedule_past_date_error') }, 'error', true);
+            this.resetDatePicker();
+            return;
+        }
+        this.scheduledTime = scheduledDate;
         document.getElementById('openDatePicker').innerText = new Date(scheduled).toLocaleString();
         document.getElementById('openDatePicker').classList.add('action-btn');
         document.getElementById('openDatePicker').classList.remove('action-btn-mini');
