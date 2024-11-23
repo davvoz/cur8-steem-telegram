@@ -20,7 +20,7 @@ export const ru = {
     post_add_image: "Добавить изображение",
     post_select_community: "Выберите сообщество",
     post_publish_now: "Опубликовать сейчас",
-    post_save_draft: "Сохранить черновик",
+    post_save_draft: "Сохранить",
 
     // Сообщения проверки публикации
     post_title_required: "Заголовок публикации обязателен",

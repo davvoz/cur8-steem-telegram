@@ -20,7 +20,7 @@ export const uk = {
     post_add_image: "Додати зображення",
     post_select_community: "Вибрати спільноту",
     post_publish_now: "Опублікувати зараз",
-    post_save_draft: "Зберегти чернетку",
+    post_save_draft: "Зберегти",
 
     // Post validation messages
     post_title_required: "Заголовок публікації обов'язковий",
@@ -138,11 +138,11 @@ export const uk = {
     schedule_time: "Час",
     scheduled_for: "Заплановано на {date}",
     reschedule: "Перепланувати",
-    unschedule: "Скасувати планування",
+    unschedule: "Скасувати п��анування",
 
     // Draft management
     draft_list_title: "Ваші чернетки",
-    draft_loading: "Завантаження чернеток...",
+    draft_loading: "Завантаження черн��ток...",
     draft_empty: "У вас немає чернеток",
     draft_filter: "Фільтрувати чернетки",
     draft_sort: "Сортувати за",

@@ -20,7 +20,7 @@ export const de = {
     post_add_image: "Bild hinzufügen",
     post_select_community: "Community auswählen",
     post_publish_now: "Jetzt veröffentlichen",
-    post_save_draft: "Entwurf speichern",
+    post_save_draft: "Speichern",
 
     // Post validation messages
     post_title_required: "Der Titel ist erforderlich",

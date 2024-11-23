@@ -20,7 +20,7 @@ export const fr = {
     post_add_image: "Ajouter une image",
     post_select_community: "Sélectionner une communauté",
     post_publish_now: "Publier maintenant",
-    post_save_draft: "Enregistrer le brouillon",
+    post_save_draft: "Enregistrer",
 
     // Post validation messages
     post_title_required: "Le titre du post est requis",

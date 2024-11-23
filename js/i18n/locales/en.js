@@ -20,7 +20,7 @@ export const en = {
     post_add_image: "Add Image",
     post_select_community: "Select Community",
     post_publish_now: "Publish Now",
-    post_save_draft: "Save Draft",
+    post_save_draft: "Save",
 
     // Post validation messages
     post_title_required: "The post title is required",

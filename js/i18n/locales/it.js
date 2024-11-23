@@ -20,7 +20,7 @@ export const it = {
     post_add_image: "Aggiungi Immagine",
     post_select_community: "Seleziona Community",
     post_publish_now: "Pubblica Ora",
-    post_save_draft: "Salva Bozza",
+    post_save_draft: "Salva",
 
     // Post validation messages
     post_title_required: "Il titolo del post è obbligatorio",

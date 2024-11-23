@@ -20,7 +20,7 @@ export const pt = {
     post_add_image: "Adicionar Imagem",
     post_select_community: "Selecionar Comunidade",
     post_publish_now: "Publicar Agora",
-    post_save_draft: "Salvar Rascunho",
+    post_save_draft: "Salvar",
 
     // Post validation messages
     post_title_required: "O título é obrigatório",

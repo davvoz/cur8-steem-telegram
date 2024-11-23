@@ -21,7 +21,7 @@ export const es = {
     post_add_image: "Añadir imagen",
     post_select_community: "Seleccionar comunidad",
     post_publish_now: "Publicar ahora",
-    post_save_draft: "Guardar borrador",
+    post_save_draft: "Guardar",
 
     // Post validation messages
     post_title_required: "El título es obligatorio",

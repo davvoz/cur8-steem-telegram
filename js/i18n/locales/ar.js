@@ -19,7 +19,7 @@ export const ar = {        // Navigation
     post_add_image: "إضافة صورة",
     post_select_community: "اختر المجتمع",
     post_publish_now: "نشر الآن",
-    post_save_draft: "حفظ المسودة",
+    post_save_draft: "حفظ",
     confirm_post: //"Il tuo post è pronto per essere pubblicato 
     "تأكيد النشر",
 

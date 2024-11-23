@@ -20,10 +20,10 @@ export const hi = {
     post_add_image: "छवि जोड़ें",
     post_select_community: "समुदाय चुनें",
     post_publish_now: "अभी प्रकाशित करें",
-    post_save_draft: "ड्राफ़्ट सहेजें",
+    post_save_draft: "सहेजें",
 
     // Post validation messages
-    post_title_required: "पोस्ट का शीर्षक आवश्यक है",
+    post_title_required: "पोस्ट का शीर्षक ���वश्यक है",
     post_body_required: "पोस्ट की सामग्री आवश्यक है",
     post_tags_required: "कम से कम एक टैग आवश्यक है",
     schedule_past_date_error: "निर्धारित तिथि अतीत में नहीं हो सकती",
@@ -63,7 +63,7 @@ export const hi = {
     account_manager: "खाता प्रबंधक",
     add_account: "खाता जोड़ें",
     account_selected: "{username} खाता चुना गया",
-    confirm_logout: "लॉगआउट की पुष्टि करें",
+    confirm_logout: "लॉगआउट क�� पुष्टि करें",
     logout_question: "क्या आप वाकई लॉगआउट करना चाहते हैं?",
     logout_successful: "सफलतापूर्वक लॉगआउट हुआ",
 
