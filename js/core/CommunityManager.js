@@ -10,6 +10,7 @@ export class CommunityManager {
     constructor() {
         this.currentFocus = -1;
         this.selectedCommunity = null;
+        this.communities = [];
     }
 
     async initialize() {
@@ -21,7 +22,21 @@ export class CommunityManager {
         const cancelButton = document.getElementById('cancelButton');
 
         this.setupEventListeners(dialog, input, cancelButton);
+        await this.loadCommunities();
         await this.showAllCommunities();
+    }
+
+    async loadCommunities() {
+        try {
+            this.communities = await window.listaComunities;
+            // Controllo se le comunità sono un array e non sono vuote
+            if (!Array.isArray(this.communities)) {
+                throw new Error(t('invalid_community_data'));
+            }
+        } catch (error) {
+            console.error(t('error_loading_community'), error);
+            displayResult({ error: error.message }, 'error', true);
+        }
     }
 
     setupEventListeners(dialog, input, cancelButton) {
@@ -39,38 +54,32 @@ export class CommunityManager {
         if (!listElement) return;
 
         listElement.innerHTML = '';
+        const fragment = document.createDocumentFragment();
         
-        // Add "No Community" option as first element
-        const noCommunityItem = this.createCommunityItem({
+        fragment.appendChild(this.createCommunityItem({
             title: t('no_community'),
             name: "",
             isNoCommunity: true
-        });
-        listElement.appendChild(noCommunityItem);
+        }));
 
-        try {
-            const communities = await window.listaComunities;
-            communities.forEach(community => {
-                const item = this.createCommunityItem(community);
-                listElement.appendChild(item);
-            });
-        } catch (error) {
-            console.error(t('error_loading_community'), error);
-            displayResult({ error: error.message }, 'error', true);
-        }
+        this.communities.forEach(community => {
+            fragment.appendChild(this.createCommunityItem(community));
+        });
+
+        listElement.appendChild(fragment);
     }
 
     createCommunityItem(community) {
         const item = document.createElement("div");
         item.className = "community-item";
-        if (community.isNoCommunity) {
-            item.style.paddingBottom = "8px";
-            item.style.marginBottom = "8px";
-            document.getElementById('comunityName').textContent = t('select_community');
-        }
-        item.innerHTML = community.title;
-        item.innerHTML += `<input type='hidden' value='${community.title}'>`;
+        item.style.paddingBottom = community.isNoCommunity ? "8px" : "";
+        item.style.marginBottom = community.isNoCommunity ? "8px" : "";
         
+        item.innerHTML = `
+            ${community.title || t('unknown_community')}
+            <input type='hidden' value='${community.title || ''}'>
+        `;
+
         item.addEventListener("click", () => {
             document.getElementById('comunityName').textContent = 
                 community.isNoCommunity ? t('select_community') : community.title;
@@ -93,34 +102,34 @@ export class CommunityManager {
         }
 
         listElement.innerHTML = '';
+        const fragment = document.createDocumentFragment();
         
-        // Mantieni sempre visibile l'opzione "No Community"
-        const noCommunityItem = this.createCommunityItem({
+        fragment.appendChild(this.createCommunityItem({
             title: t('no_community'),
             name: "",
             isNoCommunity: true
-        });
-        listElement.appendChild(noCommunityItem);
+        }));
 
-        const communities = await window.listaComunities;
-        const filteredCommunities = communities.filter(community => 
-            community.title.toLowerCase().includes(searchText)
+        const filteredCommunities = this.communities.filter(community => 
+            community.title && community.title.toLowerCase().includes(searchText)
         );
 
         filteredCommunities.forEach(community => {
             const item = this.createCommunityItem(community);
-            // Evidenzia il testo cercato
             const title = community.title;
             const matchStart = title.toLowerCase().indexOf(searchText);
             const matchEnd = matchStart + searchText.length;
 
-            item.innerHTML = title.substring(0, matchStart) +
-                "<strong>" + title.substring(matchStart, matchEnd) + "</strong>" +
-                title.substring(matchEnd);
-            item.innerHTML += `<input type='hidden' value='${title}'>`;
-            
-            listElement.appendChild(item);
+            item.innerHTML = `
+                ${title.substring(0, matchStart)}
+                <strong>${title.substring(matchStart, matchEnd)}</strong>
+                ${title.substring(matchEnd)}
+                <input type='hidden' value='${title}'>
+            `;
+            fragment.appendChild(item);
         });
+
+        listElement.appendChild(fragment);
     }
 
     handleKeydown(e) {
@@ -133,22 +142,18 @@ export class CommunityManager {
         switch (e.key) {
             case 'ArrowDown':
                 e.preventDefault();
-                this.currentFocus++;
-                if (this.currentFocus >= items.length) this.currentFocus = 0;
+                this.currentFocus = (this.currentFocus + 1) % items.length;
                 this.updateActiveItem(items);
                 break;
             case 'ArrowUp':
                 e.preventDefault();
-                this.currentFocus--;
-                if (this.currentFocus < 0) this.currentFocus = items.length - 1;
+                this.currentFocus = (this.currentFocus - 1 + items.length) % items.length;
                 this.updateActiveItem(items);
                 break;
             case 'Enter':
                 e.preventDefault();
-                if (this.currentFocus > -1) {
-                    if (items[this.currentFocus]) {
-                        items[this.currentFocus].click();
-                    }
+                if (this.currentFocus > -1 && items[this.currentFocus]) {
+                    items[this.currentFocus].click();
                 }
                 break;
             case 'Escape':
@@ -167,5 +172,4 @@ export class CommunityManager {
             items[this.currentFocus].scrollIntoView({ block: 'nearest' });
         }
     }
-
 }
