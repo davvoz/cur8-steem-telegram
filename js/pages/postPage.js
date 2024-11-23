@@ -94,10 +94,6 @@ class PostManager {
 
     async salvaBozza() {
         if (!this.validateForm()) {
-            // Reset the date picker if validation fails during scheduling
-            if (document.getElementById('openDatePicker').innerText !== 'schedule') {
-                this.resetDatePicker();
-            }
             return;
         }
 
@@ -161,23 +157,20 @@ class PostManager {
     }
 
     openDatePicker() {
+
         const dialog = createDatePickerDialog();
         document.body.appendChild(dialog);
         dialog.showModal();
 
+        const confirmButton = dialog.querySelector('#confirmButtonDP');
         const chiudiButton = dialog.querySelector('#closeButton');
         const scheduledTimeInput = dialog.querySelector('#scheduledTime');
-        const saveDraftButton = dialog.querySelector('#saveDraftButtonDP');
-        const annullaButton = dialog.querySelector('#annullaButtonDP');  // Add this line
-
+        const cancella = dialog.querySelector('#annullaButtonDP');
+        cancella.addEventListener('click', () => this.handleDatePickerCancel(dialog));
+        confirmButton.addEventListener('click', () => this.handleDatePickerConfirm(dialog, scheduledTimeInput));
         chiudiButton.addEventListener('click', () => dialog.remove());
-        saveDraftButton.addEventListener('click', async () => {
-            if (this.handleDatePickerConfirm(dialog, scheduledTimeInput)) {
-                await this.salvaBozza();
-            }
-        });
-        annullaButton.addEventListener('click', () => this.handleDatePickerCancel(dialog));  // Add this line
         dialog.addEventListener('close', () => dialog.remove());
+
     }
 
     handleDatePickerCancel(dialog) {
@@ -192,23 +185,22 @@ class PostManager {
 
     handleDatePickerConfirm(dialog, scheduledTimeInput) {
         const scheduled = scheduledTimeInput.value;
-        if (!scheduled) {
-            displayResult({ error: t('schedule_date_required') }, 'error', true);
-            return false;
-        }
-        
         const scheduledDate = new Date(scheduled).getTime();
+        if (isNaN(scheduledDate)) {
+            displayResult({ error: t('no_scheduled_time') }, 'error', true);
+            this.resetDatePicker();
+            return;
+        }
         if (scheduledDate < Date.now()) {
             displayResult({ error: t('schedule_past_date_error') }, 'error', true);
-            return false;
+            this.resetDatePicker();
+            return;
         }
-
         this.scheduledTime = scheduledDate;
         document.getElementById('openDatePicker').innerText = new Date(scheduled).toLocaleString();
         document.getElementById('openDatePicker').classList.add('action-btn');
         document.getElementById('openDatePicker').classList.remove('action-btn-mini');
         dialog.remove();
-        return true;
     }
 
     markdownToHtml(markdown) {
@@ -279,6 +271,7 @@ const communityManagerWrapper = new CommunityManagerWrapper();
 
 export const postToSteem = postManager.postToSteem.bind(postManager);
 export const svuotaForm = postManager.svuotaForm.bind(postManager);
+export const salvaBozza = postManager.salvaBozza.bind(postManager);
 export const openDatePicker = postManager.openDatePicker.bind(postManager);
 export const togglePreview = postManager.togglePreview.bind(postManager);
 export const cancellaBozza = postManager.cancellaBozza.bind(postManager);

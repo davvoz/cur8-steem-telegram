@@ -21,14 +21,13 @@ export const es = {
     post_add_image: "Añadir imagen",
     post_select_community: "Seleccionar comunidad",
     post_publish_now: "Publicar ahora",
-    post_save_draft: "Guardar borrador",
+    post_save_draft: "Guardar",
 
     // Post validation messages
     post_title_required: "El título es obligatorio",
-    post_body_required: "El contenido es obligatorio",
+    post_body_required: "El cuerpo del mensaje es obligatorio",
     post_tags_required: "Se requiere al menos una etiqueta",
     schedule_past_date_error: "La fecha seleccionada debe ser futura",
-    schedule_date_required: "La fecha de publicación es obligatoria",
 
     // Clear form dialog
     clear_fields: "Borrar campos",

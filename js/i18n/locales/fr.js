@@ -20,14 +20,13 @@ export const fr = {
     post_add_image: "Ajouter une image",
     post_select_community: "Sélectionner une communauté",
     post_publish_now: "Publier maintenant",
-    post_save_draft: "Enregistrer le brouillon",
+    post_save_draft: "Enregistrer",
 
     // Post validation messages
     post_title_required: "Le titre du post est requis",
     post_body_required: "Le contenu du post est requis",
     post_tags_required: "Au moins un tag est requis",
     schedule_past_date_error: "La date programmée ne peut pas être dans le passé",
-    schedule_date_required: "La date de publication est requise",
 
     // Clear form dialog
     clear_fields: "Effacer les champs",

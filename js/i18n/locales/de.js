@@ -20,14 +20,13 @@ export const de = {
     post_add_image: "Bild hinzufügen",
     post_select_community: "Community auswählen",
     post_publish_now: "Jetzt veröffentlichen",
-    post_save_draft: "Entwurf speichern",
+    post_save_draft: "Speichern",
 
     // Post validation messages
     post_title_required: "Der Titel ist erforderlich",
     post_body_required: "Der Inhalt ist erforderlich",
     post_tags_required: "Mindestens ein Tag ist erforderlich",
     schedule_past_date_error: "Das geplante Datum kann nicht in der Vergangenheit liegen",
-    schedule_date_required: "Das Veröffentlichungsdatum ist erforderlich",
 
     // Clear form dialog
     clear_fields: "Felder löschen",

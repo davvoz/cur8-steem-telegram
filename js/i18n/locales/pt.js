@@ -20,14 +20,13 @@ export const pt = {
     post_add_image: "Adicionar Imagem",
     post_select_community: "Selecionar Comunidade",
     post_publish_now: "Publicar Agora",
-    post_save_draft: "Salvar Rascunho",
+    post_save_draft: "Salvar",
 
     // Post validation messages
     post_title_required: "O título é obrigatório",
     post_body_required: "O conteúdo é obrigatório",
     post_tags_required: "Pelo menos uma tag é necessária",
     schedule_past_date_error: "A data agendada não pode estar no passado",
-    schedule_date_required: "A data de publicação é obrigatória",
 
     // Clear form dialog
     clear_fields: "Limpar campos",

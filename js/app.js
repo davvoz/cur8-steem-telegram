@@ -88,7 +88,7 @@ function addTranslationAttributes() {
 
     // Buttons
     document.getElementById('postToSteem').setAttribute('data-i18n', 'post_publish_now');
-   // document.getElementById('salvaBozza').setAttribute('data-i18n', 'post_save_draft');
+    document.getElementById('salvaBozza').setAttribute('data-i18n', 'post_save_draft');
 
     document.getElementById('postTags').addEventListener('input', function (e) {
         const input = e.target;

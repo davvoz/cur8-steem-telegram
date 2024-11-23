@@ -88,10 +88,10 @@ export function displayResult(result, type, enabled, callback, time) {
         dialog.showModal();
         const closeButton = dialog.querySelector('#closeButton');
         closeButton.addEventListener('click', () => {
-            dialog.remove();
             if (callback) {
                 callback();
             }
+            dialog.remove();
         });
 
         dialog.addEventListener('close', () => dialog.remove());
@@ -125,24 +125,20 @@ export function createDatePickerDialog() {
     input.id = 'scheduledTime';
     input.name = 'scheduledTime';
 
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.classList.add('buttons-container');
+    const confirmButton = document.createElement('button');
+    confirmButton.id = 'confirmButtonDP';
+    confirmButton.classList.add('action-btn');
+    confirmButton.textContent = t('confirm');
 
     const cancelButton = document.createElement('button');
     cancelButton.id = 'annullaButtonDP';
     cancelButton.classList.add('action-btn');
     cancelButton.textContent = t('cancel');
 
-    const saveDraftButton = document.createElement('button');
-    saveDraftButton.id = 'saveDraftButtonDP';
-    saveDraftButton.classList.add('action-btn');
-    saveDraftButton.textContent = t('post_save_draft');
-
     dialog.appendChild(header);
     dialog.appendChild(input);
-    buttonsContainer.appendChild(saveDraftButton);
-    buttonsContainer.appendChild(cancelButton);
-    dialog.appendChild(buttonsContainer);
+    dialog.appendChild(confirmButton);
+    dialog.appendChild(cancelButton);
     return dialog;
 }
 

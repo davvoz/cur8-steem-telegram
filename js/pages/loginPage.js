@@ -101,18 +101,27 @@ export async function login() {
             username,
             document.getElementById('postingKey').value
         );
-        await client.checkLogin(idTelegram).then(async (result) => {
-            appInitializerInstance.initializeEnd(result);
-        }).then(() => {
+        await client.checkLogin(idTelegram)
+            .then(async (result) => {
+                appInitializerInstance.initializeEnd(result);
+            }).then(() => {
+                document.getElementById('spinner').classList.add('hide');
+                document.getElementById('username').value = '';
+                document.getElementById('postingKey').value = '';
+            });
+    } catch (error) {
+        const callback = () => {
             document.getElementById('spinner').classList.add('hide');
             document.getElementById('username').value = '';
             document.getElementById('postingKey').value = '';
-        });
-    } catch (error) {
+        }   
         console.error('Error in login:', error);
-        const errorMessage = `${error.message}\n Wrong username or password`;
-        displayResult({ error: errorMessage }, 'error', true, appInitializerInstance.initializeApp());
+        const errorMessage = `Wrong username or password, please use your private posting key.`;
+        displayResult({ error: errorMessage }, 'error', true,
+            //andare su loginPage
+            callback);
     }
+
 }
 
 export function goToSteemLogin() {
@@ -143,8 +152,8 @@ export function goToHiveLogin() {
     const callbackURL = window.location.origin + window.location.search;
     const scope = ['login', 'vote', 'comment', 'custom_json'];
 
-      const authURL = `https://hivesigner.com/oauth2/authorize?client_id=${app}&redirect_uri=${encodeURIComponent(callbackURL)}&scope=${scope.join(',')}`;
-      window.location.href = authURL;
+    const authURL = `https://hivesigner.com/oauth2/authorize?client_id=${app}&redirect_uri=${encodeURIComponent(callbackURL)}&scope=${scope.join(',')}`;
+    window.location.href = authURL;
 }
 
 export async function hive_keychain() {

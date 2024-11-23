@@ -21,7 +21,7 @@ export const zh = {
     post_add_image: "添加图片",
     post_select_community: "选择社区",
     post_publish_now: "立即发布",
-    post_save_draft: "保存草稿",
+    post_save_draft: "保存",
 
     // Post validation messages
     post_title_required: "标题为必填项",

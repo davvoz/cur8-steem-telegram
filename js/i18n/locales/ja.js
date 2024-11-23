@@ -20,14 +20,13 @@ export const ja = {
     post_add_image: "画像を追加",
     post_select_community: "コミュニティを選択",
     post_publish_now: "今すぐ公開",
-    post_save_draft: "ドラフトを保存",
+    post_save_draft: "保存",
 
     // Post validation messages
     post_title_required: "タイトルは必須です",
     post_body_required: "本文は必須です",
     post_tags_required: "少なくとも1つのタグが必要です",
     schedule_past_date_error: "選択した日付は未来の日付でなければなりません",
-    schedule_date_required: "投稿日は必須です",
 
     // Clear form dialog
     clear_fields: "フィールドをクリア",
@@ -58,14 +57,14 @@ export const ja = {
 
     // Messages
     msg_success: "成功",
-    msg_error: "エラー",
+    msg_error: "���ラー",
 
     // Account page
     account_manager: "アカウント管理",
     add_account: "アカウントを追加",
     account_selected: "{username} アカウントが選択されました",
     confirm_logout: "ログアウト確認",
-    logout_question: "ログアウトしてもよろしいですか？",
+    logout_question: "ログアウトしてもよろしいで���か？",
     logout_successful: "ログアウトしました",
 
     // Post form
