@@ -88,10 +88,10 @@ export function displayResult(result, type, enabled, callback, time) {
         dialog.showModal();
         const closeButton = dialog.querySelector('#closeButton');
         closeButton.addEventListener('click', () => {
-            dialog.remove();
             if (callback) {
                 callback();
             }
+            dialog.remove();
         });
 
         dialog.addEventListener('close', () => dialog.remove());
