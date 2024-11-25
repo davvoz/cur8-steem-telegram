@@ -24,10 +24,11 @@ export function setupKeyboardHandling() {
     });
   });
 
-  keyboardDismissBtn.addEventListener('click', () => {
+  keyboardDismissBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Ferma la propagazione dell'evento
     document.activeElement.blur();
     keyboardDismissBtn.classList.remove('show');
-    isKeyboardDismissBtnPressed = true; // Imposta il flag quando il pulsante viene premuto
+    isKeyboardDismissBtnPressed = true;
   });
 
   document.addEventListener('touchend', (e) => {
