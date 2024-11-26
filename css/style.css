@@ -254,6 +254,7 @@ ul li {
     padding: 3%;
     color: var(--background);
     background-color: var(--secondary-color);
+    height: 50px;
 }
 
 .actions-container {

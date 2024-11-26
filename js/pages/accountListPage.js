@@ -158,6 +158,8 @@ export class AccountManager {
             await this.apiClient.logout(id, username);
             await this.handlePostLogout(id).then(() => {
                 document.getElementById('spinner').classList.add('hide');
+                //svuoti il campo usernameSelected e l'altro campo
+                
             });
             displayResult({ message: `${t('logout_successful')}` }, 'success');
         } catch (error) {
