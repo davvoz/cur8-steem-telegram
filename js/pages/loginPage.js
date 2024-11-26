@@ -112,8 +112,6 @@ export async function login() {
     } catch (error) {
         const callback = () => {
             document.getElementById('spinner').classList.add('hide');
-            document.getElementById('username').value = '';
-            document.getElementById('postingKey').value = '';
         }   
         console.error('Error in login:', error);
         const errorMessage = `Wrong username or password, please use your private posting key.`;
