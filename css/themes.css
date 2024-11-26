@@ -387,3 +387,35 @@
     --on-surface: #ffffff;
     --on-secondary: #000000;
 }
+
+/*default steem*/
+.theme-selector-steem-theme {
+    --primary-color: #4BA2F2;
+    --primary-variant: #4BA2F2;
+    --secondary-color: #4BA2F2;
+    --background: #FFFFFF;
+    --surface: #F5F5F5;
+    --error: #FF5252;
+    --success: #4CAF50;
+    --warning: #FFA500;
+    --on-primary: #FFFFFF;
+    --on-background: #212529;
+    --on-surface: #212529;
+    --on-secondary: #000000;
+}
+
+/*default hive (sul rossiccio)*/
+.theme-selector-hive-theme {
+    --primary-color: #e11337;
+    --primary-variant: #e12a4d;
+    --secondary-color: #4BA2F2;
+    --background: #FFFFFF;
+    --surface: #F5F5F5;
+    --error: #FF5252;
+    --success: #4CAF50;
+    --warning: #FFA500;
+    --on-primary: #FFFFFF;
+    --on-background: #212529;
+    --on-surface: #212529;
+    --on-secondary: #000000;
+}

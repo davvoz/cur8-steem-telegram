@@ -25,7 +25,6 @@ class App {
         let platform = params.get('platform');
         const token = params.get('access_token');
         const username = params.get('username');
-        const justplatform = localStorage.getItem('justPlatform')
 
         window.location.hash = '/';
 
@@ -38,13 +37,6 @@ class App {
         }
         else {
             await handleSignersLogin(platform, token, username);
-            // if(platform === null) {          
-            //     localStorage.setItem('platform', justplatform);
-            // } else if (platform !== justplatform){
-            //     localStorage.setItem('justPlatform', platform);
-            // } else {
-            //     localStorage.setItem('platform', platform);
-            // } 
         }
 
         this.eventManager.initializeInputValidation();

@@ -6,6 +6,12 @@ window.onload = function () {
         themeOption.onclick = () => setTheme(theme);
         themeChooser.appendChild(themeOption);
     });
+
+    // Set default theme based on platform if no user is selected yet
+    if (!window.usernameSelected) {
+        const defaultTheme = window.platform === 'steem' ? 'theme-selector-steem-theme' : 'theme-selector-hive-theme';
+        document.body.className = defaultTheme;
+    }
 };
 
 function getCssClassesFromStylesheet(stylesheetName, selector) {
@@ -64,6 +70,12 @@ function setTheme(theme) {
 }
 
 export function applySavedTheme() {
+    if (!window.usernameSelected) {
+        const defaultTheme = window.platform === 'steem' ? 'theme-selector-steem-theme' : 'theme-selector-hive-theme';
+        document.body.className = defaultTheme;
+        return;
+    }
+    
     const savedTheme = localStorage.getItem(`${window.usernameSelected.username}-theme`);
     console.log(`${window.usernameSelected.username}-${savedTheme}`);
     if (savedTheme) {
