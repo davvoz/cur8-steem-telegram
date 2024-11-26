@@ -29,6 +29,7 @@ class PostManager {
         dialog.querySelector('#confirmButtonPost').addEventListener('click', async () => {
             dialog.remove();
             try {
+                this.toggleSpinner(true);
                 const result = await this.client.postToSteem(
                     getUsername(),
                     document.getElementById('postTitle').value,
@@ -36,9 +37,11 @@ class PostManager {
                     document.getElementById('postTags').value,
                     document.getElementById('comunityName').textContent
                 );
+                this.toggleSpinner(false);
                 displayResult(result, 'success', true);
             } catch (error) {
                 console.error('Error in postToSteem:', error);
+                this.toggleSpinner(false);
                 displayResult({ error: error.message }, 'error', true);
             }
         });
