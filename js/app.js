@@ -5,7 +5,6 @@ import appInitializerInstance from './core/AppInitializer.js';
 import { EventManager } from './core/EventManager.js';
 import { languageManager } from './i18n/languageManager.js';
 import { LanguageSelector } from './components/languageSelector.js';
-import { setupKeyboardHandling } from './components/keyboard_manager.js';
 import { displayResult } from './components/dialog.js';
 
 class App {
@@ -47,7 +46,6 @@ class App {
 document.addEventListener('DOMContentLoaded', async () => {
     addTranslationAttributes();
     initializeLanguage();
-    setupKeyboardHandling();
 
     const app = new App();
     await app.initialize().then(() => {
