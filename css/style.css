@@ -407,7 +407,7 @@ ul li {
     font-size: 1.2em;
     color: var(--primary-color);
     font-weight: 500;
-    margin-bottom: 15px;
+    margin-bottom: 7px;
 }
 
 #dropZone.drag-over {
