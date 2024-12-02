@@ -1177,3 +1177,7 @@ table td {
     flex-direction: column;
     gap: var(--spacing-sm);
 }
+
+body{
+    margin-bottom: 70%;
+}
