@@ -88,7 +88,7 @@ function addTranslationAttributes() {
             input.value = tags.slice(0, 8).join(' ');
             displayResult({
                 error: 'Maximum 8 tags allowed'
-             }, 'error', 'tag_limit_message', 'ok');
+             }, 'error', true);
         }
     });
 
