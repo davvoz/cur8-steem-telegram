@@ -88,9 +88,9 @@ function uploadImage(file) {
         const params = new URLSearchParams(url.search);
         const platform = params.get('platform')
 
-        const baseUrlMap = {
-            'STEEM': 'https://develop-imridd.eu.pythonanywhere.com/api/steem/upload_base64_image',
-            'HIVE': 'https://develop-imridd.eu.pythonanywhere.com/api/hive/upload_base64_image'
+        const baseUrlMap = {            
+            'STEEM': 'https://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image',
+            'HIVE': 'https://imridd.eu.pythonanywhere.com/api/hive/upload_base64_image'
         };
 
         const baseUrl = baseUrlMap[platform] || (() => {
