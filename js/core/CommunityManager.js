@@ -111,7 +111,7 @@ export class CommunityManager {
         }));
 
         const filteredCommunities = this.communities.filter(community => 
-            community.title && community.title.toLowerCase().includes(searchText)
+            community?.title?.toLowerCase().includes(searchText)
         );
 
         filteredCommunities.forEach(community => {
