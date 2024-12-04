@@ -10,6 +10,7 @@ import { displayResult } from './components/dialog.js';
 class App {
     constructor() {
         this.eventManager = new EventManager();
+        this.languageSelector = null; // Add this line
     }
 
     async initialize() {
@@ -43,13 +44,13 @@ class App {
     }
 }
 
+// Modify the DOMContentLoaded listener to store app instance
 document.addEventListener('DOMContentLoaded', async () => {
     addTranslationAttributes();
-    initializeLanguage();
-
     const app = new App();
+    window.app = app; // Make app globally accessible
+    initializeLanguage();
     await app.initialize().then(() => {
-
         console.log('App initialized');
     });
 });
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function initializeLanguage() {
     const languageSelect = document.getElementById('languageSelect');
     if (languageSelect) {
-        new LanguageSelector(languageSelect);
+        window.app.languageSelector = new LanguageSelector(languageSelect); // Store the instance
     }
 
     languageManager.updatePageText();
