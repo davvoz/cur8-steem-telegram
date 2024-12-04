@@ -64,7 +64,7 @@ function initializeLanguage() {
     languageManager.updatePageText();
 }
 
-// Add data-i18n attributes to elements
+// Add data-i18n attributes to elements.
 function addTranslationAttributes() {
     // Navigation
     document.querySelector('#draftBtn span').setAttribute('data-i18n', 'nav_drafts');
