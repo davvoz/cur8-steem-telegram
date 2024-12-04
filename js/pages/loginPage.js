@@ -128,7 +128,7 @@ export function goToSteemLogin() {
         window.location.search);
     const steemClient = new window.steemlogin.Client({
         app: 'cur8',
-        callbackURL: window.location.origin ,
+        callbackURL: window.location.origin + window.location.search,
         scope: ['login', 'vote', 'comment', 'custom_json'],
     });
 
