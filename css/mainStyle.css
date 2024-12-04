@@ -39,17 +39,7 @@
     --header-height: 80px;
     /*facciamo la scrollbar stilosa elegante*/
     scrollbar-width: thin;
-:root {
-    /* ... other styles ... */
-
-    /* Make the scrollbar stylable elegant */
-    scrollbar-width: thin;
     scrollbar-color: var(--primary-color) var(--background);
-
-    /* ... other styles ... */
-}
-    scrollbar-color: var(--primary-color) var(--background);
-    
 }
 
 .theme-chooser {

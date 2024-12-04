@@ -5,16 +5,43 @@ import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
 import  appInitializerInstance  from '../core/AppInitializer.js';
 import { showPage } from '../services/pageService.js';
+import { t } from '../i18n/translationService.js';
+import { Url_parameters } from '../services/parameters.js';
 
 export class AccountManager {
     constructor(apiClient = new ApiClient()) {
         this.apiClient = apiClient;
     }
 
+    platform_logo() {
+        const url = Url_parameters()
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform');
+        const logo = document.getElementById('platformLogo');
+    
+        if (platform === 'STEEM') {
+            //logo.classList.add('blue-filter');
+            logo.src = 'assets/logo_steem.png'; // Percorso del logo per STEEM
+        } 
+        else if (platform === 'HIVE') {
+            logo.src = 'assets/logo_hive.png'; // Percorso del logo per HIVE
+        } else {
+            logo.src = 'assets/logo_tra.png'; // Percorso del logo di default
+        }
+    }
+
     createAccountListItem(username) {
         const li = document.createElement('li');
         li.appendChild(this.createContainer(username));
         document.getElementById('accountList').appendChild(li);
+
+        const url = Url_parameters()
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform')
+        if (!platform) {
+            platform = localStorage.getItem('platform');
+            window.location.search = `platform=${platform}`
+        }
     }
 
     createContainer(username) {
@@ -86,7 +113,7 @@ export class AccountManager {
         document.querySelectorAll('.container-username').forEach(el => el.classList.remove('selected'));
         containerElement.classList.add('selected');
 
-        displayResult({ message: `Account ${username.username} selected` }, 'success');
+        displayResult({ message: `${t('account_selected')} ${username.username}` }, 'success');
         getUserDrafts();
         applySavedTheme();
         setUsernameForImageUpload(username.username, localStorage.getItem('idTelegram'));
@@ -108,17 +135,17 @@ export class AccountManager {
 
         confirmButton.addEventListener('click', handleConfirmLogout);
         cancelButton.addEventListener('click', closeDialog);
-        dialog.addEventListener('close', closeDialog);
+        dialog.addEventListener('close', closeDialog);        
     }
 
     createLogoutDialog() {
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
         dialog.innerHTML = `
-            <h2>Confirm Logout</h2>
-            <p>Are you sure you want to logout?</p>
-            <button id="confirmButtonLogout" class="action-btn">Confirm</button>
-            <button id="cancelButtonLogout" class="action-btn">Cancel</button>
+            <h2>${t('confirm_logout')}</h2>
+            <p>${t('logout_question')}</p>
+            <button id="confirmButtonLogout" class="action-btn">${t('dialog_confirm')}</button>
+            <button id="cancelButtonLogout" class="action-btn">${t('dialog_cancel')}</button>
         `;
         return dialog;
     }
@@ -131,8 +158,10 @@ export class AccountManager {
             await this.apiClient.logout(id, username);
             await this.handlePostLogout(id).then(() => {
                 document.getElementById('spinner').classList.add('hide');
+                //svuoti il campo usernameSelected e l'altro campo
+                
             });
-            displayResult({ message: 'Logout successful' }, 'success');
+            displayResult({ message: `${t('logout_successful')}` }, 'success');
         } catch (error) {
             console.error('Error in handleLogout:', error);
             displayResult({ error: error.message }, 'error');
@@ -147,7 +176,7 @@ export class AccountManager {
                 document.getElementById('postBtn').disabled = true;
                 document.getElementById('accountBtn').disabled = true;
                 document.getElementById('configBtn').disabled = true;
-                showPage('loginPage');
+                window.location.reload(); 
                 return;
             }
             appInitializerInstance.setUsernames(result.usernames);
@@ -157,7 +186,6 @@ export class AccountManager {
             displayResult({ error: error.message }, 'error');
             appInitializerInstance.initializeApp();
         } finally {
-            window.location.hash = '/';
             document.getElementById('spinner').classList.add('hide');
         }
     }

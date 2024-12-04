@@ -1,10 +1,10 @@
 
 import { displayResult } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
-import  appInitializerInstance  from '../core/AppInitializer.js';
+import appInitializerInstance from '../core/AppInitializer.js';
+import { Url_parameters } from '../services/parameters.js';
 
 const client = new ApiClient();
-
 
 function updateStatus(message) {
     displayResult({ info: message }, 'info', true);
@@ -71,12 +71,9 @@ function displayUserData(userData) {
     dialog.addEventListener('close', () => dialog.remove());
 }
 
-export async function loginSteemLogin(username, idTelegram) {
+export async function SignersLogin(username, idTelegram) {
     try {
-        const result = await client.login(
-            idTelegram,
-            username
-        );
+        await client.signerlogin(idTelegram, username);
     } catch (error) {
         console.error('Error in login:', error);
         displayResult({ error: errorMessage }, 'error', true);
@@ -94,7 +91,7 @@ export async function loginSteemLogin(username, idTelegram) {
 }
 
 export async function login() {
-    idTelegram = localStorage.getItem('idTelegram');
+    const idTelegram = localStorage.getItem('idTelegram');
     try {
         document.getElementById('spinner').classList.remove('hide');
         const client = new ApiClient();
@@ -104,25 +101,34 @@ export async function login() {
             username,
             document.getElementById('postingKey').value
         );
-        await client.checkLogin(idTelegram).then(async (result) => {
-            appInitializerInstance.initializeEnd(result);
-        }).then(() => {
-            document.getElementById('spinner').classList.add('hide');
-            document.getElementById('username').value = '';
-            document.getElementById('postingKey').value = '';
-        });
+        await client.checkLogin(idTelegram)
+            .then(async (result) => {
+                appInitializerInstance.initializeEnd(result);
+            }).then(() => {
+                document.getElementById('spinner').classList.add('hide');
+                document.getElementById('username').value = '';
+                document.getElementById('postingKey').value = '';
+            });
     } catch (error) {
+        const callback = () => {
+            document.getElementById('spinner').classList.add('hide');
+        }   
         console.error('Error in login:', error);
-        const   errorMessage = `${error.message}\n Wrong username or password`;
-        displayResult({ error: errorMessage }, 'error', true,appInitializerInstance.initializeApp() );        
+        const errorMessage = `Wrong username or password, please use your private posting key.`;
+        displayResult({ error: errorMessage }, 'error', true,
+            //andare su loginPage
+            callback);
     }
+
 }
- 
+
 export function goToSteemLogin() {
     handleCallback();
+    console.log(window.location.origin + window.location.pathname +// il parametro platform 
+        window.location.search);
     const steemClient = new window.steemlogin.Client({
         app: 'cur8',
-        callbackURL: window.location.origin + window.location.pathname,
+        callbackURL: window.location.origin + window.location.search,
         scope: ['login', 'vote', 'comment', 'custom_json'],
     });
 
@@ -138,19 +144,46 @@ export function goToSteemLogin() {
     }
 }
 
-export async function handleSteemLogin() {
-    const accessTokenPresente = window.location.search.includes('access_token');
-    console.log('accessTokenPresente:', accessTokenPresente);
+export function goToHiveLogin() {
+    handleCallback();
+    const app = 'cur8';
+    const callbackURL = window.location.origin + window.location.search;
+    const scope = ['login', 'vote', 'comment', 'custom_json'];
 
-    if (accessTokenPresente) {
-        const token = window.location.search.split('access_token=')[1];
-        console.log('Token:', token);
+    const authURL = `https://hivesigner.com/oauth2/authorize?client_id=${app}&redirect_uri=${encodeURIComponent(callbackURL)}&scope=${scope.join(',')}`;
+    window.location.href = authURL;
+}
 
-        const username = window.location.search.split('username=')[1].split('&expires_in=')[0];
-        console.log('Username:', username);
-
-        const idTgr = localStorage.getItem('idTelegram');
-        await loginSteemLogin(username, idTgr);
-        window.history.replaceState({}, document.title, window.location.pathname);
+export async function hive_keychain() {
+    if (typeof window.hive_keychain === 'undefined') {
+        alert('Hive Keychain non è installato. Si prega di installarlo per continuare.');
+        return;
     }
+
+    try {
+        const username = 'menny.trx'; // Sostituisci con il tuo username Hive
+
+        // Richiesta di login
+        const response = await window.hive_keychain.requestSignBuffer(username, 'Login to my app', 'Active');
+
+        if (response) {
+            console.log('Login avvenuto con successo!', response);
+            // Qui puoi gestire la logica di login, ad esempio salvare il token o l'utente
+        } else {
+            console.log('Login fallito.');
+        }
+    } catch (error) {
+        console.error('Errore durante il login:', error);
+    }
+}
+
+export async function handleSignersLogin(platform, token, username) {
+    console.log('accessTokenPresente:', token);
+    console.log('Token:', token);
+    console.log('Username:', username);
+    console.log(`justPlatform setted: ${platform}`)
+    const idTgr = localStorage.getItem('idTelegram');
+    await SignersLogin(username, idTgr);
+    const newUrl = `${window.location.pathname}?platform=${platform}`;
+    window.history.replaceState({}, document.title, newUrl);
 }

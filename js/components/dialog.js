@@ -1,3 +1,8 @@
+import { translations } from '../i18n/translations.js';
+function t(key) {
+    const lang = localStorage.getItem('language') || 'en';
+    return translations[lang][key] || key;
+}
 export const getDialogTelegramId = () => {
     return new Promise((resolve) => {
         const dialog = createDialogo();
@@ -24,9 +29,9 @@ const createDialogo = () => {
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
     dialog.innerHTML = `
-        <h2>Telegram ID</h2>
-        <input type="text" id="telegramId" placeholder="Inserisci il tuo ID Telegram">
-        <button id="confirmButtonTelegramId" class="action-btn">Conferma</button>
+        <h2>${t('telegram_id')}</h2>
+        <input type="text" id="telegramId" placeholder="${t('enter_telegram_id')}">
+        <button id="confirmButtonTelegramId" class="action-btn">${t('confirm')}</button>
     `;
     return dialog;
 };
@@ -37,17 +42,16 @@ const closeAndResolve = async (dialog, value, resolve) => {
     await resolve(value);
 };
 
-export function displayResult(result, type = 'success', enabled = false, callback, time ) {
+export function displayResult(result, type, enabled, callback, time) {
     if (enabled) {
-        // Create a dialog with the result
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
         switch (type) {
             case 'success':
                 dialog.innerHTML = `
                 <div class="dialog-header">
-                    <h2>Result</h2>
-                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
+                    <h2>${t('result')}</h2>
+                    <button class="close-button" id="closeButton" aria-label="${t('close')}">✕</button>
                 </div>
                 <p>${result.message}</p>
                 `;
@@ -55,8 +59,8 @@ export function displayResult(result, type = 'success', enabled = false, callbac
             case 'error':
                 dialog.innerHTML = `
                 <div class="dialog-header">
-                    <h2>Error</h2>
-                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
+                    <h2>${t('msg_error')}</h2>
+                    <button class="close-button" id="closeButton" aria-label="${t('close')}">✕</button>
                 </div>
                 <p>${result.error}</p>
                 `;
@@ -65,7 +69,7 @@ export function displayResult(result, type = 'success', enabled = false, callbac
                 dialog.innerHTML = `
                 <div class="dialog-header">
                     <h2>${result.title}</h2>
-                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
+                    <button class="close-button" id="closeButton" aria-label="${t('close')}">✕</button>
                 </div>
                 <p>${result.message}</p>
                 `;
@@ -73,8 +77,8 @@ export function displayResult(result, type = 'success', enabled = false, callbac
             default:
                 dialog.innerHTML = `
                 <div class="dialog-header">
-                    <h2>Information</h2>
-                    <button class="close-button" id="closeButton" aria-label="Close">✕</button>
+                    <h2>${t('information')}</h2>
+                    <button class="close-button" id="closeButton" aria-label="${t('close')}">✕</button>
                 </div>
                 <p>${result.info}</p>
                 `;
@@ -84,10 +88,10 @@ export function displayResult(result, type = 'success', enabled = false, callbac
         dialog.showModal();
         const closeButton = dialog.querySelector('#closeButton');
         closeButton.addEventListener('click', () => {
-            dialog.remove();
             if (callback) {
                 callback();
             }
+            dialog.remove();
         });
 
         dialog.addEventListener('close', () => dialog.remove());
@@ -102,36 +106,78 @@ export function displayResult(result, type = 'success', enabled = false, callbac
 export function createDatePickerDialog() {
     const dialog = document.createElement('dialog');
     dialog.classList.add('dialogo');
-    dialog.innerHTML = `
-    <div class="dialog-header">
-        <h2>Post scheduling</h2>
-        <button class="close-button" id="closeButton" aria-label="Close">✕</button>
-    </div>
-        <input type="datetime-local" id="scheduledTime" name="scheduledTime">
-        <button id="confirmButtonDP" class="action-btn">Confirm</button>
-        <button id="annullaButtonDP" class="action-btn">Cancel</button>
-    `;
+    const header = document.createElement('div');
+    header.classList.add('dialog-header');
+
+    const title = document.createElement('h2');
+    title.textContent = t('post_scheduling');
+    header.appendChild(title);
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('close-button');
+    closeButton.id = 'closeButton';
+    closeButton.setAttribute('aria-label', t('close'));
+    closeButton.textContent = '✕';
+    header.appendChild(closeButton);
+
+    const input = document.createElement('input');
+    input.type = 'datetime-local';
+    input.id = 'scheduledTime';
+    input.name = 'scheduledTime';
+
+    const confirmButton = document.createElement('button');
+    confirmButton.id = 'confirmButtonDP';
+    confirmButton.classList.add('action-btn');
+    confirmButton.textContent = t('confirm');
+
+    const cancelButton = document.createElement('button');
+    cancelButton.id = 'annullaButtonDP';
+    cancelButton.classList.add('action-btn');
+    cancelButton.textContent = t('cancel');
+
+    dialog.appendChild(header);
+    dialog.appendChild(input);
+    dialog.appendChild(confirmButton);
+    dialog.appendChild(cancelButton);
     return dialog;
 }
 
 export function communityDialog() {
     const dialog = document.createElement('dialog');
     dialog.classList.add('c-dialogo');
-    dialog.innerHTML = `
-        <div class="autocomplete-container">
-            <div class="dialog-header">
-                <h2>Select community</h2>
-                <button class="close-button" id="closeButton" aria-label="Close">✕</button>
-            </div>
-            <div class="c-container">
-                <input 
-                    type="text" 
-                    id="myInput" 
-                    placeholder="Start typing..."
-                >
-                <div id="autocomplete-list" class="autocomplete-items"></div>
-            </div>
-        </div>
-    `;
+    const header = document.createElement('div');
+    header.classList.add('dialog-header');
+
+    const title = document.createElement('h2');
+    title.textContent = t('select_community');
+    header.appendChild(title);
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('close-button');
+    closeButton.id = 'closeButton';
+    closeButton.setAttribute('aria-label', t('close'));
+    closeButton.textContent = '✕';
+    header.appendChild(closeButton);
+
+    const container = document.createElement('div');
+    container.classList.add('c-container');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'myInput';
+    input.placeholder = t('community_search');
+    container.appendChild(input);
+
+    const autocompleteList = document.createElement('div');
+    autocompleteList.id = 'autocomplete-list';
+    autocompleteList.classList.add('autocomplete-items');
+    container.appendChild(autocompleteList);
+
+    const autocompleteContainer = document.createElement('div');
+    autocompleteContainer.classList.add('autocomplete-container');
+    autocompleteContainer.appendChild(header);
+    autocompleteContainer.appendChild(container);
+
+    dialog.appendChild(autocompleteContainer);
     return dialog;
 }

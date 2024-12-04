@@ -3,7 +3,7 @@ export  class TelegramManager {
 
     constructor() {
         if (TelegramManager.instance) {
-            return TelegramManager.instance;
+            throw new Error("Use TelegramManager.getInstance() to get an instance of this class.");
         }
         TelegramManager.instance = this;
     }
@@ -31,3 +31,4 @@ export  class TelegramManager {
         }
     }
 }
+

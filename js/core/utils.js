@@ -1,6 +1,6 @@
 import { ApiClient } from '../api/api-client.js';
 import { displayResult } from '../components/dialog.js';
-
+import { t } from '../i18n/translationService.js';
 
 export function enableNavigationButtons() {
     ['draftBtn', 'postBtn', 'accountBtn', 'configBtn'].forEach(id => {
@@ -21,14 +21,14 @@ export async function getListaComunities() {
 }
 
 export async function converiIlTagInNomeComunita(communityName) {
-    if (!communityName) return 'Select a community';
+    if (!communityName) return t('select_community');
     try {
         const communities = await window.listaComunities;
         const community = communities.find(community => community.name === communityName);
-        return community ? community.title : 'Select a community';
+        return community ? community.title : t('select_community');
     } catch (error) {
         console.error('Error while searching for community:', error);
-        return 'Error occurred while searching for community';
+        return t('error_loading_community');
     }
 }
 

@@ -3,6 +3,12 @@ import { displayResult } from "../components/dialog.js";
 import { ApiClient } from '../api/api-client.js';
 import { createIconButton } from "../components/icon.js";
 import { appState } from "../core/AppState.js";
+import { translations } from "../i18n/translations.js";
+
+function t(key) {
+    const lang = localStorage.getItem('language') || 'en';
+    return translations[lang][key] || key;
+}
 
 class ApiService {
     constructor(client) {
@@ -33,7 +39,7 @@ class DraftManager {
     }
 
     async loadUserDrafts() {
-        console.log('Loading drafts...');
+        console.log(t('draft_loading'));
         const username = getUsername();
         if (!username) return;
 
@@ -58,8 +64,8 @@ class DraftManager {
 
     createHeaderWithTabs() {
         const tabsContainer = this.createElementWithClass('div', 'tabs-container');
-        const scheduledTab = this.createTabButton('Scheduled', this.activeTabIndex === 0);
-        const unscheduledTab = this.createTabButton('Drafts', this.activeTabIndex === 1);
+        const scheduledTab = this.createTabButton(t('draft_scheduled'), this.activeTabIndex === 0);
+        const unscheduledTab = this.createTabButton(t('draft_drafts'), this.activeTabIndex === 1);
 
         scheduledTab.addEventListener('click', () => {
             this.switchTab(0);
@@ -112,8 +118,6 @@ class DraftManager {
             return;
         }
 
-
-
         const { scheduledDrafts, unscheduledDrafts } = this.sortAndSeparateDrafts(drafts);
         this.populateDraftLists(scheduledDrafts, unscheduledDrafts, scheduledList, unscheduledList);
     }
@@ -125,7 +129,7 @@ class DraftManager {
     }
 
     appendNoDraftsMessage(list) {
-        const li = this.createElementWithClass('li', 'noDraftsMessage', 'No drafts available');
+        const li = this.createElementWithClass('li', 'noDraftsMessage', t('draft_no_drafts'));
         list.appendChild(li);
     }
 
@@ -154,7 +158,7 @@ class DraftManager {
     createDraftListItem(id, draft) {
         const li = this.createElementWithClass('li', 'draft-item');
 
-        const titleSpan = this.createElementWithClass('span', 'draft-title', draft.title || 'Untitled Draft');
+        const titleSpan = this.createElementWithClass('span', 'draft-title', draft.title || t('untitled_draft'));
         const idDiv = this.createElementWithClass('div', 'draft-id', id);
         const titleContainer = this.createElementWithClass('div', 'title-container');
         titleContainer.append(idDiv, titleSpan);
@@ -162,7 +166,7 @@ class DraftManager {
         const infoDiv = this.createElementWithClass('div', 'draft-info');
         infoDiv.style.flexDirection = 'column';
 
-        const message = draft.scheduled_time === "0000-00-00 00:00:00" ? "No scheduled time" : new Date(draft.scheduled_time).toLocaleString();
+        const message = draft.scheduled_time === "0000-00-00 00:00:00" ? t('no_scheduled_time') : new Date(draft.scheduled_time).toLocaleString();
         const scheduledTimeSpan = this.createElementWithClass('div', 'scheduled-time', message);
         infoDiv.appendChild(scheduledTimeSpan);
 
@@ -204,7 +208,7 @@ class DraftManager {
         document.getElementById('postTitle').value = draft.title || '';
         document.getElementById('postTags').value = draft.tags || '';
         document.getElementById('postBody').value = draft.body || '';
-        document.getElementById('comunityName').innerText = draft.community ? draft.community : 'Select a community';
+        document.getElementById('comunityName').innerText = draft.community ? draft.community : `${t('select_community')}`;
 
         const scheduledTimeEl = document.getElementById('openDatePicker');
         if (draft.scheduled_time !== '0000-00-00 00:00:00') {
@@ -235,10 +239,10 @@ class DraftManager {
             const dialog = document.createElement('dialog');
             dialog.classList.add('dialogo');
             dialog.innerHTML = `
-                <h2>Confirm Deletion</h2>
-                <p>Are you sure you want to delete this draft?</p>
-                <button id="confirmButtonDelete" class="action-btn">Confirm</button>
-                <button id="cancelButtonDelete" class="action-btn">Cancel</button>
+                <h2>${t('draft_confirm_delete_title')}</h2>
+                <p>${t('draft_confirm_delete_message')}</p>
+                <button id="confirmButtonDelete" class="action-btn">${t('confirm')}</button>
+                <button id="cancelButtonDelete" class="action-btn">${t('cancel')}</button>
             `;
             document.body.appendChild(dialog);
             dialog.showModal();

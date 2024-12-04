@@ -202,25 +202,25 @@
     --error: #00ff00;
     --success: #0000ff;
     --warning: #ffff00;
-    --on-primary: #ffffff;
+    --on-primary: #007700;
     --on-background: #ffffff;
     --on-surface: #ffffff;
-    --on-secondary: #000000;
+    --on-secondary: #8cfd9b;
 }
 
 .theme-selector-dark-theme {
-    --primary-color: #212121;
-    --primary-variant: #484848;
-    --secondary-color: #757575;
-    --background: #2b1717;
-    --surface: #333333;
-    --error: #ff5252;
-    --success: #69f0ae;
-    --warning: #ffd740;
-    --on-primary: #ffffff;
-    --on-background: #f1f2f6;
-    --on-surface: #dfe4ea;
-    --on-secondary: #ffffff;
+    --primary-color: #212121; /* Grigio scuro */
+    --primary-variant: #484848; /* Grigio più chiaro */
+    --secondary-color: #9e9e9e; /* Grigio più chiaro e distintivo */
+    --background: #2b1717; /* Sfondo scuro */
+    --surface: #444444; /* Grigio scuro */
+    --error: #d32f2f; /* Rosso scuro */
+    --success: #69f0ae; /* Verde chiaro */
+    --warning: #ffd740; /* Giallo */
+    --on-primary: #ffffff; /* Testo bianco su primario */
+    --on-background: #ffffff; /* Testo bianco su sfondo */
+    --on-surface: #ffffff; /* Testo bianco su superficie */
+    --on-secondary: #000000; /* Testo nero su secondario */
 }
 
 .theme-selector-horror-theme {
@@ -322,25 +322,25 @@
     --error: #ff2e63;
     --success: #00f0ff;
     --warning: #ffcc00;
-    --on-primary: #ffffff;
+    --on-primary: #663d00;
     --on-background: #ffffff;
     --on-surface: #ffffff;
     --on-secondary: #000000;
 }
 
 .theme-selector-reverse-horror-theme {
-    --primary-color: #000000;
-    --primary-variant: #212121;
-    --secondary-color: #757575;
-    --background: #ff3d00;
-    --surface: #ff6e40;
-    --error: #ff3d00;
-    --success: #00e676;
-    --warning: #ffab00;
-    --on-primary: #000000;
-    --on-background: #f1f2f6;
-    --on-surface: #dfe4ea;
-    --on-secondary: #220101;
+    --primary-color: #000000; /* Nero */
+    --primary-variant: #212121; /* Grigio scuro */
+    --secondary-color: #ff9100; /* Arancio brillante */
+    --background: #ff3d00; /* Sfondo arancione */
+    --surface: #ff8f00; /* Arancio più scuro */
+    --error: #d32f2f; /* Rosso scuro */
+    --success: #00e676; /* Verde brillante */
+    --warning: #ffab00; /* Giallo */
+    --on-primary: #ffffff; /* Testo bianco su primario */
+    --on-background: #f1f2f6; /* Testo chiaro su sfondo */
+    --on-surface: #ffffff; /* Testo bianco su superficie */
+    --on-secondary: #000000; /* Testo nero su secondario */
 }
 
 .theme-selector-mio-theme {
@@ -378,7 +378,7 @@
     --primary-variant: #ff9fff;
     --secondary-color: #006d00;
     --background: #05040c;
-    --surface: #070047; 
+    --surface: #070047;
     --error: #ff00ff;
     --success: #00ff00;
     --warning: #ffff00;
@@ -386,4 +386,36 @@
     --on-background: #ff91ff;
     --on-surface: #ffffff;
     --on-secondary: #000000;
-}   
+}
+
+/*default steem*/
+.theme-selector-steem-theme {
+    --primary-color: #4BA2F2;
+    --primary-variant: #4BA2F2;
+    --secondary-color: #4BA2F2;
+    --background: #9c9c9c;
+    --surface: #F5F5F5;
+    --error: #FF5252;
+    --success: #4CAF50;
+    --warning: #FFA500;
+    --on-primary: #FFFFFF;
+    --on-background: #212529;
+    --on-surface: #212529;
+    --on-secondary: #000000;
+}
+
+/*default hive (sul rossiccio)*/
+.theme-selector-hive-theme {
+    --primary-color: #e11337;
+    --primary-variant: #e12a4d;
+    --secondary-color: #4BA2F2;
+    --background: #FFFFFF;
+    --surface: #F5F5F5;
+    --error: #FF5252;
+    --success: #4CAF50;
+    --warning: #FFA500;
+    --on-primary: #FFFFFF;
+    --on-background: #212529;
+    --on-surface: #212529;
+    --on-secondary: #000000;
+}

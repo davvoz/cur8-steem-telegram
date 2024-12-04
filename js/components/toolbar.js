@@ -161,8 +161,11 @@ class TextFormatter {
 
     const { start, end } = this.getSelectedText();
     this.postBody.value = this.postBody.value.substring(0, start) + replacement + this.postBody.value.substring(end);
+    
+    // Ripristina la posizione del cursore
+    this.postBody.selectionStart = this.postBody.selectionEnd = start + replacement.length;
     this.postBody.focus();
-  }
+}
 
   async applyFormat(formatKey) {
     const format = MARKDOWN_FORMATS[formatKey];

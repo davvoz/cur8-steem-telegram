@@ -1,8 +1,38 @@
-
+import { displayResult } from '../components/dialog.js';
 export class ApiClient {
-    constructor(baseUrl = 'https://imridd.eu.pythonanywhere.com/api/steem') {
+    constructor() {
         this.apiKey = 'your_secret_api_key';
-        this.baseUrl = baseUrl;
+        // const platform = localStorage.getItem('platform');
+        let url_string = window.location.href
+        let questionMarkCount = 0;
+        let modified_url = url_string.replace(/\?/g, function(match) {
+            questionMarkCount++;
+            return questionMarkCount === 2 ? '&' : match;
+        });
+        const url = new URL(modified_url);
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform');
+        const baseUrlMap = {
+            'STEEM': 'https://imridd.eu.pythonanywhere.com/api/steem',
+            'HIVE': 'https://imridd.eu.pythonanywhere.com/api/hive'
+        };
+        this.baseUrl = baseUrlMap[platform] || (() => {
+            console.error('Invalid start parameter:',platform);
+            displayResult(
+                { error: 'Invalid start parameter, please reload the page' },
+                'error',
+                true
+            );
+            return null;
+        })();
+
+        if (!this.baseUrl) {
+            displayResult(
+                { error: 'Error during initialization, please reload the page' },
+                'error',
+                true
+            );
+        }
     }
 
     async sendRequest(endpoint, method, data = null) {
@@ -14,7 +44,6 @@ export class ApiClient {
             'hash': window.Telegram?.WebApp?.initDataUnsafe?.hash || 'default_hash'
         };
 
-        console.log(JSON.stringify(telegramData));
         const idTelegram = localStorage.getItem('idTelegram');
         const url = `${this.baseUrl}${endpoint}`;
         const options = {
@@ -42,6 +71,10 @@ export class ApiClient {
 
     login(idTelegram, username, postingKey) {
         return this.sendRequest('/login', 'POST', { id_telegram: idTelegram, username, posting_key: postingKey });
+    }
+
+    signerlogin(idTelegram, username, postingKey) {
+        return this.sendRequest('/signerlogin', 'POST', { id_telegram: idTelegram, username, posting_key: postingKey });
     }
 
     logout(idTelegram, username) {
@@ -88,6 +121,5 @@ export class ApiClient {
     listaComunities() {
         return this.sendRequest('/communities', 'GET');
     }
-
 
 }

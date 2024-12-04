@@ -1,3 +1,5 @@
+import { Url_parameters } from '../services/parameters.js'
+
 const MAX_FILE_SIZE_MB = 15;
 const UPLOAD_TIMEOUT_MS = 60000; // 60 secondi di timeout
 
@@ -82,8 +84,21 @@ function uploadImage(file) {
             ]);
         };
 
+        const url = Url_parameters()
+        const params = new URLSearchParams(url.search);
+        const platform = params.get('platform')
+
+        const baseUrlMap = {            
+            'STEEM': 'https://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image',
+            'HIVE': 'https://imridd.eu.pythonanywhere.com/api/hive/upload_base64_image'
+        };
+
+        const baseUrl = baseUrlMap[platform] || (() => {
+            console.error('Invalid start parameter:', platform);
+        })();
+
         // Esegui la richiesta con timeout
-        fetchWithTimeout('https://imridd.eu.pythonanywhere.com/api/steem/upload_base64_image', {
+        fetchWithTimeout(baseUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

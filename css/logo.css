@@ -1,0 +1,25 @@
+#platformLogo {
+    width: 81px;
+    height: 81px;
+    display: flex;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 2px var(--primary));
+    animation: floatAnimation 3s ease-in-out infinite;
+  }
+  
+  #platformLogo:hover {
+    transform: rotate(360deg) scale(1.2);
+    filter: drop-shadow(0 0 8px var(--primary));
+  }
+  
+  @keyframes floatAnimation {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
