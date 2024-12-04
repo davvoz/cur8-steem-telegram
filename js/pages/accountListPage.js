@@ -4,7 +4,6 @@ import { setUsernameForImageUpload } from '../api/image-upload.js';
 import { getUserDrafts } from './draftPage.js';
 import { ApiClient } from '../api/api-client.js';
 import  appInitializerInstance  from '../core/AppInitializer.js';
-import { showPage } from '../services/pageService.js';
 import { t } from '../i18n/translationService.js';
 import { Url_parameters } from '../services/parameters.js';
 
@@ -20,7 +19,6 @@ export class AccountManager {
         const logo = document.getElementById('platformLogo');
     
         if (platform === 'STEEM') {
-            //logo.classList.add('blue-filter');
             logo.src = 'assets/logo_steem.png'; // Percorso del logo per STEEM
         } 
         else if (platform === 'HIVE') {

@@ -2,7 +2,6 @@ import { displayResult } from '../components/dialog.js';
 export class ApiClient {
     constructor() {
         this.apiKey = 'your_secret_api_key';
-        // const platform = localStorage.getItem('platform');
         let url_string = window.location.href
         let questionMarkCount = 0;
         let modified_url = url_string.replace(/\?/g, function(match) {

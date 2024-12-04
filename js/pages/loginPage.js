@@ -2,7 +2,6 @@
 import { displayResult } from '../components/dialog.js';
 import { ApiClient } from '../api/api-client.js';
 import appInitializerInstance from '../core/AppInitializer.js';
-import { Url_parameters } from '../services/parameters.js';
 
 const client = new ApiClient();
 
